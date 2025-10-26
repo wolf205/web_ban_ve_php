@@ -1,0 +1,189 @@
+/* Khối đen thay thế header/footer */
+.fake-header,
+.fake-footer {
+  height: 60px;
+  background-color: #aea9a9;
+}
+
+body {
+  color: var(--color-secondary, #141313);
+}
+
+/* Layout 2 cột chính: 1fr (trái) và 1fr (phải) */
+.page-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+}
+
+/* =========================
+   CỘT TRÁI: Thông tin rạp
+   ========================= */
+
+.cinema-title {
+  font-family: var(--font-title);
+  font-size: var(--font-size-xxl);
+  margin-bottom: var(--space-md);
+}
+
+.cinema-image {
+  width: 100%;
+  height: 450px; /* Chiều cao cố định cho ảnh placeholder */
+  background-color: #e0e0e0; /* Màu nền cho ảnh trống */
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  object-fit: cover;
+}
+
+.cinema-info p {
+  margin-bottom: var(--space-md);
+  line-height: 1.7; /* Tăng độ dãn dòng cho dễ đọc */
+}
+
+/* =========================
+   MỚI: Phần Bình luận (Cột Trái)
+   ========================= */
+
+.comments-section {
+  margin-top: var(--space-xl);
+  border-top: 1px solid var(--color-muted);
+  padding-top: var(--space-lg);
+}
+
+.comments-title {
+  font-family: var(--font-title);
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+}
+
+/* Form bình luận */
+.comment-form {
+  margin-bottom: var(--space-xl);
+}
+
+.form-group {
+  margin-bottom: var(--space-md);
+}
+
+.comment-form input[type="text"],
+.comment-form textarea {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-muted);
+  background-color: #fff; /* Nền trắng cho form trên nền sáng */
+  color: var(--color-secondary); /* Chữ đen */
+  font-size: var(--font-size-base);
+  font-family: var(--font-main);
+}
+
+.comment-form input[type="text"]::placeholder,
+.comment-form textarea::placeholder {
+  color: var(--color-muted);
+}
+
+.comment-form textarea {
+  resize: vertical;
+}
+
+/* ===== CẬP NHẬT PHẦN DANH SÁCH BÌNH LUẬN ===== */
+
+/* Danh sách bình luận */
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* SỬA ĐỔI: Dùng Flexbox để chia 2 cột (avatar và nội dung) */
+.comment {
+  display: flex;
+  gap: var(--space-sm); /* Khoảng cách giữa avatar và nội dung */
+
+  /* Bỏ các style viền và padding cũ */
+  border: none;
+  border-left: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* MỚI: Style cho avatar */
+.comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* Avatar tròn */
+  background-color: #ccc; /* Màu nền placeholder cho ảnh trống */
+  flex-shrink: 0; /* Ngăn avatar bị co lại */
+}
+
+.comment-content {
+  background-color: #f0f2f5;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  flex-grow: 1;
+}
+
+/*Style cho Tên tác giả */
+.comment-author {
+  font-weight: 600;
+  color: var(--color-primary); /* Màu xanh */
+  margin-bottom: 4px; /* Giảm khoảng cách với nội dung */
+  font-size: var(--font-size-sm); /* Tên tác giả thường nhỏ hơn 1 chút */
+}
+
+/* SỬA ĐỔI: Style cho Nội dung bình luận */
+.comment-body {
+  margin-bottom: var(--space-sm); /* Tạo khoảng cách với hàng 'actions' */
+  line-height: 1.6;
+}
+
+/* MỚI: Style cho hàng "Thích · Phản hồi" */
+.comment-actions {
+  font-size: var(--font-size-xs); /* Chữ siêu nhỏ */
+  color: var(--color-muted); /* Màu xám */
+}
+
+.comment-actions a {
+  color: var(--color-primary); /* Màu xanh cho link */
+  font-weight: 600; /* In đậm */
+  text-decoration: none;
+}
+
+.comment-actions a:hover {
+  text-decoration: underline;
+}
+
+/* Dấu chấm ngăn cách */
+.comment-actions span {
+  margin: 0 var(--space-xs);
+}
+
+.comment-time {
+  color: var(--color-muted); /* Màu xám cho thời gian */
+}
+
+/* =========================
+   CỘT PHẢI: Phim hot
+   ========================= */
+
+.card {
+  width: 85%;
+  position: relative;
+}
+
+/* Lưới 2 cột cho các thẻ phim */
+.movie-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  row-gap: var(--space-xl);
+  column-gap: var(--space-sm);
+}
+
+.movie-title {
+  font-family: var(--font-title);
+  font-size: var(--font-size-lg);
+  margin-top: var(--space-sm);
+  color: var(--color-accent);
+  text-align: center;
+}

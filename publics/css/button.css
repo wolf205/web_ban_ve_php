@@ -1,0 +1,49 @@
+/* =========================
+   COMPONENT: Button
+   ========================= */
+
+.btn {
+  display: inline-block;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* Nút chính (đặt vé, thanh toán,...) */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.btn-primary:hover {
+  background-color: #b00610;
+  box-shadow: var(--shadow-strong);
+}
+
+/* Nút phụ (xem chi tiết, quay lại,...) */
+.btn-secondary {
+  background-color: var(--color-bg-light);
+  color: var(--color-text);
+  border: 1px solid var(--color-muted);
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* Nút vàng (combo, ưu đãi, highlight) */
+.btn-accent {
+  background-color: var(--color-accent);
+  color: #000;
+  font-weight: 600;
+}
+
+.btn-accent:hover {
+  background-color: #ffdf50;
+}

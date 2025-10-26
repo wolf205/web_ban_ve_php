@@ -1,0 +1,35 @@
+/* =========================
+   LAYOUT: Container
+   ========================= */
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-lg) 0;
+}
+
+.section {
+  margin-bottom: var(--space-xxl);
+}
+
+.section-title {
+  font-family: var(--font-title);
+  font-size: var(--font-size-xl);
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: var(--space-md);
+  text-align: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+}

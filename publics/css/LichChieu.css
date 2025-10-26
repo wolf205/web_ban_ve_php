@@ -1,0 +1,178 @@
+/* =========================
+   PAGE: Lịch Chiếu (Desktop Only)
+   ========================= */
+
+/* --- Cài đặt chung cho trang --- */
+body {
+  /* Ghi đè màu chữ mặc định.
+     File variables.css có thể đang đặt màu chữ sáng (vì thiết kế cho nền tối),
+     nhưng trang này có nền sáng, nên ta đổi chữ sang màu tối (--color-secondary).
+   */
+  color: var(--color-secondary, #141313);
+}
+
+/* --- Khối giả lập Header/Footer --- */
+.placeholder-nav {
+  height: 60px; /* Chiều cao cố định */
+  background-color: #b1afaf; /* Nền đen */
+  width: 100%;
+}
+
+/* --- Bộ chọn ngày --- */
+.date-selector {
+  display: flex; /* Sắp xếp các ngày theo hàng ngang */
+  /* ĐÃ THAY ĐỔI: Căn giữa các mục ngày cho giống ảnh */
+  justify-content: center;
+  gap: var(--space-xl); /* Khoảng cách giữa các mục ngày */
+  border-bottom: 1px solid #ddd; /* Đường kẻ chân mờ cho toàn bộ thanh */
+  margin-bottom: var(--space-xl); /* Khoảng cách tới lưới phim bên dưới */
+}
+
+/* --- Một mục chọn ngày (VD: 25/10 - T7) --- */
+.date-item {
+  display: block;
+  padding: var(--space-md) var(--space-sm); /* Đệm lót bên trong */
+  color: var(--color-muted); /* Màu chữ mờ (chưa chọn) */
+  font-weight: 600;
+  font-size: var(--font-size-lg);
+  /* Tạo đường viền "chờ" (trong suốt).
+     Giúp khi chuyển sang active (có viền) layout không bị "giật".
+   */
+  border-bottom: 3px solid transparent;
+  /* Đẩy mục ngày xuống 2px để đường viền 3px "đè" lên đường viền 1px của .date-selector.
+     (3px - 1px = 2px)
+   */
+  margin-bottom: -2px;
+  transition: all 0.3s ease; /* Hiệu ứng chuyển động mượt */
+}
+
+/* --- Khi di chuột vào mục ngày --- */
+.date-item:hover {
+  color: var(--color-secondary); /* Đổi sang màu chữ chính */
+}
+
+/* --- Mục ngày đang được chọn (active) --- */
+.date-item.active {
+  color: var(
+    --color-secondary
+  ); /* Màu chữ chính (Màu xanh trong ảnh gốc không có trong variables, tạm dùng màu này) */
+  /* Ghi chú: ảnh gốc dùng màu xanh dương, nhưng variables.css dùng màu vàng (--color-accent) */
+  border-bottom-color: var(--color-accent);
+}
+
+/* --- Lưới Phim --- */
+.movie-grid {
+  display: grid;
+  /* ĐÃ THAY ĐỔI: Chuyển từ 2 cột (1fr 1fr) sang 1 cột duy nhất */
+  grid-template-columns: 1fr;
+  /* ĐÃ THAY ĐỔI: Bỏ khoảng cách hàng (row-gap) để dùng border thay thế */
+  gap: 0 var(--space-lg);
+}
+
+/* --- Container cho MỘT mục phim (bao gồm Poster và Thông tin) --- */
+.movie-listing {
+  display: flex;
+  flex-direction: row; /* Sắp xếp poster và thông tin nằm ngang */
+  gap: var(--space-lg); /* Khoảng cách giữa poster và thông tin */
+  align-items: flex-start;
+
+  /* --- THÊM MỚI: Thêm đường kẻ và khoảng cách bên trên, giống trong ảnh --- */
+  border-top: 1px dashed #ddd;
+  padding-top: var(--space-xl);
+  /* --- KẾT THÚC THÊM MỚI --- */
+}
+
+/* --- THÊM MỚI: Xóa đường kẻ và khoảng cách cho phim đầu tiên trong danh sách --- */
+.movie-listing:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+/* --- KẾT THÚC THÊM MỚI --- */
+
+/* --- 1. Phần Poster (Thẻ bên trái) --- */
+.movie-poster-card {
+  flex-shrink: 0; /* Không bị co lại nếu nội dung bên phải quá dài */
+  position: relative; /* Làm gốc để định vị .movie-tag (T13, T16) */
+  flex-basis: 250px; /* Đặt chiều rộng cơ sở là 270px */
+  width: 250px; /* Cố định chiều rộng */
+  /* Lớp .card từ card.css sẽ xử lý shadow, radius, hover */
+}
+
+.movie-poster-card img {
+  /* Màu nền cho ảnh (hiển thị khi ảnh chưa tải xong hoặc bị lỗi) */
+  background-color: #333;
+  /* Chiều cao 350px được kế thừa từ lớp .card trong card.css */
+}
+
+/* --- 2. Phần thông tin chi tiết (Khối bên phải) --- */
+.movie-info-details {
+  flex-grow: 1; /* Tự động lấp đầy không gian còn lại bên phải */
+}
+
+/* --- Tiêu đề phim --- */
+.movie-title {
+  font-family: var(--font-title); /* Sử dụng font tiêu đề (Bebas Neue) */
+  font-size: var(--font-size-xl);
+  color: var(--color-accent); /* Màu vàng nổi bật */
+  text-transform: uppercase;
+  margin-bottom: var(--space-sm);
+}
+
+/* --- Thông tin phụ (Thể loại, Thời lượng) --- */
+.movie-details {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+  margin-bottom: var(--space-lg);
+}
+
+/* --- Tiêu đề của nhóm suất chiếu (VD: 2D PHỤ ĐỀ) --- */
+.showtimes h4 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: var(--space-md);
+  border-bottom: 1px solid #ddd; /* Đường kẻ mờ */
+  padding-bottom: var(--space-sm);
+  color: var(--color-secondary); /* Màu chữ chính */
+}
+
+/* --- Lưới chứa các ô chọn suất chiếu --- */
+.showtimes-grid {
+  display: flex;
+  flex-wrap: wrap; /* Cho phép các ô tự động xuống hàng khi không đủ chỗ */
+  gap: var(--space-md); /* Khoảng cách giữa các ô */
+}
+
+/* --- Định dạng cho MỘT ô suất chiếu --- */
+.showtime-slot {
+  display: inline-block;
+  border: 1px solid var(--color-muted); /* Viền mờ */
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  text-align: center; /* Căn giữa nội dung (giờ và số ghế) */
+  background-color: transparent; /* Nền trong suốt */
+  color: var(--color-secondary); /* Màu chữ chính */
+  font-size: var(--font-size-sm);
+  transition: all 0.3s ease; /* Hiệu ứng hover mượt */
+}
+
+/* --- Khi di chuột vào ô suất chiếu --- */
+.showtime-slot:hover {
+  border-color: var(--color-accent); /* Đổi viền sang màu vàng */
+  color: var(--color-accent); /* Đổi chữ sang màu vàng */
+}
+
+/* --- Định dạng phần GIỜ CHIẾU (chữ to) --- */
+.showtime-slot .time {
+  display: block; /* Đẩy phần số ghế xuống dòng dưới */
+  font-weight: 600; /* In đậm */
+  font-size: var(--font-size-base); /* Cỡ chữ to hơn */
+}
+
+/* --- Định dạng phần SỐ GHẾ (chữ nhỏ, mờ) --- */
+.showtime-slot .seats {
+  display: block;
+  color: var(--color-muted); /* Màu mờ */
+  font-size: var(--font-size-sm); /* Cỡ chữ nhỏ */
+  margin-top: var(--space-xs); /* Khoảng cách với giờ chiếu bên trên */
+}
