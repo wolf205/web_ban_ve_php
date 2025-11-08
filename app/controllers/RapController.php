@@ -1,46 +1,56 @@
 <?php
-// app/controllers/RapController.php
+require_once __DIR__ . '/../config/Database.php';
+require_once __DIR__ . '/../models/RapModel.php';
+require_once __DIR__ . '/../models/DanhGiaModel.php';
+require_once __DIR__ . '/../models/PhimModel.php';
 
 class RapController {
+    private $db;
+    private $rapModel;
+    private $danhGiaModel;
+    private $phimModel;
+
+    public function __construct() {
+        $database = new Database();
+        $this->db = $database->getConnection();
+        if ($this->db === null) throw new \Exception("Không thể kết nối đến CSDL.");
+
+        $this->rapModel = new RapModel($this->db);
+        $this->danhGiaModel = new DanhGiaModel($this->db);
+        $this->phimModel = new PhimModel($this->db);
+    }
+
+    public function showDetails() {
+        $ma_rap = $_GET['ma_rap'] ?? '1';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['noi_dung'])) {
+            session_start();
+            if (isset($_SESSION['ma_kh']) && !empty(trim($_POST['noi_dung']))) {
+                $ma_kh = $_SESSION['ma_kh'];
+                $noi_dung = trim($_POST['noi_dung']);
+                $this->danhGiaModel->insertDanhGia($ma_rap, $ma_kh, $noi_dung);
+                header("Location: " . $_SERVER['REQUEST_URI']);
+                exit;
+            }
+        }
+
+        $rap = $this->rapModel->getRapById($ma_rap);
+        if (!$rap) {
+            echo "404 - Không tìm thấy rạp.";
+            exit;
+        }
+
+        $danh_gia_list = $this->danhGiaModel->getDanhGiaByRap($ma_rap);
+        $all_hot_movies = $this->phimModel->getPhimHot();
+        $hot_movies = array_slice($all_hot_movies, 0, 4);
+        $all_raps = $this->rapModel->getAllRap();
+        $header_rap_link_template = 'index.php?controller=rap&action=showDetails&ma_rap=__MA_RAP__';
+
+        require __DIR__ . '/../views/Rap.php';
+    }
+
     public function index() {
-        // ==============================
-        // DỮ LIỆU MẪU (khi chưa có model)
-        // ==============================
-        $rap = [
-            'ten_rap' => 'Beta Thanh Xuân, TP Hà Nội',
-            'hinh_anh' => '/Project1/publics/img/beta_thai_nguyen.jpeg',
-            'mo_ta' => [
-                'Rạp Beta Cinemas Thanh Xuân tọa lạc tại Tầng hầm B1, tòa nhà Golden West, Số 2, Lê Văn Thiêm, Phường Thanh Xuân, Hà Nội.',
-                'Rạp có vị trí thuận lợi, rất gần những trường đại học, cao đẳng và cấp 3 lớn tại Hà Nội (Trường Đại học Khoa học Tự nhiên, Trường Đại học Khoa học Xã hội và Nhân văn, Trường Hà Nội – Amsterdam...).',
-                'Beta Cinemas Thanh Xuân sở hữu hệ thống tổng cộng 6 phòng chiếu tương đương 838 ghế ngồi v.v'
-            ]
-        ];
-
-        $binhluan = [
-            [
-                'ten' => 'Ngọc Anh',
-                'anh_dai_dien' => '/Project1/publics/img/avata1.jpg',
-                'noi_dung' => 'Rạp này xem thích, gần trường mình, cuối tuần hay rủ bạn qua đây.',
-                'thoi_gian' => '1 ngày trước'
-            ],
-            [
-                'ten' => 'Trần Hùng',
-                'anh_dai_dien' => '', // chưa có ảnh
-                'noi_dung' => 'Rạp hơi nhỏ nhưng nhân viên nhiệt tình, bắp rang ngon!',
-                'thoi_gian' => '2 ngày trước'
-            ]
-        ];
-
-        $phim_hot = [
-            ['ten' => 'Bịt Mắt Bắt Nai', 'tag' => 'T18', 'poster' => '/Project1/publics/img/bit_mat_bat_nai.png'],
-            ['ten' => 'Nhà Ma Xó', 'tag' => 'T16', 'poster' => '/Project1/publics/img/Nha_ma_xo.png'],
-            ['ten' => 'Kinh Dị Nhật Vị', 'tag' => 'T16', 'poster' => '/Project1/publics/img/kinh_di_nhat_vi.jpg'],
-            ['ten' => 'Cục Vàng Của Ngoại', 'tag' => 'T13', 'poster' => '/Project1/publics/img/cuc_vang_cua_ngoai.jpg']
-        ];
-
-        // ==============================
-        // TRUYỀN DỮ LIỆU SANG VIEW
-        // ==============================
-        include_once __DIR__ . '/../views/rap/Rap.php';
+        $this->showDetails();
     }
 }
+?>

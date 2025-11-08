@@ -11,13 +11,6 @@ body {
   color: var(--color-secondary, #141313);
 }
 
-/* --- Khối giả lập Header/Footer --- */
-.placeholder-nav {
-  height: 60px; /* Chiều cao cố định */
-  background-color: #b1afaf; /* Nền đen */
-  width: 100%;
-}
-
 /* --- Bộ chọn ngày --- */
 .date-selector {
   display: flex; /* Sắp xếp các ngày theo hàng ngang */

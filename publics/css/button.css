@@ -5,7 +5,7 @@
 .btn {
   display: inline-block;
   padding: var(--space-sm) var(--space-lg);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-xl);
   font-size: var(--font-size-base);
   font-weight: 500;
   text-transform: uppercase;
@@ -15,14 +15,21 @@
 
 /* Nút chính (đặt vé, thanh toán,...) */
 .btn-primary {
-  background-color: var(--color-primary);
+  background: linear-gradient(135deg, #e50914 0%, #ff6b6b 100%);
+  padding: 8px 20px;
   color: #fff;
-  box-shadow: var(--shadow-soft);
+  font-weight: 600;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.5px;
+  font-size: 15px;
 }
 
 .btn-primary:hover {
-  background-color: #b00610;
-  box-shadow: var(--shadow-strong);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(229, 9, 20, 0.5);
 }
 
 /* Nút phụ (xem chi tiết, quay lại,...) */

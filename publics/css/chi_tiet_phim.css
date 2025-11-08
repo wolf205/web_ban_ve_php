@@ -1,0 +1,226 @@
+/* =========================
+   LAYOUT: Trang Chi Tiết Phim
+   ========================= */
+
+/* =========================
+   Grid 2 Cột (Ảnh và Thông tin)
+   ========================= */
+
+.movie-detail-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: var(--space-xl); /* */
+  margin-bottom: var(--space-xl); /* */
+}
+.card {
+  position: relative;
+}
+/*
+ * KHỐI POSTER (ĐÃ XÓA FIX 1)
+ *
+ * Khối poster giờ sẽ có kích thước cố định.
+ * - Chiều rộng 300px (từ 'grid-template-columns' ở trên)
+ * - Chiều cao 400px (từ 'height: 400px' trong file card.css)
+ */
+
+/* Khối 2: Nội dung */
+.movie-detail-content h1 {
+  font-family: var(--font-title); /* */
+  font-size: var(--font-size-xxl); /* */
+  margin-bottom: var(--space-md); /* */
+  color: var(--color-secondary); /* Đổi chữ thành màu tối (Đen) */
+}
+
+.movie-detail-content .synopsis {
+  font-size: var(--font-size-base); /* */
+  margin-bottom: var(--space-lg); /* */
+  line-height: 1.7;
+  color: #555; /* Đổi thành xám tối */
+}
+
+.movie-metadata {
+  list-style: none;
+}
+.movie-metadata li {
+  font-size: var(--font-size-sm); /* */
+  margin-bottom: var(--space-sm); /* */
+  display: flex;
+  /* FIX 2: Chỉnh lại màu chữ (Thể loại, Diễn viên,...) */
+  color: #555; /* Đổi thành xám tối */
+}
+.movie-metadata li strong {
+  min-width: 120px;
+  display: inline-block;
+  color: var(--color-secondary); /* Đổi thành màu tối (Đen) */
+}
+.movie-metadata li span {
+  flex: 1;
+}
+
+/* =========================
+   Khối Suất Chiếu (FIX MÀU)
+   ========================= */
+
+.movie-tabs {
+  display: flex;
+  justify-content: flex-start;
+  gap: var(--space-lg); /* */
+  margin-bottom: var(--space-lg); /* */
+  border-bottom: 1px solid #ddd; /* Đổi gạch chân sang màu sáng */
+}
+.movie-tabs a {
+  font-family: var(--font-main); /* */
+  font-size: var(--font-size-lg); /* */
+  padding-bottom: var(--space-md); /* */
+  border-bottom: 3px solid transparent;
+  transform: translateY(1px);
+  transition: all 0.3s ease;
+  color: #777; /* Đổi chữ tab sang xám */
+}
+.movie-tabs a:hover {
+  color: var(--color-primary); /* Đổi hover sang Đỏ */
+}
+.movie-tabs a.active {
+  color: var(--color-primary); /* Đổi active sang Đỏ */
+  border-bottom-color: var(--color-primary); /* */
+  font-weight: 600;
+}
+
+/* Danh sách giờ chiếu */
+.showtime-list h3 {
+  font-size: var(--font-size-base); /* */
+  font-weight: 600;
+  margin-bottom: var(--space-md); /* */
+  text-transform: uppercase;
+  color: var(--color-secondary); /* Đổi sang Đen */
+}
+.time-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md); /* */
+}
+
+/* Nút chọn giờ (btn-time) */
+.btn-time {
+  display: inline-block;
+  border-radius: var(--radius-sm); /* */
+  padding: var(--space-sm) var(--space-md); /* */
+  text-align: center;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  cursor: pointer;
+  /* Style cho nền sáng */
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  color: var(--color-secondary); /* */
+}
+.btn-time:hover {
+  /* Đổi hover sang màu Đỏ (giống .btn-primary) */
+  border-color: var(--color-primary); /* */
+  color: var(--color-primary); /* */
+}
+.btn-time span {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: var(--space-xs); /* */
+  color: #777; /* Đổi chữ "Trống" sang xám */
+}
+
+/* =========================
+   Responsive
+   ========================= */
+
+@media (max-width: 768px) {
+  .movie-detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .movie-detail-poster {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  .movie-detail-content h1 {
+    font-size: var(--font-size-xl); /* */
+  }
+  .movie-tabs {
+    gap: var(--space-md); /* */
+  }
+  .movie-tabs a {
+    font-size: var(--font-size-base); /* */
+  }
+}
+
+/* --- Định dạng cho MỘT ô suất chiếu --- */
+.showtime-slot {
+  display: inline-block;
+  border: 1px solid var(--color-muted); /* Viền mờ */
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  text-align: center; /* Căn giữa nội dung (giờ và số ghế) */
+  background-color: transparent; /* Nền trong suốt */
+  color: var(--color-secondary); /* Màu chữ chính */
+  font-size: var(--font-size-sm);
+  transition: all 0.3s ease; /* Hiệu ứng hover mượt */
+}
+
+/* --- Khi di chuột vào ô suất chiếu --- */
+.showtime-slot:hover {
+  border-color: var(--color-accent); /* Đổi viền sang màu vàng */
+  color: var(--color-accent); /* Đổi chữ sang màu vàng */
+}
+
+/* --- Định dạng phần GIỜ CHIẾU (chữ to) --- */
+.showtime-slot .time {
+  display: block; /* Đẩy phần số ghế xuống dòng dưới */
+  font-weight: 600; /* In đậm */
+  font-size: var(--font-size-base); /* Cỡ chữ to hơn */
+}
+
+/* --- Định dạng phần SỐ GHẾ (chữ nhỏ, mờ) --- */
+.showtime-slot .seats {
+  display: block;
+  color: var(--color-muted); /* Màu mờ */
+  font-size: var(--font-size-sm); /* Cỡ chữ nhỏ */
+  margin-top: var(--space-xs); /* Khoảng cách với giờ chiếu bên trên */
+}
+
+/* --- Bộ chọn ngày --- */
+.date-selector {
+  display: flex; /* Sắp xếp các ngày theo hàng ngang */
+  /* ĐÃ THAY ĐỔI: Căn giữa các mục ngày cho giống ảnh */
+  gap: var(--space-xl); /* Khoảng cách giữa các mục ngày */
+  border-bottom: 1px solid #ddd; /* Đường kẻ chân mờ cho toàn bộ thanh */
+  margin-bottom: var(--space-xl); /* Khoảng cách tới lưới phim bên dưới */
+}
+
+/* --- Một mục chọn ngày (VD: 25/10 - T7) --- */
+.date-item {
+  display: block;
+  padding: var(--space-md) var(--space-sm); /* Đệm lót bên trong */
+  color: var(--color-muted); /* Màu chữ mờ (chưa chọn) */
+  font-weight: 600;
+  font-size: var(--font-size-lg);
+  /* Tạo đường viền "chờ" (trong suốt).
+     Giúp khi chuyển sang active (có viền) layout không bị "giật".
+   */
+  border-bottom: 3px solid transparent;
+  /* Đẩy mục ngày xuống 2px để đường viền 3px "đè" lên đường viền 1px của .date-selector.
+     (3px - 1px = 2px)
+   */
+  margin-bottom: -2px;
+  transition: all 0.3s ease; /* Hiệu ứng chuyển động mượt */
+}
+
+/* --- Khi di chuột vào mục ngày --- */
+.date-item:hover {
+  color: var(--color-secondary); /* Đổi sang màu chữ chính */
+}
+
+/* --- Mục ngày đang được chọn (active) --- */
+.date-item.active {
+  color: var(
+    --color-secondary
+  ); /* Màu chữ chính (Màu xanh trong ảnh gốc không có trong variables, tạm dùng màu này) */
+  /* Ghi chú: ảnh gốc dùng màu xanh dương, nhưng variables.css dùng màu vàng (--color-accent) */
+  border-bottom-color: var(--color-accent);
+}

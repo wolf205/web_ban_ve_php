@@ -1,0 +1,346 @@
+/* =========================================================
+   COMBO & THANH TOÁN — Cinema Plus
+   Scope an toàn (prefix .checkout-*) để tránh đè global
+   Phụ thuộc: variables.css, container.css, card.css, button.css
+   ========================================================= */
+
+.checkout {
+  /* alias biến hệ thống */
+  --brand: var(--color-primary);
+  --accent: var(--color-accent);
+  --bg-page: var(--color-bg, #f6f7fb);
+  --bg-surface: #fff;
+  --text: #111;
+  --muted: #6b7280;
+  --border: rgba(0, 0, 0, 0.08);
+  --r-lg: var(--radius-lg, 16px);
+  --r-md: var(--radius-md, 10px);
+  /* sizing dùng chung */
+  --gap-lg: 20px;
+  --gap-md: 14px;
+  --gap-sm: 10px;
+  color: var(--text);
+}
+
+/* ===== Layout chính ===== */
+
+.checkout .checkout__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  /* trái: nội dung; phải: tóm tắt phim */
+  gap: var(--gap-lg);
+}
+
+/* ===== Section khối ===== */
+
+.checkout .checkout__section {
+  padding: 14px;
+  background: var(--bg-surface);
+  border-radius: var(--r-lg);
+}
+
+.checkout .checkout__section + .checkout__section {
+  margin-top: var(--gap-lg);
+}
+
+.checkout .checkout__section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.checkout .checkout__icon {
+  font-size: 1.05rem;
+}
+
+/* ===== Cặp nhãn–giá trị ngắn gọn ===== */
+
+.checkout .checkout__label {
+  color: var(--muted);
+  margin-right: 6px;
+}
+
+.checkout .checkout__kv {
+  display: grid;
+  gap: 8px 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.checkout .checkout__split {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0;
+}
+
+/* ===== Dòng tóm tắt vé ===== */
+
+.checkout .checkout__ticketline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* =========================================================
+   COMBO (đã làm gọn kích thước để vừa nội dung)
+   ========================================================= */
+
+.checkout .checkout__combo {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  /* ảnh nhỏ gọn */
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px dashed var(--border);
+}
+
+.checkout .checkout__combo:first-of-type {
+  border-top: 0;
+}
+
+.checkout .checkout__combo-img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  background: #f2f4f7;
+  border-radius: 12px;
+}
+
+.checkout .checkout__combo-info {
+  min-width: 0;
+}
+
+.checkout .checkout__combo-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.checkout .checkout__combo-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.checkout .checkout__combo-price {
+  font-weight: 700;
+  color: var(--brand);
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.checkout .checkout__combo-desc {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.35;
+  margin: 6px 0 8px;
+}
+
+/* Số lượng combo */
+
+.checkout .checkout__qty {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.checkout .checkout__btn-qty {
+  min-width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: var(--r-md);
+}
+
+.checkout .checkout__qty-input {
+  width: 42px;
+  height: 30px;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: #fff;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* =========================================================
+   GIẢM GIÁ (voucher/điểm)
+   ========================================================= */
+
+.checkout .checkout__discount-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-top: 1px dashed var(--border);
+}
+
+.checkout .checkout__discount-line:first-of-type {
+  border-top: 0;
+}
+
+/* Nút hành động ở khu giảm giá — scoped, không ảnh hưởng global */
+
+.checkout .checkout__discount-line .btn {
+  background: #fff;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  min-width: 140px;
+}
+
+.checkout .checkout__discount-line .btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* =========================================================
+   PHƯƠNG THỨC THANH TOÁN
+   ========================================================= */
+
+.checkout .checkout__paylist {
+  display: flex;
+  gap: 10px 12px;
+  flex-wrap: wrap;
+}
+
+.checkout .checkout__payitem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.checkout .checkout__payitem input {
+  accent-color: var(--brand);
+}
+
+/* =========================================================
+   TỔNG TIỀN
+   ========================================================= */
+
+.checkout .checkout__totalbox {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.checkout .checkout__total-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+/* Dòng cuối cùng cần nổi bật */
+
+.checkout .checkout__total-row--final {
+  font-size: 1.06rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+.checkout .checkout__total-row--final span {
+  font-weight: 700;
+}
+
+/* =========================================================
+   ASIDE THÔNG TIN PHIM (cột phải)
+   ========================================================= */
+
+.checkout .checkout__movie {
+  padding: 12px;
+  border-radius: var(--r-lg);
+  background: var(--bg-surface);
+}
+
+.checkout .checkout__poster {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-bottom: 10px;
+}
+
+.checkout .checkout__movie-title {
+  font-size: 1.05rem;
+  margin: 0 0 6px;
+}
+
+.checkout .checkout__movie-facts {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 8px;
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+}
+
+/* =========================================================
+   HÀNH ĐỘNG (QUAY LẠI / TIẾP TỤC)
+   ========================================================= */
+
+.checkout .checkout__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.checkout .checkout__actions .btn {
+  min-width: 120px;
+}
+
+/* Hover rõ ràng, không đè global: chỉ gói trong .checkout__actions */
+
+/* Nút "QUAY LẠI": giống nút CHỌN VOUCHER & DÙNG ĐIỂM */
+
+.checkout .checkout__actions .btn:hover {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: var(--color-accent);
+}
+
+/* Nút "TIẾP TỤC": bình thường trắng, hover mới đỏ */
+
+.checkout .checkout__actions .btn.btn--primary:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .checkout .checkout__grid {
+    grid-template-columns: 1fr;
+  }
+  .checkout .checkout__kv {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .checkout .checkout__kv {
+    grid-template-columns: 1fr;
+  }
+  .checkout .checkout__combo {
+    grid-template-columns: 64px 1fr;
+  }
+  .checkout .checkout__combo-img {
+    width: 64px;
+    height: 64px;
+  }
+  .checkout .checkout__poster {
+    max-width: 320px;
+    margin-inline: auto;
+    display: block;
+  }
+}

@@ -1,21 +1,39 @@
 <?php
-// Lấy trang cần hiển thị
-$page = $_GET['page'] ?? 'rap'; // mặc định vào trang Rạp
+// Hiển thị lỗi trong môi trường phát triển
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-switch ($page) {
-    case 'rap':
-        require_once './app/controllers/RapController.php';
-        $controller = new RapController();
-        $controller->index();
-        break;
+// Lấy tên controller và action từ URL (hoặc đặt mặc định)
+$controllerName = ucfirst(strtolower($_REQUEST['controller'] ?? 'Lichchieu')) . 'Controller';
+$actionName     = $_REQUEST['action'] ?? 'index';
 
-    case 'lichchieu':
-        require_once './app/controllers/LichChieuController.php';
-        $controller = new LichChieuController();
-        $controller->theoRap();
-        break;
+// Đường dẫn đến file controller
+$controllerPath = __DIR__ . "/app/controllers/{$controllerName}.php";
 
-    default:
-        echo "404 - Trang không tồn tại";
-        break;
+// Kiểm tra controller có tồn tại không
+if (!file_exists($controllerPath)) {
+    http_response_code(404);
+    echo "<h1>404 - Không tìm thấy controller</h1>";
+    echo "<p>File: {$controllerPath}</p>";
+    exit;
+}
+
+// Gọi file controller
+require_once $controllerPath;
+
+// Kiểm tra class có tồn tại không
+if (!class_exists($controllerName)) {
+    echo "<h1>Lỗi: Controller '$controllerName' không tồn tại trong file.</h1>";
+    exit;
+}
+
+// Tạo đối tượng controller
+$controllerObject = new $controllerName();
+
+// Gọi action tương ứng
+if (method_exists($controllerObject, $actionName)) {
+    $controllerObject->$actionName();
+} else {
+    echo "<h1>404 - Action không tồn tại</h1>";
+    echo "<p>Controller '$controllerName' không có phương thức '$actionName'.</p>";
 }

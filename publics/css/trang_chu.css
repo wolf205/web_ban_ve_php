@@ -1,0 +1,27 @@
+/* =========================
+   LAYOUT: Trang Chủ (home.css)
+   ========================= */
+
+/* =========================
+   COMPONENT: Hero Slider
+   ========================= */
+
+.hero-slider {
+  width: 100%;
+  /* Đặt chiều cao tối đa cho banner, tránh bị quá lớn */
+  height: 600px;
+  overflow: hidden;
+  /* Khoảng cách với mục phim bên dưới */
+  margin-bottom: var(--space-xl); /* */
+  background-color: #000; /* Màu nền đen nếu ảnh chưa tải kịp */
+}
+
+.hero-slider img {
+  width: 100%;
+  height: 100%;
+  /* Đảm bảo ảnh lấp đầy khung mà không bị méo, 
+      tương tự 'background-size: cover'
+    */
+  object-fit: cover;
+  object-position: center; /* Ưu tiên hiển thị phần giữa ảnh */
+}
