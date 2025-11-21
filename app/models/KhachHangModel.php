@@ -15,7 +15,7 @@ class KhachHangModel {
     // 1. LẤY KHÁCH HÀNG THEO MÃ
     // ==============================
     public function getKhachHangById($ma_kh) {
-        $sql = "SELECT ma_kh, ho_ten, email, SDT, diem_tich_luy, tai_khoan 
+        $sql = "SELECT ma_kh, avatar, ho_ten, email, SDT, tai_khoan , vai_tro
                 FROM khach_hang 
                 WHERE ma_kh = :ma_kh";
         $stmt = $this->conn->prepare($sql);
@@ -52,7 +52,7 @@ class KhachHangModel {
     // 4. HÀM LOGIN
     // ==============================
     public function login($tai_khoan, $mat_khau) {
-        $sql = "SELECT ma_kh, ho_ten, email, SDT, diem_tich_luy, tai_khoan 
+        $sql = "SELECT ma_kh, ho_ten, email, SDT, vai_tro, tai_khoan 
                 FROM khach_hang 
                 WHERE tai_khoan = :tai_khoan AND mat_khau = :mat_khau";
         $stmt = $this->conn->prepare($sql);
@@ -65,13 +65,14 @@ class KhachHangModel {
     // ==============================
     // 5. CẬP NHẬT THÔNG TIN KHÁCH HÀNG
     // ==============================
-    public function updateKhachHang($ma_kh, $ho_ten, $email, $SDT) {
+    public function updateKhachHang($ma_kh, $ho_ten, $email, $SDT, $avatar) {
         
             $sql = "UPDATE khach_hang 
-                    SET ho_ten = :ho_ten, email = :email, SDT = :SDT 
+                    SET ho_ten = :ho_ten, email = :email, SDT = :SDT , avatar = :avatar
                     WHERE ma_kh = :ma_kh";
 
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':avatar', $avatar);
         $stmt->bindParam(':ho_ten', $ho_ten);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':SDT', $SDT);
@@ -79,20 +80,20 @@ class KhachHangModel {
 
         return $stmt->execute();
     }
+    
 
     // ==============================
     // 6. HÀM REGISTER (ĐĂNG KÝ KHÁCH HÀNG MỚI)
     // ==============================
-    public function register($ma_kh, $ho_ten, $email, $SDT, $tai_khoan, $mat_khau) {
+    public function register( $ho_ten, $email, $SDT, $tai_khoan, $mat_khau) {
         // Kiểm tra trùng email hoặc tài khoản trước khi thêm
         if ($this->checkEmailExists($email) || $this->checkTaiKhoanExists($tai_khoan)) {
             return false; // Không thêm nếu trùng
         }
 
-        $sql = "INSERT INTO khach_hang (ma_kh, ho_ten, email, SDT, diem_tich_luy, tai_khoan, mat_khau)
-                VALUES (:ma_kh, :ho_ten, :email, :SDT, 0, :tai_khoan, :mat_khau)";
+        $sql = "INSERT INTO khach_hang ( ho_ten, email, SDT, tai_khoan, mat_khau)
+                VALUES ( :ho_ten, :email, :SDT, :tai_khoan, :mat_khau)";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':ma_kh', $ma_kh);
         $stmt->bindParam(':ho_ten', $ho_ten);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':SDT', $SDT);

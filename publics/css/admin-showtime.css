@@ -1,0 +1,166 @@
+/* publics/css/admin-showtime.css */
+
+/* Form Container Styles */
+.form-container {
+  background: #f9f9f9;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.form-container h4 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 2px solid #4caf50;
+  padding-bottom: 10px;
+}
+
+/* Form Grid Layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* Form Group Styles */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+/* Form Actions */
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Button Styles */
+.btn-save {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-save:hover {
+  background: #45a049;
+}
+
+.btn-cancel {
+  background: #f44336;
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  display: inline-block;
+  text-align: center;
+  font-size: 14px;
+}
+
+.btn-cancel:hover {
+  background: #da190b;
+}
+
+/* Action Buttons in Table */
+.action-btn {
+  display: inline-block;
+  padding: 5px 10px;
+  color: white;
+  text-decoration: none;
+  border-radius: 3px;
+  margin-right: 5px;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background: #007bff;
+}
+
+.edit-btn:hover {
+  background: #0056b3;
+}
+
+.delete-btn {
+  background: #dc3545;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.add-btn {
+  background: #4caf50;
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.add-btn:hover {
+  background: #45a049;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    text-align: center;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+}

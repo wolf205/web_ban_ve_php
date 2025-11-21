@@ -41,7 +41,7 @@ class RapController {
         }
 
         $danh_gia_list = $this->danhGiaModel->getDanhGiaByRap($ma_rap);
-        $all_hot_movies = $this->phimModel->getPhimHot();
+        $all_hot_movies = $this->phimModel->getPhimHot($ma_rap);
         $hot_movies = array_slice($all_hot_movies, 0, 4);
         $all_raps = $this->rapModel->getAllRap();
         $header_rap_link_template = 'index.php?controller=rap&action=showDetails&ma_rap=__MA_RAP__';

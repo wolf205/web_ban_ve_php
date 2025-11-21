@@ -1,0 +1,260 @@
+/* publics/css/admin-rap.css */
+/* Đã đồng bộ hoàn toàn với admin-showtime.css */
+
+/* Form Container Styles */
+.form-container {
+  background: #f9f9f9;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.form-container h4 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 2px solid #4caf50; /* Màu xanh lá */
+  padding-bottom: 10px;
+}
+
+/* Form Grid Layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* Form Group Styles */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="date"],
+.form-group input[type="time"],
+.form-group input[type="file"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #4caf50; /* Màu xanh lá */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+.form-group-full {
+  grid-column: 1 / -1;
+}
+
+/* Form Actions */
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Button Styles */
+.btn-save {
+  background: #4caf50; /* Màu xanh lá */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn-save:hover {
+  background: #45a049;
+}
+
+.btn-cancel {
+  background: #f44336; /* Màu đỏ */
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  display: inline-block;
+  text-align: center;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background: #da190b;
+}
+
+/* Page Header (GIỐNG SHOWTIME) */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  /* admin-layout.css đã xử lý padding chung cho main-content */
+}
+
+.add-btn {
+  /* Style chung cho .add-btn, giờ đã ở trong .page-header */
+  background: #4caf50; /* Màu xanh lá */
+  color: white;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  display: inline-block;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background: #45a049;
+}
+
+/* Action Buttons in Table (GIỐNG SHOWTIME) */
+.action-btn {
+  display: inline-block;
+  padding: 5px 10px;
+  color: white;
+  text-decoration: none;
+  border-radius: 3px;
+  margin-right: 5px;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background: #007bff; /* Màu xanh dương */
+}
+
+.edit-btn:hover {
+  background: #0056b3;
+}
+
+.delete-btn {
+  background: #dc3545; /* Màu đỏ */
+}
+
+.delete-btn:hover {
+  background: #c82333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+table th,
+table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background: #f0c419; /* Đổi thành màu vàng */
+  font-weight: 700; /* Đậm hơn */
+  color: #111; /* Chữ màu đen */
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Image Styles (Đặc thù của rap.css) */
+.table-image {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.image-preview img {
+  max-width: 100px;
+  height: auto;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.no-image {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.file-help {
+  font-size: 12px;
+  color: #6c757d;
+  display: block;
+  margin-top: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    text-align: center;
+    width: 100%;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .add-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  table th,
+  table td {
+    padding: 8px;
+  }
+
+  .action-btn {
+    display: block;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+}

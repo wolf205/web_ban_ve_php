@@ -14,6 +14,7 @@
   /* Khoảng cách với mục phim bên dưới */
   margin-bottom: var(--space-xl); /* */
   background-color: #000; /* Màu nền đen nếu ảnh chưa tải kịp */
+  position: relative;
 }
 
 .hero-slider img {
@@ -24,4 +25,195 @@
     */
   object-fit: cover;
   object-position: center; /* Ưu tiên hiển thị phần giữa ảnh */
+  display: block;
+}
+
+/* =========================
+   Slider Container & Items
+   ========================= */
+
+.hero-slider {
+  display: flex;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  scrollbar-width: none; /* Ẩn scrollbar Firefox */
+}
+
+.hero-slider::-webkit-scrollbar {
+  display: none; /* Ẩn scrollbar Chrome/Safari */
+}
+
+.slide-item {
+  flex: 0 0 100%;
+  scroll-snap-align: start;
+  position: relative;
+}
+
+/* =========================
+   Slider Navigation (Optional)
+   ========================= */
+
+.slider-controls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.slider-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.slider-dot.active {
+  background: rgba(255, 255, 255, 1);
+}
+
+.slider-arrows {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.slider-arrow {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.slider-arrow:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+/* =========================
+   Responsive Design
+   ========================= */
+
+@media (max-width: 768px) {
+  .hero-slider {
+    height: 400px;
+    margin-bottom: var(--space-lg);
+  }
+
+  .slider-arrows {
+    padding: 0 10px;
+  }
+
+  .slider-arrow {
+    width: 35px;
+    height: 35px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-slider {
+    height: 300px;
+    margin-bottom: var(--space-md);
+  }
+
+  .slider-controls {
+    bottom: 15px;
+  }
+
+  .slider-dot {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* =========================
+   Animation Effects
+   ========================= */
+
+.slide-item {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.slide-item.active {
+  opacity: 1;
+}
+
+/* Fade In/Out Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.hero-slider .slide-item {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* =========================
+   Overlay Effects (Optional)
+   ========================= */
+
+.slide-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.2) 0%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+}
+
+/* =========================
+   Performance Optimizations
+   ========================= */
+
+.hero-slider img {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* =========================
+   Loading States
+   ========================= */
+
+.hero-slider.loading {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

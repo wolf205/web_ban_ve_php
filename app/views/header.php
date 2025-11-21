@@ -44,7 +44,7 @@ $current_controller = $_GET['controller'] ?? 'phim';
   </div>
 
   <div class="main-header">
-    <a href="index.php?controller=phim" class="logo">
+    <a href="index.php?controller=trangchu" class="logo">
       <i class="fas fa-film"></i>
       CINEMA PLUS
     </a>

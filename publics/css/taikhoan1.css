@@ -442,3 +442,189 @@ body {
     gap: var(--space-sm);
   }
 }
+/* ============================
+   BỐ CỤC MỚI - ACCOUNT LAYOUT
+   ============================ */
+
+/* Bố cục lưới cho account content */
+.account-layout-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+/* Cột trái */
+.account-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  align-items: center;
+}
+
+/* Cột phải */
+.account-right-column {
+  flex: 1;
+}
+
+/* Phần avatar */
+.avatar-section {
+  text-align: center;
+  padding: var(--space-xl);
+  border: 1px solid #eee;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  box-shadow: var(--shadow-soft);
+  width: 100%;
+}
+
+.avatar-preview {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffffff 0%, #f1f3f4 100%);
+  margin: 0 auto var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 4px solid #ffffff;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.avatar-preview:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-preview i {
+  font-size: 4rem;
+  color: #adb5bd;
+  transition: color 0.3s ease;
+}
+
+.avatar-preview:hover i {
+  color: var(--color-primary);
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.avatar-preview:hover img {
+  transform: scale(1.05);
+}
+
+/* Nút chọn ảnh được cải thiện */
+.avatar-upload-container {
+  text-align: center;
+  width: 100%;
+}
+
+.avatar-upload-container .form-group {
+  margin-bottom: 0;
+}
+
+.avatar-upload-container .btn-outline {
+  width: 100%;
+  padding: var(--space-md) var(--space-lg);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  background-color: transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.avatar-upload-container .btn-outline:hover {
+  background-color: var(--color-primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+}
+
+.avatar-upload-container .btn-outline:active {
+  transform: translateY(0);
+}
+
+.avatar-upload-container .btn-outline i {
+  font-size: 1.1em;
+}
+
+/* Text hỗ trợ dưới nút */
+.avatar-upload-hint {
+  font-size: var(--font-size-sm);
+  color: #6c757d;
+  margin-top: var(--space-sm);
+  text-align: center;
+}
+
+/* Form grid 1 cột cho phần thông tin bên phải */
+.account-right-column .form-grid {
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .account-layout-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  .avatar-section {
+    padding: var(--space-lg);
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .avatar-preview {
+    width: 180px;
+    height: 180px;
+  }
+
+  .avatar-preview i {
+    font-size: 3.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .avatar-section {
+    padding: var(--space-md);
+  }
+
+  .avatar-preview {
+    width: 150px;
+    height: 150px;
+  }
+
+  .avatar-preview i {
+    font-size: 3rem;
+  }
+
+  .avatar-upload-container .btn-outline {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Ẩn form group avatar cũ */
+.form-group-avatar {
+  display: none;
+}
+
+/* Ẩn link đổi mật khẩu cũ */
+.change-password-link {
+  display: none;
+}

@@ -10,18 +10,19 @@ class GheSuatChieuModel {
 
     // Đếm số ghế trống (trang_thai = 0)
     public function countGheTrong($ma_suat_chieu) {
-        $sql = "SELECT COUNT(*) AS so_ghe_trong
-                FROM ghe_suat_chieu
-                WHERE ma_suat_chieu = :ma_suat_chieu
-                AND (trang_thai = 0 OR trang_thai IS NULL)";
+    // Đếm số ghế có trạng thái = 0 (trống)
+    $sql = "SELECT COUNT(*) AS so_ghe_trong
+            FROM ghe_suat_chieu
+            WHERE ma_suat_chieu = :ma_suat_chieu
+            AND trang_thai = 0";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':ma_suat_chieu', $ma_suat_chieu);
-        $stmt->execute();
-        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':ma_suat_chieu', $ma_suat_chieu);
+    $stmt->execute();
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $result['so_ghe_trong'] ?? 0;
-    }
+    return $result['so_ghe_trong'] ?? 0;
+}
 
     // Lấy danh sách ghế của suất chiếu
     public function getGheBySuatChieu($ma_suat_chieu) {
