@@ -124,5 +124,60 @@ class PhongModel {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // Thêm các hàm này vào cuối class PhongModel, trước dấu đóng ngoặc }
+
+// ==============================
+// HÀM: LỌC VÀ TÌM KIẾM PHÒNG
+// ==============================
+public function filterPhong($ma_rap = null, $search = null, $loai_man_hinh = null) {
+    $sql = "SELECT p.*, r.ten_rap 
+            FROM phong p
+            LEFT JOIN rap r ON p.ma_rap = r.ma_rap
+            WHERE 1=1";
+    $params = [];
+    
+    // Lọc theo rạp
+    if (!empty($ma_rap) && $ma_rap != 'all') {
+        $sql .= " AND p.ma_rap = :ma_rap";
+        $params[':ma_rap'] = $ma_rap;
+    }
+    
+    // Lọc theo loại màn hình
+    if (!empty($loai_man_hinh) && $loai_man_hinh != 'all') {
+        $sql .= " AND p.loai_man_hinh = :loai_man_hinh";
+        $params[':loai_man_hinh'] = $loai_man_hinh;
+    }
+    
+    // Tìm kiếm theo tên phòng
+    if (!empty($search)) {
+        $sql .= " AND (p.ten_phong LIKE :search OR r.ten_rap LIKE :search)";
+        $params[':search'] = '%' . $search . '%';
+    }
+    
+    $sql .= " ORDER BY p.ma_phong ASC";
+    
+    $stmt = $this->conn->prepare($sql);
+    
+    // Bind các tham số
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
+    
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// ==============================
+// HÀM: LẤY DANH SÁCH LOẠI MÀN HÌNH DUY NHẤT
+// ==============================
+public function getDistinctScreenTypes() {
+    $sql = "SELECT DISTINCT loai_man_hinh FROM phong ORDER BY loai_man_hinh ASC";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    
+    $types = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    return $types ?: [];
+}
 }
 ?>

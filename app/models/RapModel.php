@@ -113,5 +113,49 @@ class RapModel {
             throw $e;
         }
     }
+
+    // ==============================
+// 6. LỌC VÀ TÌM KIẾM RẠP
+// ==============================
+public function filterRap($thanh_pho = null, $search = null) {
+    $sql = "SELECT ma_rap, ten_rap, dia_chi, thanh_pho, SDT, anh_rap, mo_ta_rap FROM rap WHERE 1=1";
+    $params = [];
+    
+    // Lọc theo thành phố
+    if (!empty($thanh_pho) && $thanh_pho != 'all') {
+        $sql .= " AND thanh_pho = :thanh_pho";
+        $params[':thanh_pho'] = $thanh_pho;
+    }
+    
+    // Tìm kiếm theo tên
+    if (!empty($search)) {
+        $sql .= " AND (ten_rap LIKE :search OR dia_chi LIKE :search)";
+        $params[':search'] = '%' . $search . '%';
+    }
+    
+    $sql .= " ORDER BY ma_rap ASC";
+    
+    $stmt = $this->conn->prepare($sql);
+    
+    // Bind các tham số
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value);
+    }
+    
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// ==============================
+// 7. LẤY DANH SÁCH THÀNH PHỐ DUY NHẤT
+// ==============================
+public function getDistinctCities() {
+    $sql = "SELECT DISTINCT thanh_pho FROM rap ORDER BY thanh_pho ASC";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute();
+    
+    $cities = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    return $cities ?: [];
+}
 }
 ?>

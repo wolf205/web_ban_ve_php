@@ -1,6 +1,6 @@
 <?php
 // app/views/admin/rap_view.php
-// Các biến $danhSachRap, $action, $edit_id, $rap_to_edit
+// Các biến $danhSachRap, $action, $edit_id, $rap_to_edit, $cities, $filter_params
 // được truyền từ AdminRapController
 ?>
 <!DOCTYPE html>
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quản lý Rạp</title>
     <link rel="stylesheet" href="publics/css/admin-layout.css" />
-    <link rel="stylesheet" href="publics/css/admin-rap.css" />
+    <link rel="stylesheet" href="publics/css/admin-rap1.css" />
 </head>
 <body>
     <header class="top-bar">
@@ -44,15 +44,77 @@
         </aside>
 
         <main class="main-content">
-            <!-- ĐÃ CẬP NHẬT: Thêm page-header giống showtime_view.php -->
+            <!-- PAGE HEADER -->
             <div class="page-header">
                 <h3>DANH SÁCH RẠP</h3>
                 <a href="index.php?controller=adminRap&action=create" class="add-btn">+ Thêm Rạp</a>
             </div>
 
-            <!-- ĐÃ CẬP NHẬT: Đưa form ra ngoài data-section giống showtime_view.php -->
-            <?php if (isset($action) && $action === 'create'): ?>
+            <!-- BỘ LỌC & TÌM KIẾM -->
+            <div class="filter-section">
+                <h4>BỘ LỌC & TÌM KIẾM</h4>
+                <form method="GET" action="" class="filter-form">
+                    <input type="hidden" name="controller" value="adminRap">
+                    <input type="hidden" name="action" value="index">
+                    
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label for="thanh_pho">Thành phố:</label>
+                            <select name="thanh_pho" id="thanh_pho">
+                                <option value="all">Tất cả thành phố</option>
+                                <?php 
+                                // Lấy danh sách thành phố từ controller
+                                $cities = $cities ?? [];
+                                $selected_city = $filter_params['thanh_pho'] ?? null;
+                                foreach ($cities as $city): 
+                                ?>
+                                    <option value="<?php echo htmlspecialchars($city); ?>" 
+                                        <?php echo ($selected_city == $city) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($city); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="search">Tìm kiếm:</label>
+                            <input type="text" name="search" id="search" 
+                                   placeholder="Tên rạp hoặc địa chỉ" 
+                                   value="<?php echo htmlspecialchars($filter_params['search'] ?? ''); ?>">
+                        </div>
+                        
+                        <div class="filter-actions">
+                            <button type="submit" class="btn-filter">Lọc</button>
+                            <a href="index.php?controller=adminRap&action=index" class="btn-reset">Xóa lọc</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- THÔNG TIN BỘ LỌC ĐANG ÁP DỤNG -->
+            <?php if (!empty($filter_params['thanh_pho']) || !empty($filter_params['search'])): ?>
+                <div class="active-filters">
+                    <small>
+                        <strong>Đang lọc:</strong>
+                        <?php 
+                        $filters = [];
+                        if (!empty($filter_params['thanh_pho']) && $filter_params['thanh_pho'] != 'all') {
+                            $filters[] = "Thành phố: " . htmlspecialchars($filter_params['thanh_pho']);
+                        }
+                        if (!empty($filter_params['search'])) {
+                            $filters[] = "Tìm kiếm: " . htmlspecialchars($filter_params['search']);
+                        }
+                        echo implode(', ', $filters);
+                        ?>
+                        <a href="index.php?controller=adminRap&action=index" style="margin-left: 10px; color: #e74c3c;">
+                            [Xóa tất cả]
+                        </a>
+                    </small>
+                </div>
+            <?php endif; ?>
+
             <!-- FORM THÊM MỚI -->
+            <?php if (isset($action) && $action === 'create'): ?>
             <div class="form-container">
                 <h4>THÊM RẠP MỚI</h4>
                 <form action="index.php?controller=adminRap&action=store" method="POST" enctype="multipart/form-data" class="form-grid">
@@ -88,8 +150,8 @@
             </div>
             <?php endif; ?>
 
-            <?php if (isset($edit_id) && isset($rap_to_edit)): ?>
             <!-- FORM CHỈNH SỬA -->
+            <?php if (isset($edit_id) && isset($rap_to_edit)): ?>
             <div class="form-container">
                 <h4>CHỈNH SỬA RẠP</h4>
                 <form action="index.php?controller=adminRap&action=update" method="POST" enctype="multipart/form-data" class="form-grid">
@@ -132,7 +194,14 @@
             </div>
             <?php endif; ?>
 
-            <!-- ĐÃ CẬP NHẬT: Bảng nằm trong data-section riêng giống showtime_view.php -->
+            <!-- SỐ LƯỢNG KẾT QUẢ -->
+            <?php if (!isset($action) || $action !== 'create'): ?>
+                <div class="result-count">
+                    <span>Hiển thị <?php echo count($danhSachRap); ?> rạp</span>
+                </div>
+            <?php endif; ?>
+
+            <!-- BẢNG DỮ LIỆU -->
             <section class="data-section">
                 <div class="table-container">
                     <table>
@@ -151,7 +220,17 @@
                         <tbody>
                             <?php if (empty($danhSachRap)): ?>
                                 <tr>
-                                    <td colspan="8" style="text-align: center;">Chưa có rạp nào.</td>
+                                    <td colspan="8" style="text-align: center; padding: 30px;">
+                                        <?php if (!empty($filter_params['thanh_pho']) || !empty($filter_params['search'])): ?>
+                                            Không tìm thấy rạp nào phù hợp với bộ lọc.
+                                            <br>
+                                            <a href="index.php?controller=adminRap&action=index" style="color: #4a90e2; text-decoration: underline;">
+                                                Xem tất cả rạp
+                                            </a>
+                                        <?php else: ?>
+                                            Chưa có rạp nào.
+                                        <?php endif; ?>
+                                    </td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($danhSachRap as $rap): ?>
@@ -180,7 +259,58 @@
                     </table>
                 </div>
             </section>
+
+            <!-- PHÂN TRANG (CÓ THỂ THÊM SAU NẾU CẦN) -->
+            <?php if (count($danhSachRap) > 0 && !isset($action)): ?>
+                <div class="pagination">
+                    <div class="pagination-info">
+                        Hiển thị tất cả <?php echo count($danhSachRap); ?> rạp
+                    </div>
+                </div>
+            <?php endif; ?>
         </main>
     </div>
+
+    <!-- THÔNG BÁO -->
+    <?php if (isset($_GET['status'])): ?>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var status = '<?php echo $_GET["status"]; ?>';
+                var message = '';
+                var type = 'info';
+                
+                switch(status) {
+                    case 'add_success':
+                        message = 'Thêm rạp thành công!';
+                        type = 'success';
+                        break;
+                    case 'add_error':
+                        message = 'Có lỗi xảy ra khi thêm rạp!';
+                        type = 'error';
+                        break;
+                    case 'update_success':
+                        message = 'Cập nhật rạp thành công!';
+                        type = 'success';
+                        break;
+                    case 'update_error':
+                        message = 'Có lỗi xảy ra khi cập nhật rạp!';
+                        type = 'error';
+                        break;
+                    case 'delete_success':
+                        message = 'Xóa rạp thành công!';
+                        type = 'success';
+                        break;
+                    case 'delete_error_fk':
+                        message = 'Không thể xóa rạp vì có phòng hoặc suất chiếu liên quan!';
+                        type = 'error';
+                        break;
+                }
+                
+                if (message) {
+                    alert(message);
+                }
+            });
+        </script>
+    <?php endif; ?>
 </body>
 </html>

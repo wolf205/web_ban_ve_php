@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/../models/RapModel.php';
 require_once __DIR__ . '/../models/DanhGiaModel.php';
@@ -21,6 +22,7 @@ class RapController {
     }
 
     public function showDetails() {
+        $selected_rap_id = $_GET['ma_rap'] ?? '1';
         $ma_rap = $_GET['ma_rap'] ?? '1';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['noi_dung'])) {
@@ -45,7 +47,7 @@ class RapController {
         $hot_movies = array_slice($all_hot_movies, 0, 4);
         $all_raps = $this->rapModel->getAllRap();
         $header_rap_link_template = 'index.php?controller=rap&action=showDetails&ma_rap=__MA_RAP__';
-
+        
         require __DIR__ . '/../views/Rap.php';
     }
 

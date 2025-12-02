@@ -101,5 +101,55 @@ class KhachHangModel {
         $stmt->bindParam(':mat_khau', $mat_khau);
         return $stmt->execute();
     }
+
+    public function getBookingHistory($ma_kh) {
+    $sql = "
+        SELECT 
+            hd.ma_hoa_don AS ma_hd,
+            p.ten_phim,
+            r.ten_rap,
+            sc.ngay_chieu,
+            sc.gio_bat_dau,
+            sc.gio_ket_thuc,
+
+            -- Ghế đã đặt (từ bảng ve)
+            GROUP_CONCAT(DISTINCT g.vi_tri ORDER BY g.vi_tri SEPARATOR ', ') AS ghe_da_dat,
+
+            -- Combo đã mua
+            GROUP_CONCAT(DISTINCT CONCAT(cb.ten_combo, ' x', hdc.so_luong) SEPARATOR ', ') AS combo_da_mua,
+
+            hd.ngay_tao
+
+        FROM hoa_don hd
+
+        -- Lấy ghế qua bảng VE
+        LEFT JOIN ve v ON v.ma_hoa_don = hd.ma_hoa_don
+        LEFT JOIN ghe g ON g.ma_ghe = v.ma_ghe
+
+        -- Combo
+        LEFT JOIN hoa_don_combo hdc ON hdc.ma_hoa_don = hd.ma_hoa_don
+        LEFT JOIN combo cb ON cb.ma_combo = hdc.ma_combo
+
+        -- Suất chiếu
+        LEFT JOIN suat_chieu sc ON sc.ma_suat_chieu = v.ma_suat_chieu
+        LEFT JOIN phim p ON p.ma_phim = sc.ma_phim
+        LEFT JOIN phong ph ON ph.ma_phong = sc.ma_phong
+        LEFT JOIN rap r ON r.ma_rap = ph.ma_rap
+
+        WHERE hd.ma_kh = :ma_kh
+
+        GROUP BY hd.ma_hoa_don
+
+        ORDER BY hd.ngay_tao DESC
+    ";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bindParam(':ma_kh', $ma_kh);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+}
+
 ?>

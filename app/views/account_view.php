@@ -26,7 +26,7 @@ require_once __DIR__ . '/header.php';
         <div class="account-topnav">
           <nav>
             <a href="index.php?controller=KhachHang&action=profile" class="sidebar-item active">THÔNG TIN TÀI KHOẢN</a>
-            <a href="hanh-trinh.html" class="sidebar-item">HÀNH TRÌNH ĐIỆN ẢNH</a>
+            <a href="index.php?controller=KhachHang&action=hanhTrinh" class="sidebar-item">HÀNH TRÌNH ĐIỆN ẢNH</a>
           </nav>
         </div>
 

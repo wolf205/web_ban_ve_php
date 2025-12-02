@@ -9,6 +9,7 @@
     <title>Quản lý Phòng chiếu & Ghế</title>
     <link rel="stylesheet" href="publics/css/admin-layout.css" />
     <link rel="stylesheet" href="publics/css/admin-showtime.css" />
+    <link rel="stylesheet" href="publics/css/admin-room.css" />
 </head>
 <body>
     <header class="top-bar">
@@ -46,6 +47,97 @@
                 <h3>DANH SÁCH PHÒNG CHIẾU</h3>
                 <button type="button" class="add-btn" onclick="toggleForm('add-phong-form')">+ Thêm phòng</button>
             </div>
+
+            <!-- BỘ LỌC & TÌM KIẾM -->
+<div class="filter-section">
+    <h4>BỘ LỌC & TÌM KIẾM</h4>
+    <form method="GET" action="" class="filter-form">
+        <input type="hidden" name="controller" value="adminPhong">
+        <input type="hidden" name="action" value="index">
+        <?php if (isset($selected_phong_id)): ?>
+            <input type="hidden" name="selected_phong" value="<?php echo $selected_phong_id; ?>">
+        <?php endif; ?>
+        
+        <div class="filter-row">
+            <div class="filter-group">
+                <label for="ma_rap">Rạp:</label>
+                <select name="ma_rap" id="ma_rap">
+                    <option value="all">Tất cả rạp</option>
+                    <?php 
+                    $selected_rap = $filter_params['ma_rap'] ?? null;
+                    foreach ($danhSachRap as $rap): 
+                    ?>
+                        <option value="<?php echo $rap['ma_rap']; ?>" 
+                            <?php echo ($selected_rap == $rap['ma_rap']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($rap['ten_rap']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="loai_man_hinh">Loại màn hình:</label>
+                <select name="loai_man_hinh" id="loai_man_hinh">
+                    <option value="all">Tất cả loại</option>
+                    <?php 
+                    $selected_screen = $filter_params['loai_man_hinh'] ?? null;
+                    $screen_types = $loai_man_hinh_list ?? [];
+                    foreach ($screen_types as $type): 
+                    ?>
+                        <option value="<?php echo htmlspecialchars($type); ?>" 
+                            <?php echo ($selected_screen == $type) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($type); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="search">Tìm kiếm:</label>
+                <input type="text" name="search" id="search" 
+                       placeholder="Tên phòng hoặc rạp" 
+                       value="<?php echo htmlspecialchars($filter_params['search'] ?? ''); ?>">
+            </div>
+            
+            <div class="filter-actions">
+                <button type="submit" class="btn-filter">Lọc</button>
+                <a href="index.php?controller=adminPhong&action=index<?php echo isset($selected_phong_id) ? '&selected_phong=' . $selected_phong_id : ''; ?>" class="btn-reset">Xóa lọc</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- THÔNG TIN BỘ LỌC ĐANG ÁP DỤNG -->
+<?php if (!empty($filter_params['ma_rap']) || !empty($filter_params['search']) || !empty($filter_params['loai_man_hinh'])): ?>
+    <div class="active-filters">
+        <small>
+            <strong>Đang lọc:</strong>
+            <?php 
+            $filters = [];
+            if (!empty($filter_params['ma_rap']) && $filter_params['ma_rap'] != 'all') {
+                $rap_name = '';
+                foreach ($danhSachRap as $rap) {
+                    if ($rap['ma_rap'] == $filter_params['ma_rap']) {
+                        $rap_name = $rap['ten_rap'];
+                        break;
+                    }
+                }
+                $filters[] = "Rạp: " . htmlspecialchars($rap_name);
+            }
+            if (!empty($filter_params['loai_man_hinh']) && $filter_params['loai_man_hinh'] != 'all') {
+                $filters[] = "Màn hình: " . htmlspecialchars($filter_params['loai_man_hinh']);
+            }
+            if (!empty($filter_params['search'])) {
+                $filters[] = "Tìm kiếm: " . htmlspecialchars($filter_params['search']);
+            }
+            echo implode(', ', $filters);
+            ?>
+            <a href="index.php?controller=adminPhong&action=index<?php echo isset($selected_phong_id) ? '&selected_phong=' . $selected_phong_id : ''; ?>" style="margin-left: 10px; color: #e74c3c;">
+                [Xóa tất cả]
+            </a>
+        </small>
+    </div>
+<?php endif; ?>
 
             <!-- Form thêm phòng -->
             <div id="add-phong-form" class="form-container" style="display: none;">

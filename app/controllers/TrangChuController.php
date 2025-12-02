@@ -35,6 +35,7 @@ class TrangChuController {
         // Lấy dữ liệu cho header
         $all_raps = $this->rapModel->getAllRap();
         $rap = $this->rapModel->getRapById($selected_rap_id); // Lấy rạp đang chọn
+        $header_rap_link_template = 'index.php?controller=trangchu&action=index&ma_rap=__MA_RAP__';
 
         session_start();
     

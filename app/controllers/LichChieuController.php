@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/../models/LichChieuModel.php';
 require_once __DIR__ . '/../models/PhimModel.php';

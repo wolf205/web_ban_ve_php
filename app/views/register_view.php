@@ -13,7 +13,7 @@ require_once __DIR__ . '/header.php';
     <link rel="stylesheet" href="publics/css/reset.css" />
     <link rel="stylesheet" href="publics/css/container.css" />
     <link rel="stylesheet" href="publics/css/button.css" />
-    <link rel="stylesheet" href="publics/css/taikhoan.css" />
+    <link rel="stylesheet" href="publics/css/taikhoan1.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="publics/css/styles.css" />
   </head>

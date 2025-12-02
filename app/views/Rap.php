@@ -86,7 +86,7 @@ require_once __DIR__ . '/header.php';
                 />
                 <span class="movie-tag">T<?php echo htmlspecialchars($phim['gioi_han_do_tuoi']); ?></span>
               </div>
-              <a href="index.php?controller=chitietphim&ma_phim=<?php echo $phim['ma_phim']; ?>">
+              <a href="index.php?controller=phim&action=detail&ma_phim=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>">
                 <h3 class="movie-title"><?php echo htmlspecialchars($phim['ten_phim']); ?></h3>
               </a>
             </div>

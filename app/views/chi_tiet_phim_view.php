@@ -101,7 +101,7 @@ require_once __DIR__ . '/header.php';
                         <div class="showtimes-grid">
                             
                             <?php foreach ($data['gio'] as $suat): ?>
-                                <a href="index.php?controller=dat_ve&action=chon_ghe&suat_chieu_id=<?php echo $suat['id']; ?>" class="showtime-slot">
+                                <a href="index.php?controller=chonghe&ma_suat_chieu=<?php echo $suat['ma_phim']; ?>" class="showtime-slot">
                                     <span class="time"><?php echo $suat['thoi_gian']; ?></span>
                                     <span class="seats">Trống</span>
                                 </a>

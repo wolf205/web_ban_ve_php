@@ -18,12 +18,11 @@ require_once __DIR__ . '/header.php';
   <link rel="stylesheet" href="publics/css/container.css" />
   <link rel="stylesheet" href="publics/css/button.css" />
   <link rel="stylesheet" href="publics/css/card.css" />
-  <link rel="stylesheet" href="publics/css/LichChieu.css" />
   <link rel="stylesheet" href="publics/css/Phim.css" />
-  <link rel="stylesheet" href="publics/css/trang_chu.css" />
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="publics/css/styles.css" />
-
+  <link rel="stylesheet" href="publics/css/trang_chu1.css" />
 </head>
 <body>
     <main>
@@ -39,35 +38,34 @@ require_once __DIR__ . '/header.php';
 
     </main>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // 1. Tìm tất cả các slide
-            const slides = document.querySelectorAll('.hero-slider .slide-item');
-            if (slides.length > 1) { // Chỉ chạy nếu có nhiều hơn 1 slide
-                let currentSlide = 0; // Bắt đầu từ slide đầu tiên
-
-                // 2. Hiển thị slide đầu tiên ngay lập tức
-                slides[currentSlide].classList.add('active');
-
-                // 3. Hàm chuyển slide
-                function nextSlide() {
-                    // Ẩn slide hiện tại
-                    slides[currentSlide].classList.remove('active');
-                    
-                    // Tính toán slide tiếp theo
-                    currentSlide = (currentSlide + 1) % slides.length;
-                    
-                    // Hiển thị slide tiếp theo
-                    slides[currentSlide].classList.add('active');
-                }
-
-                // 4. Tự động gọi hàm nextSlide() mỗi 5 giây
-                setInterval(nextSlide, 5000); // 5000 mili-giây = 5 giây
-            } else if (slides.length === 1) {
-                // Nếu chỉ có 1 slide, hiển thị nó luôn
-                slides[0].classList.add('active');
-            }
-        });
-    </script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const slides = document.querySelectorAll('.hero-slider .slide-item');
+        
+        if (slides.length === 0) return; // Nếu không có slide nào thì thoát
+        
+        let currentSlide = 0;
+        
+        // Hiển thị slide đầu tiên
+        slides[currentSlide].classList.add('active');
+        
+        // Nếu chỉ có 1 slide thì không cần chạy auto-slide
+        if (slides.length <= 1) return;
+        
+        function nextSlide() {
+            // Ẩn slide hiện tại
+            slides[currentSlide].classList.remove('active');
+            
+            // Tính slide tiếp theo
+            currentSlide = (currentSlide + 1) % slides.length;
+            
+            // Hiển thị slide tiếp theo
+            slides[currentSlide].classList.add('active');
+        }
+        
+        // Tự động chuyển slide mỗi 5 giây
+        setInterval(nextSlide, 5000);
+    });
+</script>
 </body>
 </html>
 <?php

@@ -14,19 +14,19 @@
     <div id="dang-chieu" class="movie-grid tab-content active">
       <?php foreach ($phimDangChieu as $phim): ?>
         <div class="movie-item">
-            <a href="index.php?controller=phim&action=detail&id=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>">
+            <a href="index.php?controller=phim&action=detail&ma_phim=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>">
                 <div class="card">
                     <img src="<?php echo $phim['anh_trailer']; ?>" alt="Poster <?php echo $phim['ten_phim']; ?>">
                     <span class="movie-tag"><?php echo $phim['gioi_han_do_tuoi']; ?></span>
                 </div>
             </a>
             <div class="movie-info">
-                <h3><a href="index.php?controller=phim&action=detail&id=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>"><?php echo $phim['ten_phim']; ?></a></h3>
+                <h3><a href="index.php?controller=phim&action=detail&ma_phim=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>"><?php echo $phim['ten_phim']; ?></a></h3>
                 <div class="movie-info-details">
                     Thể loại: <?php echo $phim['the_loai']; ?><br>
                     Thời lượng: <?php echo $phim['thoi_luong']; ?> phút
                 </div>
-                <a href="index.php?controller=dat_ve&id=<?php echo $phim['ma_phim']; ?>" class="btn btn-primary">Mua vé</a>
+                <a href="index.php?controller=phim&action=detail&ma_phim=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id;?>" class="btn btn-primary">Mua vé</a>
             </div>
         </div>
       <?php endforeach; ?>
@@ -35,19 +35,19 @@
     <div id="sap-chieu" class="movie-grid tab-content" style="display: none;">
       <?php foreach ($phimSapChieu as $phim): ?>
         <div class="movie-item">
-            <a href="index.php?controller=phim&action=detail&id=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>">
+            <a href="index.php?controller=phim&action=detail&ma_phim=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>">
                 <div class="card">
                     <img src="<?php echo $phim['anh_trailer']; ?>" alt="Poster <?php echo $phim['ten_phim']; ?>">
                     <span class="movie-tag"><?php echo $phim['gioi_han_do_tuoi']; ?></span>
                 </div>
             </a>
             <div class="movie-info">
-                <h3><a href="index.php?controller=phim&action=detail&id=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>"><?php echo $phim['ten_phim']; ?></a></h3>
+                <h3><a href="index.php?controller=phim&action=detail&ma_phim=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>"><?php echo $phim['ten_phim']; ?></a></h3>
                 <div class="movie-info-details">
                     Thể loại: <?php echo $phim['the_loai']; ?><br>
                     Ngày khởi chiếu: <?php echo date('d/m/Y', strtotime($phim['ngay_khoi_chieu'])); ?>
                 </div>
-                <a href="index.php?controller=phim&action=detail&id=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>" class="btn btn-secondary">Xem Chi Tiết</a>
+                <a href="index.php?controller=phim&action=detail&ma_phim=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>" class="btn btn-primary">Mua Vé</a>
             </div>
         </div>
       <?php endforeach; ?>
@@ -56,19 +56,19 @@
     <div id="suat-chieu-dac-biet" class="movie-grid tab-content" style="display: none;">
        <?php foreach ($suatChieuDacBiet as $phim): ?>
         <div class="movie-item">
-            <a href="index.php?controller=phim&action=detail&id=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>">
+            <a href="index.php?controller=phim&action=detail&ma_phim=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>">
                 <div class="card">
                     <img src="<?php echo $phim['anh_trailer']; ?>" alt="Poster <?php echo $phim['ten_phim']; ?>">
                     <span class="movie-tag"><?php echo $phim['gioi_han_do_tuoi']; ?></span>
                 </div>
             </a>
             <div class="movie-info">
-                <h3><a href="index.php?controller=phim&action=detail&id=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>"><?php echo $phim['ten_phim']; ?></a></h3>
+                <h3><a href="index.php?controller=phim&action=detail&ma_phim=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id; ?>"><?php echo $phim['ten_phim']; ?></a></h3>
                 <div class="movie-info-details">
                     Thể loại: <?php echo $phim['the_loai']; ?><br>
                     Thời lượng: <?php echo $phim['thoi_luong']; ?> phút
                 </div>
-                <a href="index.php?controller=dat_ve&id=<?php echo $phim['ma_phim']; ?>" class="btn btn-primary">Mua vé</a>
+                <a href="index.php?controller=phim&action=detail&ma_phim=<?php echo $phim['ma_phim']; ?>&ma_rap=<?php echo $selected_rap_id;?>" class="btn btn-primary">Mua vé</a>
             </div>
         </div>
        <?php endforeach; ?>

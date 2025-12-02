@@ -21,46 +21,59 @@ class KhachHangController {
      * Hiển thị trang đăng nhập
      */
      public function index() {
-        // // Nếu đã đăng nhập, chuyển hướng về trang chủ
-        // if (isset($_SESSION['khach_hang'])) {
-        //     header('Location: index.php');
-        //     exit;
-        // }
+    // Kiểm tra nếu đã đăng nhập, chuyển hướng theo vai trò
+    if (isset($_SESSION['khach_hang'])) {
+        $this->redirectByRole($_SESSION['khach_hang']['vai_tro']);
+        exit;
+    }
 
-        // Xử lý khi form được submit
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            try {
-                $tai_khoan = $_POST['tai_khoan'] ?? '';
-                $mat_khau = $_POST['mat_khau'] ?? '';
+    // Xử lý khi form được submit
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        try {
+            $tai_khoan = $_POST['tai_khoan'] ?? '';
+            $mat_khau = $_POST['mat_khau'] ?? '';
 
-                // Kiểm tra thông tin đăng nhập
-                $khach_hang = $this->khachHangModel->login($tai_khoan, $mat_khau);
+            // Kiểm tra thông tin đăng nhập
+            $khach_hang = $this->khachHangModel->login($tai_khoan, $mat_khau);
 
-                if ($khach_hang) {
-                    // Đăng nhập thành công - lưu thông tin vào session
-                    $_SESSION['khach_hang'] = [
-                        'ma_kh' => $khach_hang['ma_kh'],
-                        'ho_ten' => $khach_hang['ho_ten'],
-                        'email' => $khach_hang['email'],
-                        'SDT' => $khach_hang['SDT'],
-                        'tai_khoan' => $khach_hang['tai_khoan'],
-                        'vai_tro' => $khach_hang['vai_tro']
-                    ];
+            if ($khach_hang) {
+                // Đăng nhập thành công - lưu thông tin vào session
+                $_SESSION['khach_hang'] = [
+                    'ma_kh' => $khach_hang['ma_kh'],
+                    'ho_ten' => $khach_hang['ho_ten'],
+                    'email' => $khach_hang['email'],
+                    'SDT' => $khach_hang['SDT'],
+                    'tai_khoan' => $khach_hang['tai_khoan'],
+                    'vai_tro' => $khach_hang['vai_tro']
+                ];
 
-                    header('Location: index.php?controller=trangchu');
-                    exit;
-                } else {
-                    throw new Exception("Tài khoản hoặc mật khẩu không đúng!");
-                }
-            } catch (Exception $e) {
-                $error = $e->getMessage();
-                require_once __DIR__ . '/../views/login_view.php';
+                // Chuyển hướng theo vai trò sau khi đăng nhập thành công
+                $this->redirectByRole($khach_hang['vai_tro']);
+                exit;
+            } else {
+                throw new Exception("Tài khoản hoặc mật khẩu không đúng!");
             }
-        } else {
-            // Hiển thị form đăng nhập
+        } catch (Exception $e) {
+            $error = $e->getMessage();
             require_once __DIR__ . '/../views/login_view.php';
         }
+    } else {
+        // Hiển thị form đăng nhập
+        require_once __DIR__ . '/../views/login_view.php';
     }
+}
+
+/**
+ * Chuyển hướng theo vai trò người dùng
+ * @param string $vai_tro Vai trò của người dùng
+ */
+private function redirectByRole($vai_tro) {
+    if ($vai_tro === 'admin') {
+        header('Location: index.php?controller=adminrap');
+    } else {
+        header('Location: index.php?controller=trangchu');
+    }
+}
 /**
      * Hiển thị trang đăng ký
      */
@@ -231,6 +244,21 @@ class KhachHangController {
 
     return null; //Không upload thì trả về null
 }
+public function hanhTrinh() {
+    // Kiểm tra đăng nhập
+    if (!isset($_SESSION['khach_hang'])) {
+        header('Location: index.php?controller=khachhang');
+        exit;
+    }
+
+    $ma_kh = $_SESSION['khach_hang']['ma_kh'];
+
+    // Lấy dữ liệu từ model
+    $bookingHistory = $this->khachHangModel->getBookingHistory($ma_kh);
+
+    // Gọi view
+    require_once __DIR__ . '/../views/hanh_trinh_view.php';
+}
 
 
     /**
@@ -242,7 +270,7 @@ class KhachHangController {
         session_destroy();
 
         // Chuyển hướng về trang chủ
-        header('Location: index.php?status=logout_success');
+        header('Location: index.php?controller=trangchu&status=logout_success');
         exit;
     }
 }

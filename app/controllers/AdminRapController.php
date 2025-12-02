@@ -52,19 +52,37 @@ class AdminRapController {
     }
 
     /**
-     * Hiển thị danh sách rạp
-     */
-    public function index() {
+ * Hiển thị danh sách rạp với bộ lọc
+ */
+public function index() {
+    // Nhận tham số lọc từ URL hoặc POST
+    $thanh_pho = $_GET['thanh_pho'] ?? $_POST['thanh_pho'] ?? null;
+    $search = $_GET['search'] ?? $_POST['search'] ?? null;
+    
+    // Lấy danh sách rạp đã lọc
+    if ($thanh_pho || $search) {
+        $danhSachRap = $this->rapModel->filterRap($thanh_pho, $search);
+    } else {
         $danhSachRap = $this->rapModel->getAllRap();
-        
-        // Lấy số lượng phòng cho mỗi rạp
-        foreach ($danhSachRap as $key => $rap) {
-            $danhSachRap[$key]['so_phong'] = $this->phongModel->countPhongByRapId($rap['ma_rap']);
-        }
-        
-        // Tải view
-        require_once __DIR__ . '/../views/rap_view.php';
     }
+    
+    // Lấy danh sách thành phố để hiển thị trong dropdown
+    $cities = $this->rapModel->getDistinctCities();
+    
+    // Lấy số lượng phòng cho mỗi rạp
+    foreach ($danhSachRap as $key => $rap) {
+        $danhSachRap[$key]['so_phong'] = $this->phongModel->countPhongByRapId($rap['ma_rap']);
+    }
+    
+    // Lưu các tham số lọc để hiển thị lại trong form
+    $filter_params = [
+        'thanh_pho' => $thanh_pho,
+        'search' => $search
+    ];
+    
+    // Tải view
+    require_once __DIR__ . '/../views/rap_view.php';
+}
 
     /**
      * Hiển thị form THÊM MỚI (inline)

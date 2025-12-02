@@ -26,23 +26,49 @@ class AdminShowtimeController {
     /**
      * Hiển thị danh sách suất chiếu
      */
-    public function index() {
-        $danhSachSuatChieu = $this->suatChieuModel->getAllSuatChieu();
-        
-        // Lấy số ghế trống và tổng số ghế cho mỗi suất chiếu
-        foreach ($danhSachSuatChieu as $key => $suatChieu) {
-            $soGheTrong = $this->gheSuatChieuModel->countGheTrong($suatChieu['ma_suat_chieu']);
-            $tongSoGhe = $this->gheModel->countGheByPhong($suatChieu['ma_phong']); // Lấy tổng số ghế từ phòng
-            
-            $danhSachSuatChieu[$key]['so_ghe_trong'] = $soGheTrong;
-            $danhSachSuatChieu[$key]['tong_so_ghe'] = $tongSoGhe; // Sử dụng giá trị thực tế
+    // Cập nhật hàm index() trong AdminShowtimeController.php
+
+/**
+ * Hiển thị danh sách suất chiếu
+ */
+public function index() {
+    $filters = [];
+    
+    // Xử lý bộ lọc nếu có
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        if (!empty($_GET['ngay_chieu'])) {
+            $filters['ngay_chieu'] = $_GET['ngay_chieu'];
         }
-
-        $danhSachPhim = $this->suatChieuModel->getAllPhim();
-        $danhSachPhong = $this->suatChieuModel->getAllPhong();
-
-        require_once __DIR__ . '/../views/showtime_view.php';
+        if (!empty($_GET['ten_rap'])) {
+            $filters['ten_rap'] = $_GET['ten_rap'];
+        }
+        if (!empty($_GET['ten_phim'])) {
+            $filters['ten_phim'] = $_GET['ten_phim'];
+        }
     }
+
+    // Lấy danh sách suất chiếu với bộ lọc
+    if (!empty($filters)) {
+        $danhSachSuatChieu = $this->suatChieuModel->getSuatChieuWithFilter($filters);
+    } else {
+        $danhSachSuatChieu = $this->suatChieuModel->getAllSuatChieu();
+    }
+    
+    // Lấy số ghế trống và tổng số ghế cho mỗi suất chiếu
+    foreach ($danhSachSuatChieu as $key => $suatChieu) {
+        $soGheTrong = $this->gheSuatChieuModel->countGheTrong($suatChieu['ma_suat_chieu']);
+        $tongSoGhe = $this->gheModel->countGheByPhong($suatChieu['ma_phong']);
+        
+        $danhSachSuatChieu[$key]['so_ghe_trong'] = $soGheTrong;
+        $danhSachSuatChieu[$key]['tong_so_ghe'] = $tongSoGhe;
+    }
+
+    $danhSachPhim = $this->suatChieuModel->getAllPhim();
+    $danhSachPhong = $this->suatChieuModel->getAllPhong();
+    $danhSachRap = $this->suatChieuModel->getAllRap();
+
+    require_once __DIR__ . '/../views/showtime_view.php';
+}
 
     /**
      * Hiển thị form thêm mới

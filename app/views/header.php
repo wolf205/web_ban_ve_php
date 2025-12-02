@@ -78,15 +78,29 @@ $current_controller = $_GET['controller'] ?? 'phim';
       <a href="index.php?controller=lichchieu" class="nav-link <?php echo ($current_controller == 'lichchieu') ? 'active' : ''; ?>">Lịch Chiếu Theo Rạp</a>
       <a href="index.php?controller=rap" class="nav-link <?php echo ($current_controller == 'rap') ? 'active' : ''; ?>">Rạp</a>
       
-      <a href="index.php?controller=taikhoan" class="nav-link <?php echo ($current_controller == 'taikhoan') ? 'active' : ''; ?>">Tài Khoản</a>
+      <a href="index.php?controller=KhachHang&action=profile"
+       class="nav-link <?php echo ($current_controller == 'KhachHang') ? 'active' : ''; ?>">
+   Tài Khoản
+</a>
+
     </nav>
 
     <div class="header-actions">
-      <a href="index.php?controller=dangnhap" class="btn btn-primary">
-        <i class="fas fa-user"></i>
-        Đăng Nhập
-      </a>
-    </div>
+    <?php if (isset($_SESSION['khach_hang'])): ?>
+        <!-- Nếu đã đăng nhập → Hiện nút Đăng Xuất -->
+        <a href="index.php?controller=KhachHang&action=logout" class="btn btn-primary">
+            <i class="fas fa-sign-out-alt"></i>
+            Đăng Xuất
+        </a>
+    <?php else: ?>
+        <!-- Nếu chưa đăng nhập → Hiện nút Đăng Nhập -->
+        <a href="index.php?controller=KhachHang&action=index" class="btn btn-primary">
+            <i class="fas fa-user"></i>
+            Đăng Nhập
+        </a>
+    <?php endif; ?>
+</div>
+
   </div>
 </header>
 <script src="publics/js/header.js" defer></script>

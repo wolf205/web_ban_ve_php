@@ -1,6 +1,6 @@
 <?php
 // app/controllers/PhimController.php
-
+session_start();
 require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/../models/PhimModel.php';
 require_once __DIR__ . '/../models/LichChieuModel.php';
@@ -46,11 +46,12 @@ class PhimController {
      * Action 2: Hiển thị trang Chi Tiết Phim (ĐÃ LỌC LỊCH CHIẾU THEO RẠP)
      */
     public function detail() {
+        $selected_rap_id = $_GET['ma_rap'] ?? '1';
         // Lấy ID Phim VÀ MÃ RẠP từ URL
-        if (!isset($_GET['id']) || !isset($_GET['ma_rap'])) {
+        if (!isset($_GET['ma_phim']) || !isset($_GET['ma_rap'])) {
             die("Lỗi: Thiếu ID phim hoặc Mã rạp.");
         }
-        $ma_phim = $_GET['id'];
+        $ma_phim = $_GET['ma_phim'];
         $ma_rap = $_GET['ma_rap']; // <-- Lấy mã rạp
 
         // Lấy dữ liệu chi tiết phim (vẫn như cũ)
@@ -74,15 +75,16 @@ class PhimController {
                 $lichChieuTheoNgay[$keyNgay] = ['dinh_dang' => $dinhDang, 'gio' => []];
             }
             $lichChieuTheoNgay[$keyNgay]['gio'][] = [
-                'id' => $suat['ma_suat_chieu'],
+                'ma_phim' => $suat['ma_suat_chieu'],
                 'thoi_gian' => date('H:i', strtotime($suat['gio_bat_dau']))
             ];
         }
 
         // Lấy dữ liệu cho header
         $all_raps = $this->rapModel->getAllRap();
-        $rap = $this->rapModel->getRapById($ma_rap); // Lấy rạp đang chọn
-        $header_rap_link_template = 'index.php?controller=phim&action=detail&ma_rap=__MA_RAP__';
+        $rap = $this->rapModel->getRapById($ma_rap);
+         // Lấy rạp đang chọn
+        $header_rap_link_template = 'index.php?controller=phim&action=detail&ma_rap=__MA_RAP__&ma_phim='.$ma_phim;
 
         // Tải View
         require_once __DIR__ . '/../views/chi_tiet_phim_view.php';

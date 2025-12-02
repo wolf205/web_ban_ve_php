@@ -155,6 +155,52 @@
             <?php endif; ?>
 
             <section class="data-section">
+                <!-- Thêm vào showtime_view.php sau thẻ mở <section class="data-section"> -->
+
+<!-- Bộ lọc mới -->
+<div class="filter-container">
+    <h3 class="filter-title">Bộ lọc suất chiếu</h3>
+    <form class="filter-form" method="GET" action="index.php">
+        <input type="hidden" name="controller" value="adminShowtime">
+        <input type="hidden" name="action" value="index">
+        
+        <div class="form-group">
+            <label for="ngay_chieu">Ngày chiếu</label>
+            <input type="date" id="ngay_chieu" name="ngay_chieu" value="<?php echo $_GET['ngay_chieu'] ?? ''; ?>">
+        </div>
+
+        <div class="form-group">
+            <label for="ten_rap">Rạp</label>
+            <select id="ten_rap" name="ten_rap">
+                <option value="">Tất cả rạp</option>
+                <?php foreach ($danhSachRap as $rap): ?>
+                    <option value="<?php echo htmlspecialchars($rap['ten_rap']); ?>" 
+                        <?php echo (isset($_GET['ten_rap']) && $_GET['ten_rap'] == $rap['ten_rap']) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($rap['ten_rap']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="ten_phim">Phim</label>
+            <select id="ten_phim" name="ten_phim">
+                <option value="">Tất cả phim</option>
+                <?php foreach ($danhSachPhim as $phim): ?>
+                    <option value="<?php echo htmlspecialchars($phim['ten_phim']); ?>" 
+                        <?php echo (isset($_GET['ten_phim']) && $_GET['ten_phim'] == $phim['ten_phim']) ? 'selected' : ''; ?>>
+                        <?php echo htmlspecialchars($phim['ten_phim']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="filter-buttons">
+            <button type="submit" class="filter-btn">Lọc</button>
+            <a href="index.php?controller=adminShowtime&action=index" class="reset-btn">Đặt lại</a>
+        </div>
+    </form>
+</div>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -170,14 +216,25 @@
                                 <th>Hành động</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <?php if (empty($danhSachSuatChieu)): ?>
-                                <tr>
-                                    <td colspan="9" style="text-align: center;">Chưa có suất chiếu nào.</td>
-                                </tr>
-                            <?php else: ?>
-                                <?php foreach ($danhSachSuatChieu as $suatChieu): ?>
-                                    <tr>
+                        <!-- Cập nhật phần tbody trong showtime_view.php -->
+
+<tbody>
+    <?php if (empty($danhSachSuatChieu)): ?>
+        <tr>
+            <td colspan="9" class="no-results">
+                <?php 
+                if (!empty($_GET['ngay_chieu']) || !empty($_GET['ten_rap']) || !empty($_GET['ten_phim'])) {
+                    echo 'Không có suất chiếu nào phù hợp với bộ lọc';
+                } else {
+                    echo 'Chưa có suất chiếu nào.';
+                }
+                ?>
+            </td>
+        </tr>
+    <?php else: ?>
+        <?php foreach ($danhSachSuatChieu as $suatChieu): ?>
+            <!-- ... phần hiển thị từng suất chiếu ... -->
+             <tr>
                                         <td><?php echo $suatChieu['ma_suat_chieu']; ?></td>
                                         <td><?php echo htmlspecialchars($suatChieu['ten_phim']); ?></td>
                                         <td><?php echo htmlspecialchars($suatChieu['ten_rap']); ?></td>
@@ -191,9 +248,9 @@
                                             <a href="index.php?controller=adminShowtime&action=destroy&id=<?php echo $suatChieu['ma_suat_chieu']; ?>" class="action-btn delete-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa suất chiếu này?');">Xóa</a>
                                         </td>
                                     </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</tbody>
                     </table>
                 </div>
             </section>

@@ -164,3 +164,119 @@
     align-items: flex-start;
   }
 }
+
+/* Thêm vào admin-showtime.css */
+
+/* --- Bộ lọc --- */
+.filter-container {
+  background-color: #2c2c2c;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #444;
+}
+
+.filter-title {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #f0c419;
+  font-weight: 600;
+}
+
+.filter-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #ddd;
+}
+
+.form-group select,
+.form-group input {
+  padding: 10px 12px;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background-color: #1a1a1a;
+  color: #f0f0f0;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  border-color: #f0c419;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(240, 196, 25, 0.2);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.filter-btn {
+  background-color: #f0c419;
+  color: #111;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.filter-btn:hover {
+  opacity: 0.9;
+}
+
+.reset-btn {
+  background-color: #555;
+  color: #f0f0f0;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.reset-btn:hover {
+  background-color: #666;
+}
+
+/* --- Trạng thái không có kết quả --- */
+.no-results {
+  text-align: center;
+  padding: 30px;
+  color: #aaa;
+  font-style: italic;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .filter-form {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-buttons {
+    flex-direction: column;
+  }
+}

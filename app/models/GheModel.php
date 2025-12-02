@@ -3,7 +3,7 @@
 
 class GheModel {
     private $conn;
-
+    private $table = "ghe";
     // ==============================
     // HÀM KHỞI TẠO
     // ==============================
@@ -103,5 +103,32 @@ class GheModel {
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result['so_luong'];
     }
+
+/**
+     * Lấy nhiều ghế theo danh sách ID (phục vụ bước thanh toán hiển thị lại ghế)
+     */
+    public function getGheByIds(array $dsMaGhe)
+    {
+        if (empty($dsMaGhe)) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($dsMaGhe), '?'));
+
+        $sql = "SELECT ma_ghe, ma_phong, loai_ghe, ma_phong_ghe, vi_tri
+                FROM {$this->table}
+                WHERE ma_ghe IN ($placeholders)
+                ORDER BY ma_phong_ghe ASC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        foreach ($dsMaGhe as $index => $ma_ghe) {
+            $stmt->bindValue($index + 1, $ma_ghe, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }
 ?>
