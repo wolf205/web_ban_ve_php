@@ -1,0 +1,28 @@
+/* publics/css/admin-showtime.css */
+
+/* Không cần CSS form và bộ lọc ở đây nữa vì đã có trong admin-layout.css */
+/* Chỉ giữ các style đặc thù nếu có */
+
+/* Ví dụ: Style riêng cho trang showtime nếu cần */
+.showtime-status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.showtime-status.active {
+  background: #4caf50;
+  color: white;
+}
+
+.showtime-status.inactive {
+  background: #f44336;
+  color: white;
+}
+
+/* Style cho ô ngày giờ chiếu nếu cần */
+.datetime-cell {
+  white-space: nowrap;
+}

@@ -1,137 +1,8 @@
-/* BỘ LỌC CHO PHÒNG CHIẾU */
-.filter-section {
-  background: #1a1a1a;
-  border-radius: 8px;
-  padding: 20px;
-  margin: 0 30px 20px;
-  border: 1px solid #333;
-}
+/* publics/css/admin-phong.css */
 
-.filter-section h4 {
-  color: #f0c419;
-  font-size: 16px;
-  margin-bottom: 15px;
-  border-bottom: 1px solid #333;
-  padding-bottom: 10px;
-}
+/* Style riêng cho trang phòng chiếu */
 
-.filter-form {
-  width: 100%;
-}
-
-.filter-row {
-  display: flex;
-  gap: 15px;
-  align-items: flex-end;
-}
-
-.filter-group {
-  flex: 1;
-}
-
-.filter-group label {
-  display: block;
-  color: #aaa;
-  font-weight: 500;
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-.filter-group select,
-.filter-group input {
-  width: 100%;
-  padding: 10px;
-  background: #2c2c2c;
-  border: 1px solid #444;
-  border-radius: 4px;
-  color: #f0f0f0;
-  font-size: 14px;
-}
-
-.filter-group select:focus,
-.filter-group input:focus {
-  outline: none;
-  border-color: #f0c419;
-}
-
-.filter-actions {
-  display: flex;
-  gap: 10px;
-  margin-left: 10px;
-}
-
-.btn-filter {
-  background: #f0c419;
-  color: #111;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-  height: 40px;
-}
-
-.btn-filter:hover {
-  opacity: 0.9;
-}
-
-.btn-reset {
-  background: #333;
-  color: #f0f0f0;
-  border: 1px solid #555;
-  padding: 10px 20px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 14px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-}
-
-.btn-reset:hover {
-  background: #444;
-}
-
-/* THÔNG TIN BỘ LỌC ĐANG ÁP DỤNG */
-.active-filters {
-  background: #2c2c2c;
-  padding: 12px 20px;
-  margin: 0 30px 15px;
-  border-radius: 6px;
-  border-left: 4px solid #f0c419;
-}
-
-.active-filters small {
-  color: #f0f0f0;
-  font-size: 14px;
-}
-
-.active-filters strong {
-  color: #f0c419;
-  font-weight: 600;
-}
-
-.active-filters a {
-  color: #ff6b6b;
-  text-decoration: none;
-  font-weight: 600;
-  margin-left: 10px;
-}
-
-.active-filters a:hover {
-  text-decoration: underline;
-}
-
-/* SỐ LƯỢNG KẾT QUẢ */
-.result-count {
-  padding: 0 30px 10px;
-  color: #aaa;
-  font-size: 14px;
-  font-style: italic;
-}
-
-/* TRANG THÁI GHẾ */
+/* Status cho ghế */
 .status-active {
   color: #4caf50;
   font-weight: 600;
@@ -147,7 +18,7 @@
   font-weight: 600;
 }
 
-/* DÒNG ĐƯỢC CHỌN */
+/* Dòng được chọn trong bảng phòng */
 .selected-row {
   background-color: #2c2c2c !important;
   border-left: 4px solid #f0c419;
@@ -157,26 +28,43 @@
   color: #f0c419 !important;
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .filter-section {
-    margin: 0 15px 20px;
-    padding: 15px;
-  }
+/* Style cho ô số lượng ghế */
+.seat-count {
+  font-weight: 600;
+  color: #f0c419;
+}
 
-  .filter-row {
-    flex-direction: column;
-    gap: 15px;
-  }
+/* Style cho loại màn hình */
+.screen-type {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #333;
+  color: #f0c419;
+  font-size: 12px;
+  font-weight: 600;
+}
 
-  .filter-actions {
-    margin-left: 0;
-    width: 100%;
-    justify-content: flex-end;
-  }
+/* Style cho loại ghế */
+.seat-type {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
 
-  .active-filters {
-    margin-left: 15px;
-    margin-right: 15px;
-  }
+.seat-type.normal {
+  background: #4caf50;
+  color: white;
+}
+
+.seat-type.vip {
+  background: #ff9800;
+  color: white;
+}
+
+.seat-type.couple {
+  background: #9c27b0;
+  color: white;
 }

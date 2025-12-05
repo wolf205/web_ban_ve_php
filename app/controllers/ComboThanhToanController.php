@@ -78,7 +78,7 @@ class ComboThanhToanController
         // 3. Truyền dữ liệu sang view combo_thanh_toan.php
         // - $dsCombo: danh sách combo từ DB
         // - $ticketSubtotal: tổng tiền vé từ bước trước
-        require_once __DIR__ . '/../views/combo_thanh_toan.php';
+        require_once __DIR__ . '/../views/khach_hang/combo_thanh_toan.php';
     }
 }
 ?>

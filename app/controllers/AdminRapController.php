@@ -81,7 +81,7 @@ public function index() {
     ];
     
     // Tải view
-    require_once __DIR__ . '/../views/rap_view.php';
+    require_once __DIR__ . '/../views/admin/rap_view.php';
 }
 
     /**
@@ -98,7 +98,7 @@ public function index() {
         $action = 'create';
 
         // Tải view
-        require_once __DIR__ . '/../views/rap_view.php';
+        require_once __DIR__ . '/../views/admin/rap_view.php';
     }
 
     /**
@@ -150,7 +150,7 @@ public function index() {
         }
 
         // Tải view
-        require_once __DIR__ . '/../views/rap_view.php';
+        require_once __DIR__ . '/../views/admin/rap_view.php';
     }
 
     /**

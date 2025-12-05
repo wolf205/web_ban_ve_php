@@ -40,7 +40,7 @@ class ChonGheController
         if (!$thongTinSuat) {
             die("Không tìm thấy suất chiếu.");
         }
-    // ⭐⭐ NẾU LÀ REQUEST POST (bấm TIẾP TỤC) → xử lý ghế, lưu SESSION, redirect ⭐⭐
+
     if ($_SERVER['REQUEST_METHOD'] === 'POST'
         && isset($_POST['seat_ids'], $_POST['seat_names'])) {
 
@@ -106,7 +106,7 @@ class ChonGheController
         $rap      = $this->rapModel->getRapById($ma_rap);
 
         // 6. Gọi view
-        require_once __DIR__ . '/../views/chon_ghe.php';
+        require_once __DIR__ . '/../views/khach_hang/chon_ghe.php';
     }
 }
 ?>

@@ -4,7 +4,7 @@
 // 2. $phimDangChieu (cho partial view)
 // 3. $phimSapChieu (cho partial view)
 // 4. $suatChieuDacBiet (cho partial view)
-require_once __DIR__ . '/header.php';
+require_once __DIR__ . '/../chung/header.php';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -69,5 +69,5 @@ require_once __DIR__ . '/header.php';
 </body>
 </html>
 <?php
-require_once __DIR__ . '/footer.php';
+require_once __DIR__ . '/../chung/footer.php';
 ?>

@@ -40,7 +40,7 @@ class TrangChuController {
         session_start();
     
         // Tải View
-        require_once __DIR__ . '/../views/trang_chu_view.php';
+        require_once __DIR__ . '/../views/khach_hang/trang_chu_view.php';
 
 }
 }

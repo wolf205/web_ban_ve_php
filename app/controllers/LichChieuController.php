@@ -25,17 +25,34 @@ class LichChieuController {
     }
 
     public function index() {
-        $selected_date = $_GET['ngay'] ?? '2025-10-25';
+        // Lấy ngày được chọn từ GET, mặc định là ngày hôm nay
+        $selected_date = $_GET['ngay'] ?? date('Y-m-d');
         $selected_rap_id = $_GET['ma_rap'] ?? '1';
 
-        $dateListRaw = [
-            ['sql' => '2025-10-25', 'display' => '25/10', 'weekday' => 'T7'],
-            ['sql' => '2025-10-26', 'display' => '26/10', 'weekday' => 'CN'],
-            ['sql' => '2025-10-27', 'display' => '27/10', 'weekday' => 'T2'],
-            ['sql' => '2025-10-28', 'display' => '28/10', 'weekday' => 'T3'],
-            ['sql' => '2025-10-29', 'display' => '29/10', 'weekday' => 'T4'],
-            ['sql' => '2025-10-30', 'display' => '30/10', 'weekday' => 'T5'],
-        ];
+        // Tạo danh sách 6 ngày kể từ hôm nay
+        $dateListRaw = [];
+        
+        // Tên các thứ trong tiếng Việt
+        $weekdays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+        
+        // Ngày hiện tại
+        $currentDate = new DateTime();
+        
+        // Tạo 6 ngày kể từ hôm nay
+        for ($i = 0; $i < 6; $i++) {
+            $date = clone $currentDate;
+            $date->modify("+$i days");
+            
+            $sqlDate = $date->format('Y-m-d');
+            $displayDate = $date->format('d/m');
+            $weekdayIndex = (int)$date->format('w'); // 0=CN, 1=T2, ..., 6=T7
+            
+            $dateListRaw[] = [
+                'sql' => $sqlDate,
+                'display' => $displayDate,
+                'weekday' => $weekdays[$weekdayIndex]
+            ];
+        }
 
         $fixedDateList = [];
         foreach ($dateListRaw as $date_item) {
@@ -45,6 +62,7 @@ class LichChieuController {
             $fixedDateList[] = $date_item;
         }
 
+        // Lấy lịch chiếu cho ngày được chọn
         $allShowtimes = $this->lichChieuModel->getLichChieu($selected_date, $selected_rap_id);
         $moviesData = [];
 
@@ -69,7 +87,7 @@ class LichChieuController {
                                   . urlencode($selected_date) 
                                   . '&ma_rap=__MA_RAP__';
 
-        require_once __DIR__ . '/../views/LichChieu_view.php';
+        require_once __DIR__ . '/../views/khach_hang/LichChieu_view.php';
     }
 }
 ?>

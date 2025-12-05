@@ -1,196 +1,371 @@
-/* NỘI DUNG CHO FILE: publics/css/dashboard.css */
+/* publics/css/dashboard.css */
 
-/* --- CSS Cụ Thể Cho Trang DASHBOARD --- */
-
-/* --- Stats Cards --- */
+/* Stats Cards */
 .stats-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
-  padding: 20px 30px;
+  margin-bottom: 30px;
 }
 
 .stat-card {
-  background-color: #f0c419;
-  color: #111;
+  background: #2c2c2c;
+  border-radius: 10px;
   padding: 20px;
-  border-radius: 8px;
-  transition: transform 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+  border: 1px solid #444;
 }
 
 .stat-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
-.card-title {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 10px;
+.stat-icon {
+  font-size: 2.5rem;
+  margin-right: 15px;
+  color: #fff;
 }
 
-.card-value {
-  font-size: 28px;
-  font-weight: 700;
+.stat-info h4 {
+  font-size: 1.8rem;
+  margin: 0 0 5px 0;
+  color: #fff;
 }
 
-.card-subtitle {
-  font-size: 12px;
-  margin-top: 5px;
-  opacity: 0.8;
+.stat-info p {
+  margin: 0 0 5px 0;
+  color: #bbb;
+  font-weight: 500;
 }
 
-/* --- Charts Section --- */
+.stat-info small {
+  color: #999;
+  font-size: 0.85rem;
+}
+
+/* Charts Section */
 .charts-section {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 20px;
-  padding: 0 30px 20px;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
 }
 
 .chart-container {
-  background-color: #1a1a1a;
-  border-radius: 8px;
+  background: #2c2c2c;
+  border-radius: 10px;
   padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border: 1px solid #444;
 }
 
 .chart-container h3 {
-  font-size: 18px;
-  margin-bottom: 15px;
-  color: white;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* --- Top Movies Section --- */
+/* Top Movies Section */
 .top-movies-section {
-  padding: 0 30px 20px;
-}
-
-.top-movies-container {
-  background-color: #1a1a1a;
-  border-radius: 8px;
+  background: #2c2c2c;
+  border-radius: 10px;
   padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  margin-bottom: 30px;
+  border: 1px solid #444;
 }
 
 .top-movies-container h3 {
-  font-size: 18px;
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+}
+
+.time-range-label {
+  color: #bbb;
+  font-size: 0.9rem;
   margin-bottom: 15px;
-  color: white;
+  padding: 5px 10px;
+  background: #3a3a3a;
+  border-radius: 5px;
+  display: inline-block;
+  border: 1px solid #555;
 }
 
 .movie-item {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 12px;
-  background-color: #2c2c2c;
-  border-radius: 6px;
-  margin-bottom: 10px;
+  padding: 15px;
+  border-bottom: 1px solid #444;
   transition: background-color 0.2s;
 }
 
+.movie-item:last-child {
+  border-bottom: none;
+}
+
 .movie-item:hover {
-  background-color: #333;
+  background-color: #3a3a3a;
 }
 
 .movie-rank {
-  font-size: 24px;
-  font-weight: 700;
-  color: #f0c419;
-  min-width: 40px;
-  text-align: center;
+  width: 40px;
+  height: 40px;
+  background: #555;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 15px;
+  font-size: 1.2rem;
+  border: 2px solid #777;
 }
 
-.movie-poster-small {
-  width: 50px;
-  height: 70px;
-  border-radius: 4px;
-  object-fit: cover;
-  background-color: #444;
+.movie-item:nth-child(1) .movie-rank {
+  background: #d4af37;
+  border-color: #ffd700;
 }
 
-.movie-info {
-  flex: 1;
+.movie-item:nth-child(2) .movie-rank {
+  background: #c0c0c0;
+  border-color: #d4d4d4;
 }
 
-.movie-title {
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 5px;
-  color: #f0f0f0;
+.movie-item:nth-child(3) .movie-rank {
+  background: #cd7f32;
+  border-color: #daa520;
+}
+
+.movie-info h4 {
+  margin: 0 0 5px 0;
+  color: #fff;
 }
 
 .movie-stats {
-  font-size: 12px;
-  color: #aaa;
+  display: flex;
+  gap: 15px;
+  font-size: 0.9rem;
+  color: #bbb;
 }
 
-.movie-revenue {
-  font-weight: 700;
-  color: #f0c419;
-  font-size: 16px;
-}
-
-/* --- Thanh Lọc Của Dashboard --- */
-.tieu_de {
-  padding: 25px;
-}
-.filter-bar {
+.movie-stats span {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
+}
+
+/* Filter Section */
+.top-filter-section {
+  background: #2c2c2c;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  margin-bottom: 30px;
+  border: 1px solid #444;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 20px;
   flex-wrap: wrap;
+  align-items: flex-end;
 }
 
 .filter-group {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-left: 25px;
-  padding-bottom: 20px;
+  flex-direction: column;
+  gap: 5px;
 }
 
-.filter-bar label {
+.filter-group label {
   font-weight: 500;
-  font-size: 14px;
-  white-space: nowrap;
+  color: #fff;
+  font-size: 0.9rem;
 }
 
-.filter-bar input[type="date"],
-.filter-bar select {
-  background-color: #333;
-  color: white;
-  border: 1px solid #555;
+.filter-group select,
+.filter-group input[type="date"],
+.filter-group input[type="month"],
+.filter-group input[type="text"] {
   padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 14px;
-  min-width: 140px;
+  background: #3a3a3a;
+  border: 1px solid #555;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  min-width: 150px;
+  color: #fff;
 }
 
-.filter-bar select {
-  cursor: pointer;
-}
-
-.filter-bar select option {
-  background-color: #333;
-  color: white;
+.filter-group select:focus,
+.filter-group input[type="date"]:focus,
+.filter-group input[type="month"]:focus,
+.filter-group input[type="text"]:focus {
+  outline: none;
+  border-color: #777;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
 }
 
 .filter-btn {
-  background-color: #f0c419;
-  color: #111;
-  border: none;
-  padding: 9px 20px;
-  border-radius: 4px;
+  background: #000;
+  color: white;
+  border: 1px solid #555;
+  padding: 8px 20px;
+  border-radius: 5px;
   cursor: pointer;
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 500;
   transition: all 0.3s;
 }
 
 .filter-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
+  background: #333;
+  border-color: #777;
 }
-/* --- Responsive Design --- */
+
+/* Fill Rate Bar */
+.fill-rate-bar {
+  width: 100px;
+  height: 20px;
+  background: #3a3a3a;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #555;
+}
+
+.fill-rate-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #444, #222);
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.fill-rate-bar span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Table Header with Filter */
+.table-header-with-filter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.table-header-with-filter h3 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+}
+
+/* Data Section */
+.data-section {
+  background: #2c2c2c;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  margin-bottom: 30px;
+  border: 1px solid #444;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-container thead {
+  background: #3a3a3a;
+}
+
+.table-container th {
+  padding: 15px;
+  text-align: left;
+  color: #fff;
+  font-weight: 600;
+  border-bottom: 2px solid #555;
+}
+
+.table-container td {
+  padding: 15px;
+  border-bottom: 1px solid #444;
+  color: #ddd;
+}
+
+.table-container tbody tr:hover {
+  background-color: #3a3a3a;
+}
+
+/* No Data Styles */
+.no-data {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  font-style: italic;
+  background: #3a3a3a;
+  border-radius: 5px;
+  margin: 10px 0;
+  border: 1px solid #555;
+}
+
+/* Custom Date Fields Styling */
+#custom-date-fields,
+#custom-month-field {
+  background: #3a3a3a;
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid #555;
+}
+
+#custom-date-fields .filter-group,
+#custom-month-field .filter-group {
+  margin-bottom: 10px;
+}
+
+/* Scrollbar Styling */
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #3a3a3a;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+/* Responsive */
 @media (max-width: 1200px) {
   .charts-section {
     grid-template-columns: 1fr;
@@ -203,15 +378,60 @@
   }
 
   .filter-bar {
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .movie-item {
-    flex-wrap: wrap;
+  .filter-group {
+    width: 100%;
   }
 
-  .movie-rank {
-    min-width: 30px;
-    font-size: 20px;
+  .filter-group select,
+  .filter-group input {
+    width: 100%;
   }
+
+  .table-header-with-filter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .movie-stats {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+/* Additional Dark Theme Enhancements */
+.filter-group select option {
+  background: #3a3a3a;
+  color: #fff;
+}
+
+/* Chart.js Dark Theme Override */
+.chart-container canvas {
+  filter: brightness(0.9) contrast(1.1);
+}
+
+/* Border Radius for Inputs */
+.filter-group select,
+.filter-group input,
+.filter-btn {
+  border-radius: 4px;
+}
+
+/* Focus States */
+.filter-group select:focus,
+.filter-group input:focus,
+.filter-btn:focus {
+  outline: 2px solid #555;
+  outline-offset: 2px;
+}
+
+/* Disabled State */
+.filter-group select:disabled,
+.filter-group input:disabled {
+  background: #333;
+  color: #777;
+  cursor: not-allowed;
 }

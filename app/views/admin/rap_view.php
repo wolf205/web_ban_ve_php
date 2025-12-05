@@ -9,39 +9,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quản lý Rạp</title>
-    <link rel="stylesheet" href="publics/css/admin-layout.css" />
+    <link rel="stylesheet" href="publics/css/admin-layout1.css" />
     <link rel="stylesheet" href="publics/css/admin-rap1.css" />
 </head>
 <body>
-    <header class="top-bar">
-        <div class="logo">
-            <img src="publics/img/avata1.jpg" alt="Logo" />
-            <h1>CINETIX</h1>
-        </div>
-        <div class="user-profile">
-            <span>Alice</span>
-            <div class="user-icon">A</div>
-        </div>
-    </header>
-
-    <div class="content-container">
-        <aside class="sidebar">
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="index.php?controller=adminDashboard&action=index">Dashboard</a></li>
-                    <li><a href="index.php?controller=adminCustomer&action=index">Tài khoản người dùng</a></li>
-                    <li><a href="index.php?controller=adminStaff&action=index">Tài khoản nhân sự</a></li>
-                    <li><a href="index.php?controller=adminPhim&action=index">Quản lý phim</a></li>
-                    <li><a href="index.php?controller=adminShowtime&action=index">Quản lý suất chiếu</a></li>
-                    <li class="active">
-                        <a href="index.php?controller=adminRap&action=index">Quản lý rạp</a>
-                    </li>
-                    <li>
-                        <a href="index.php?controller=adminPhong&action=index">Quản lý phòng chiếu</a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
+    <?php include __DIR__ . '/../chung/header_sidebar.php'; ?>
 
         <main class="main-content">
             <!-- PAGE HEADER -->

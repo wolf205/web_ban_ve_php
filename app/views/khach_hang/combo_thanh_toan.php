@@ -1,7 +1,7 @@
 <?php
 // sau này bạn có thể lấy thông tin ghế + giá vé từ session/DB
 // ví dụ: $ticketSubtotal = $_SESSION['ticket_subtotal'] ?? 50000;
-require_once __DIR__ . '/header.php';
+require_once __DIR__ . '/../chung/header.php';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -347,5 +347,5 @@ require_once __DIR__ . '/header.php';
 </html>
 <?php
 // footer.php của bạn khả năng cao đã đóng </body></html>
-require_once __DIR__ . '/footer.php';
+require_once __DIR__ . '/../chung/footer.php';
 ?>

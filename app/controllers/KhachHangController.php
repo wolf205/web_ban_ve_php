@@ -55,11 +55,11 @@ class KhachHangController {
             }
         } catch (Exception $e) {
             $error = $e->getMessage();
-            require_once __DIR__ . '/../views/login_view.php';
+            require_once __DIR__ . '/../views/khach_hang/login_view.php';
         }
     } else {
         // Hiển thị form đăng nhập
-        require_once __DIR__ . '/../views/login_view.php';
+        require_once __DIR__ . '/../views/khach_hang/login_view.php';
     }
 }
 
@@ -117,11 +117,11 @@ private function redirectByRole($vai_tro) {
                 }
             } catch (Exception $e) {
                 $error = $e->getMessage();
-                require_once __DIR__ . '/../views/register_view.php';
+                require_once __DIR__ . '/../views/khach_hang/register_view.php';
             }
         } else {
             // Hiển thị form đăng ký
-            require_once __DIR__ . '/../views/register_view.php';
+            require_once __DIR__ . '/../views/khach_hang/register_view.php';
         }
     }
 
@@ -139,7 +139,7 @@ private function redirectByRole($vai_tro) {
         $ma_kh = $_SESSION['khach_hang']['ma_kh'];
         $khach_hang = $this->khachHangModel->getKhachHangById($ma_kh);
         
-        require_once __DIR__ . '/../views/account_view.php';
+        require_once __DIR__ . '/../views/khach_hang/account_view.php';
     }
 
     /**
@@ -195,7 +195,7 @@ private function redirectByRole($vai_tro) {
                 $error = $e->getMessage();
                 $ma_kh = $_SESSION['khach_hang']['ma_kh'];
                 $khach_hang = $this->khachHangModel->getKhachHangById($ma_kh);
-                require_once __DIR__ . '/../views/account_view.php';
+                require_once __DIR__ . '/../views/khach_hang/account_view.php';
             }
         } else {
             header('Location: index.php?controller=KhachHang&action=profile');
@@ -257,7 +257,7 @@ public function hanhTrinh() {
     $bookingHistory = $this->khachHangModel->getBookingHistory($ma_kh);
 
     // Gọi view
-    require_once __DIR__ . '/../views/hanh_trinh_view.php';
+    require_once __DIR__ . '/../views/khach_hang/hanh_trinh_view.php';
 }
 
 

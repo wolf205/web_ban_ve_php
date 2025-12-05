@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/header.php';
+require_once __DIR__ . '/../chung/header.php';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -38,12 +38,41 @@ require_once __DIR__ . '/header.php';
 
         <div class="comments-section">
           <h3 class="comments-title">Bình luận (<?php echo count($danh_gia_list); ?>)</h3>
-          <form class="comment-form" method="POST" action="">
-            <div class="form-group">
-              <textarea rows="4" placeholder="Viết bình luận của bạn..." name="noi_dung" required></textarea>
+          
+          <!-- HIỂN THỊ THÔNG BÁO -->
+          <?php if (isset($_SESSION['success'])): ?>
+            <div class="alert alert-success">
+              <?php echo $_SESSION['success']; ?>
+              <?php unset($_SESSION['success']); ?>
             </div>
-            <button type="submit" class="btn btn-primary">Gửi bình luận</button>
-          </form>
+          <?php endif; ?>
+          
+          <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-error">
+              <?php echo $_SESSION['error']; ?>
+              <?php unset($_SESSION['error']); ?>
+            </div>
+          <?php endif; ?>
+          
+          <!-- FORM BÌNH LUẬN -->
+          <!-- FORM BÌNH LUẬN -->
+<form class="comment-form" method="POST" action="index.php?controller=rap&action=showDetails">
+    <input type="hidden" name="ma_rap" value="<?php echo $ma_rap; ?>">
+    
+    <div class="form-group">
+        <textarea rows="4" placeholder="Viết bình luận của bạn..." name="noi_dung" required></textarea>
+    </div>
+    
+    <?php 
+    // SỬA Ở ĐÂY: Kiểm tra $_SESSION['khach_hang'] thay vì $_SESSION['ma_kh']
+    if (!isset($_SESSION['khach_hang']) || empty($_SESSION['khach_hang']['ma_kh'])): ?>
+        <p class="login-required">
+            Vui lòng <a href="index.php?controller=KhachHang&action=index">đăng nhập</a> để bình luận
+        </p>
+    <?php else: ?>
+        <button type="submit" class="btn btn-primary">Gửi bình luận</button>
+    <?php endif; ?>
+</form>
 
           <div class="comment-list">
             <?php if (empty($danh_gia_list)): ?>
@@ -98,5 +127,5 @@ require_once __DIR__ . '/header.php';
 </body>
 </html>
 <?php
-require_once __DIR__ . '/footer.php';
+require_once __DIR__ . '/../chung/footer.php';
 ?>

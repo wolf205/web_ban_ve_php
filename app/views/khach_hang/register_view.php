@@ -1,6 +1,6 @@
 <?php
 // app/views/register_view.php
-require_once __DIR__ . '/header.php';
+require_once __DIR__ . '/../chung/header.php';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -122,6 +122,6 @@ require_once __DIR__ . '/header.php';
       </div>
     </main>
 
-    <?php require_once __DIR__ . '/footer.php'; ?>
+    <?php require_once __DIR__ . '/../chung/footer.php'; ?>
   </body>
 </html>

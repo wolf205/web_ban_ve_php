@@ -39,7 +39,7 @@ class PhimController {
         $rap = $this->rapModel->getRapById($selected_rap_id); // Lấy rạp đang chọn
         $header_rap_link_template = 'index.php?controller=phim&action=index&ma_rap=__MA_RAP__';
         // Tải View
-        require_once __DIR__ . '/../views/Phim_view.php';
+        require_once __DIR__ . '/../views/khach_hang/Phim_view.php';
     }
 
     /**
@@ -87,7 +87,7 @@ class PhimController {
         $header_rap_link_template = 'index.php?controller=phim&action=detail&ma_rap=__MA_RAP__&ma_phim='.$ma_phim;
 
         // Tải View
-        require_once __DIR__ . '/../views/chi_tiet_phim_view.php';
+        require_once __DIR__ . '/../views/khach_hang/chi_tiet_phim_view.php';
     }
 }
 ?>

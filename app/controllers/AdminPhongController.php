@@ -70,7 +70,7 @@ public function index() {
     ];
 
     // Tải view
-    require_once __DIR__ . '/../views/phong_view.php';
+    require_once __DIR__ . '/../views/admin/phong_view.php';
 }
     // ... (các hàm khác giữ nguyên)
     public function store() {

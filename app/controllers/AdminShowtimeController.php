@@ -67,7 +67,7 @@ public function index() {
     $danhSachPhong = $this->suatChieuModel->getAllPhong();
     $danhSachRap = $this->suatChieuModel->getAllRap();
 
-    require_once __DIR__ . '/../views/showtime_view.php';
+    require_once __DIR__ . '/../views/admin/showtime_view.php';
 }
 
     /**
@@ -89,7 +89,7 @@ public function index() {
         
         $action = 'create';
         
-        require_once __DIR__ . '/../views/showtime_view.php';
+        require_once __DIR__ . '/../views/admin/showtime_view.php';
     }
 
     /**
@@ -149,7 +149,7 @@ public function index() {
         
         $edit_id = $edit_id;
         
-        require_once __DIR__ . '/../views/showtime_view.php';
+        require_once __DIR__ . '/../views/admin/showtime_view.php';
     }
 
     /**
