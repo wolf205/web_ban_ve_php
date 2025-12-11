@@ -68,7 +68,7 @@ class KhachHangController {
  * @param string $vai_tro Vai trò của người dùng
  */
 private function redirectByRole($vai_tro) {
-    if ($vai_tro === 'admin') {
+    if ($vai_tro === 'quản lý') {
         header('Location: index.php?controller=adminrap');
     } else {
         header('Location: index.php?controller=trangchu');

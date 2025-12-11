@@ -1,0 +1,147 @@
+/* NỘI DUNG CHO FILE: publics/css/admin-layout.css */
+
+/* --- Cài đặt chung & Reset --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #222; /* GIỐNG CODE CŨ */
+    color: #f0f0f0; /* GIỐNG CODE CŨ */
+    line-height: 1.6;
+}
+
+/* --- Top Bar (Header) --- */
+.top-bar {
+    height: 80px; /* GIỐNG CODE CŨ */
+    background-color: #111; /* GIỐNG CODE CŨ */
+    border-bottom: 1px solid #333; /* GIỐNG CODE CŨ */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo img {
+    width: 40px; /* GIỐNG CODE CŨ */
+    height: 40px; /* GIỐNG CODE CŨ */
+    border-radius: 8px;
+    background-color: #f0c419; /* GIỐNG CODE CŨ */
+}
+
+.logo h1 {
+    font-size: 24px; /* GIỐNG CODE CŨ */
+    font-weight: 700;
+    color: #f0c419; /* GIỐNG CODE CŨ */
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-profile span {
+    font-weight: 600;
+}
+
+.user-icon {
+    width: 36px; /* GIỐNG CODE CŨ */
+    height: 36px; /* GIỐNG CODE CŨ */
+    background-color: #f0c419; /* GIỐNG CODE CŨ */
+    color: #111; /* GIỐNG CODE CŨ */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+}
+
+/* --- Container (Bố cục chính) --- */
+.content-container {
+    display: flex;
+    min-height: calc(100vh - 80px);
+}
+
+/* --- Sidebar (Menu bên trái) --- */
+.sidebar {
+    width: 250px; /* GIỐNG CODE CŨ */
+    background-color: #1a1a1a; /* GIỐNG CODE CŨ */
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 20px 0;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+}
+
+.sidebar-nav li {
+    margin-bottom: 5px;
+}
+
+.sidebar-nav a {
+    color: #aaa; /* GIỐNG CODE CŨ */
+    text-decoration: none;
+    display: block;
+    padding: 12px 20px;
+    font-weight: 500;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.sidebar-nav a:hover {
+    background-color: #2c2c2c; /* GIỐNG CODE CŨ */
+    color: white;
+    border-left-color: #f0c419; /* GIỐNG CODE CŨ */
+}
+
+.sidebar-nav li.active a {
+    background-color: #f0c419; /* GIỐNG CODE CŨ */
+    color: #111; /* GIỐNG CODE CŨ */
+    font-weight: 700;
+    border-left-color: #f0c419; /* GIỐNG CODE CŨ */
+}
+
+/* --- Main Content (Nội dung chính) --- */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Page Header (Tiêu đề trang) --- */
+.tieu_de h3 {
+    font-size: 24px;
+    color: white;
+    font-weight: 600;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .content-container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+}

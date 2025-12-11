@@ -1,437 +1,394 @@
-/* publics/css/dashboard.css */
+/* NỘI DUNG CHO FILE: publics/css/dashboard.css */
 
-/* Stats Cards */
+/* --- CSS Cụ Thể Cho Trang DASHBOARD --- */
+
+/* --- Stats Cards --- GIỐNG CODE CŨ */
 .stats-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 40px;
+    padding: 20px 30px;
 }
 
 .stat-card {
-  background: #2c2c2c;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  display: flex;
-  align-items: center;
-  transition: transform 0.3s ease;
-  border: 1px solid #444;
+    background-color: #f0c419; /* MÀU VÀNG GIỐNG CODE CŨ */
+    color: #111; /* MÀU CHỮ ĐEN GIỐNG CODE CŨ */
+    padding: 20px;
+    border-radius: 8px;
+    transition: transform 0.2s;
 }
 
 .stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
 }
 
+/* CẤU TRÚC MỚI NHƯNG GIAO DIỆN CŨ */
 .stat-icon {
-  font-size: 2.5rem;
-  margin-right: 15px;
-  color: #fff;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    display: block;
 }
 
 .stat-info h4 {
-  font-size: 1.8rem;
-  margin: 0 0 5px 0;
-  color: #fff;
+    font-size: 28px; /* GIỐNG CODE CŨ */
+    font-weight: 700; /* GIỐNG CODE CŨ */
+    margin: 0 0 5px 0;
+    color: #111;
 }
 
 .stat-info p {
-  margin: 0 0 5px 0;
-  color: #bbb;
-  font-weight: 500;
+    font-size: 14px; /* GIỐNG CODE CŨ */
+    font-weight: 600; /* GIỐNG CODE CŨ */
+    margin: 0 0 5px 0;
+    color: #111;
 }
 
 .stat-info small {
-  color: #999;
-  font-size: 0.85rem;
+    font-size: 12px; /* GIỐNG CODE CŨ */
+    color: #333;
+    display: block;
 }
 
-/* Charts Section */
+/* --- Charts Section --- GIỐNG CODE CŨ */
 .charts-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* GIỐNG CODE CŨ */
+    gap: 20px;
+    padding: 0 30px 20px;
 }
 
 .chart-container {
-  background: #2c2c2c;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  border: 1px solid #444;
+    background-color: #1a1a1a; /* GIỐNG CODE CŨ */
+    border-radius: 8px;
+    padding: 20px;
 }
 
 .chart-container h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+    font-size: 18px; /* GIỐNG CODE CŨ */
+    margin-bottom: 15px;
+    color: white; /* GIỐNG CODE CŨ */
 }
 
-/* Top Movies Section */
+/* --- Top Movies Section --- GIỐNG CODE CŨ */
 .top-movies-section {
-  background: #2c2c2c;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  margin-bottom: 30px;
-  border: 1px solid #444;
+    padding: 0 30px 20px; /* GIỐNG CODE CŨ */
+}
+
+.top-movies-container {
+    background-color: #1a1a1a; /* GIỐNG CODE CŨ */
+    border-radius: 8px;
+    padding: 20px;
 }
 
 .top-movies-container h3 {
-  margin-top: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #fff;
+    font-size: 18px; /* GIỐNG CODE CŨ */
+    margin-bottom: 15px;
+    color: white; /* GIỐNG CODE CŨ */
 }
 
+/* CẤU TRÚC MỚI NHƯNG GIAO DIỆN CŨ */
 .time-range-label {
-  color: #bbb;
-  font-size: 0.9rem;
-  margin-bottom: 15px;
-  padding: 5px 10px;
-  background: #3a3a3a;
-  border-radius: 5px;
-  display: inline-block;
-  border: 1px solid #555;
+    color: #bbb;
+    font-size: 13px;
+    margin-bottom: 15px;
+    padding-left: 5px;
 }
 
 .movie-item {
-  display: flex;
-  align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid #444;
-  transition: background-color 0.2s;
-}
-
-.movie-item:last-child {
-  border-bottom: none;
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    background-color: #2c2c2c; /* GIỐNG CODE CŨ */
+    border-radius: 6px;
+    margin-bottom: 10px;
+    transition: background-color 0.2s;
 }
 
 .movie-item:hover {
-  background-color: #3a3a3a;
+    background-color: #333; /* GIỐNG CODE CŨ */
 }
 
 .movie-rank {
-  width: 40px;
-  height: 40px;
-  background: #555;
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  margin-right: 15px;
-  font-size: 1.2rem;
-  border: 2px solid #777;
+    font-size: 24px; /* GIỐNG CODE CŨ */
+    font-weight: 700;
+    color: #f0c419;
+    min-width: 40px;
+    text-align: center;
 }
 
-.movie-item:nth-child(1) .movie-rank {
-  background: #d4af37;
-  border-color: #ffd700;
-}
-
-.movie-item:nth-child(2) .movie-rank {
-  background: #c0c0c0;
-  border-color: #d4d4d4;
-}
-
-.movie-item:nth-child(3) .movie-rank {
-  background: #cd7f32;
-  border-color: #daa520;
+.movie-info {
+    flex: 1;
+    padding-left: 15px;
 }
 
 .movie-info h4 {
-  margin: 0 0 5px 0;
-  color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #f0f0f0; /* GIỐNG CODE CŨ */
 }
 
 .movie-stats {
-  display: flex;
-  gap: 15px;
-  font-size: 0.9rem;
-  color: #bbb;
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+    color: #aaa; /* GIỐNG CODE CŨ */
 }
 
 .movie-stats span {
-  display: flex;
-  align-items: center;
-  gap: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-/* Filter Section */
+/* --- Thanh Lọc Của Dashboard --- GIỐNG CODE CŨ */
+.tieu_de {
+    padding: 25px 30px 0; /* GIỐNG CODE CŨ */
+}
+
+.tieu_de h3 {
+    font-size: 24px;
+    color: white;
+    font-weight: 600;
+}
+
 .top-filter-section {
-  background: #2c2c2c;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  margin-bottom: 30px;
-  border: 1px solid #444;
+    padding: 0 30px 20px;
 }
 
 .filter-bar {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  align-items: flex-end;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .filter-group {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.filter-group label {
-  font-weight: 500;
-  color: #fff;
-  font-size: 0.9rem;
+.filter-bar label {
+    font-weight: 500;
+    font-size: 14px;
+    white-space: nowrap;
+    color: white; /* THÊM MÀU CHỮ TRẮNG */
 }
 
-.filter-group select,
-.filter-group input[type="date"],
-.filter-group input[type="month"],
-.filter-group input[type="text"] {
-  padding: 8px 12px;
-  background: #3a3a3a;
-  border: 1px solid #555;
-  border-radius: 5px;
-  font-size: 0.9rem;
-  min-width: 150px;
-  color: #fff;
+.filter-bar input[type="date"],
+.filter-bar input[type="month"],
+.filter-bar select {
+    background-color: #333; /* GIỐNG CODE CŨ */
+    color: white; /* GIỐNG CODE CŨ */
+    border: 1px solid #555;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 140px;
 }
 
-.filter-group select:focus,
-.filter-group input[type="date"]:focus,
-.filter-group input[type="month"]:focus,
-.filter-group input[type="text"]:focus {
-  outline: none;
-  border-color: #777;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+.filter-bar select {
+    cursor: pointer;
+}
+
+.filter-bar select option {
+    background-color: #333; /* GIỐNG CODE CŨ */
+    color: white; /* GIỐNG CODE CŨ */
 }
 
 .filter-btn {
-  background: #000;
-  color: white;
-  border: 1px solid #555;
-  padding: 8px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s;
+    background-color: #f0c419; /* GIỐNG CODE CŨ */
+    color: #111; /* GIỐNG CODE CŨ */
+    border: none;
+    padding: 9px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    transition: all 0.3s;
 }
 
 .filter-btn:hover {
-  background: #333;
-  border-color: #777;
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 
-/* Fill Rate Bar */
-.fill-rate-bar {
-  width: 100px;
-  height: 20px;
-  background: #3a3a3a;
-  border-radius: 10px;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid #555;
+/* Các trường filter custom */
+#custom-date-fields,
+#custom-month-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    background-color: #2c2c2c;
+    border-radius: 4px;
+    border: 1px solid #444;
 }
 
-.fill-rate-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #444, #222);
-  border-radius: 10px;
-  transition: width 0.5s ease;
-}
-
-.fill-rate-bar span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-/* Table Header with Filter */
-.table-header-with-filter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-
-.table-header-with-filter h3 {
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #fff;
-}
-
-/* Data Section */
+/* --- Data Section & Table --- GIỐNG CODE CŨ */
 .data-section {
-  background: #2c2c2c;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-  margin-bottom: 30px;
-  border: 1px solid #444;
+    padding: 0 30px 30px;
 }
 
 .table-container {
-  overflow-x: auto;
+    background-color: #1a1a1a; /* GIỐNG CODE CŨ */
+    border-radius: 8px;
+    padding: 20px;
+    overflow-x: auto;
 }
 
-.table-container table {
-  width: 100%;
-  border-collapse: collapse;
+.table-container h3 {
+    font-size: 18px; /* GIỐNG CODE CŨ */
+    margin-bottom: 15px;
+    color: white; /* GIỐNG CODE CŨ */
 }
 
-.table-container thead {
-  background: #3a3a3a;
+.table-header-with-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.table-container th {
-  padding: 15px;
-  text-align: left;
-  color: #fff;
-  font-weight: 600;
-  border-bottom: 2px solid #555;
+.table-header-with-filter form {
+    flex: 1;
+    margin-left: 20px;
 }
 
-.table-container td {
-  padding: 15px;
-  border-bottom: 1px solid #444;
-  color: #ddd;
+/* TABLE GIỐNG CODE CŨ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px; /* GIỐNG CODE CŨ */
 }
 
-.table-container tbody tr:hover {
-  background-color: #3a3a3a;
+table thead tr {
+    background-color: #f0c419; /* GIỐNG CODE CŨ - HEADER VÀNG */
 }
 
-/* No Data Styles */
+table th {
+    color: #111; /* GIỐNG CODE CŨ */
+    text-align: left;
+    padding: 12px 15px;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+table tbody tr {
+    background-color: #2c2c2c; /* GIỐNG CODE CŨ */
+    border-bottom: 1px solid #333;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #222; /* GIỐNG CODE CŨ */
+}
+
+table td {
+    padding: 12px 15px;
+    color: #f0f0f0; /* GIỐNG CODE CŨ */
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+/* Fill Rate Bar (GIỮ TỪ CODE MỚI) */
+.fill-rate-bar {
+    width: 100px;
+    height: 20px;
+    background: #3a3a3a;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #555;
+}
+
+.fill-rate-fill {
+    height: 100%;
+    background: #f0c419; /* DÙNG MÀU VÀNG GIỐNG CODE CŨ */
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.fill-rate-bar span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #111; /* MÀU CHỮ ĐEN GIỐNG CODE CŨ */
+}
+
+/* --- No Data Styles --- */
 .no-data {
-  text-align: center;
-  color: #999;
-  padding: 20px;
-  font-style: italic;
-  background: #3a3a3a;
-  border-radius: 5px;
-  margin: 10px 0;
-  border: 1px solid #555;
+    text-align: center;
+    color: #999;
+    padding: 20px;
+    font-style: italic;
+    background-color: #2c2c2c;
+    border-radius: 4px;
+    margin: 10px 0;
 }
 
-/* Custom Date Fields Styling */
-#custom-date-fields,
-#custom-month-field {
-  background: #3a3a3a;
-  padding: 15px;
-  border-radius: 5px;
-  border: 1px solid #555;
+/* --- Chart Error Styling --- */
+.chart-error {
+    background-color: #ff6b6b;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
 }
 
-#custom-date-fields .filter-group,
-#custom-month-field .filter-group {
-  margin-bottom: 10px;
-}
-
-/* Scrollbar Styling */
-.table-container::-webkit-scrollbar {
-  height: 8px;
-}
-
-.table-container::-webkit-scrollbar-track {
-  background: #3a3a3a;
-  border-radius: 4px;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 4px;
-}
-
-.table-container::-webkit-scrollbar-thumb:hover {
-  background: #666;
-}
-
-/* Responsive */
+/* --- Responsive Design --- */
 @media (max-width: 1200px) {
-  .charts-section {
-    grid-template-columns: 1fr;
-  }
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
-  .stats-cards {
-    grid-template-columns: 1fr;
-  }
-
-  .filter-bar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .filter-group {
-    width: 100%;
-  }
-
-  .filter-group select,
-  .filter-group input {
-    width: 100%;
-  }
-
-  .table-header-with-filter {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .movie-stats {
-    flex-direction: column;
-    gap: 5px;
-  }
-}
-
-/* Additional Dark Theme Enhancements */
-.filter-group select option {
-  background: #3a3a3a;
-  color: #fff;
-}
-
-/* Chart.js Dark Theme Override */
-.chart-container canvas {
-  filter: brightness(0.9) contrast(1.1);
-}
-
-/* Border Radius for Inputs */
-.filter-group select,
-.filter-group input,
-.filter-btn {
-  border-radius: 4px;
-}
-
-/* Focus States */
-.filter-group select:focus,
-.filter-group input:focus,
-.filter-btn:focus {
-  outline: 2px solid #555;
-  outline-offset: 2px;
-}
-
-/* Disabled State */
-.filter-group select:disabled,
-.filter-group input:disabled {
-  background: #333;
-  color: #777;
-  cursor: not-allowed;
+    .stats-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .filter-group {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .filter-group label {
+        min-width: 70px;
+    }
+    
+    .movie-item {
+        flex-wrap: wrap;
+    }
+    
+    .movie-rank {
+        min-width: 30px;
+        font-size: 20px;
+    }
+    
+    .table-header-with-filter {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .table-header-with-filter form {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+    }
+    
+    #custom-date-fields,
+    #custom-month-field {
+        flex-wrap: wrap;
+    }
 }

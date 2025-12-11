@@ -23,10 +23,7 @@ $current_controller = $_GET['controller'] ?? '';
                         <a href="index.php?controller=Dashboard&action=index">Dashboard</a>
                     </li>
                     <li class="<?php echo ($current_controller == 'adminCustomer') ? 'active' : ''; ?>">
-                        <a href="index.php?controller=adminCustomer&action=index">Tài khoản người dùng</a>
-                    </li>
-                    <li class="<?php echo ($current_controller == 'adminStaff') ? 'active' : ''; ?>">
-                        <a href="index.php?controller=adminStaff&action=index">Tài khoản nhân sự</a>
+                        <a href="index.php?controller=adminKhachHang&action=index">Quản lý người dùng</a>
                     </li>
                     <li class="<?php echo ($current_controller == 'adminPhim') ? 'active' : ''; ?>">
                         <a href="index.php?controller=adminPhim&action=index">Quản lý phim</a>

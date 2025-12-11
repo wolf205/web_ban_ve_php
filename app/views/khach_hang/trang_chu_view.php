@@ -1,9 +1,4 @@
 <?php
-// Giả định Controller (trang_chu_controller.php) đã cung cấp các biến:
-// 1. $banners (cho slider)
-// 2. $phimDangChieu (cho partial view)
-// 3. $phimSapChieu (cho partial view)
-// 4. $suatChieuDacBiet (cho partial view)
 require_once __DIR__ . '/../chung/header.php';
 ?>
 <!DOCTYPE html>
@@ -19,7 +14,6 @@ require_once __DIR__ . '/../chung/header.php';
   <link rel="stylesheet" href="publics/css/button.css" />
   <link rel="stylesheet" href="publics/css/card.css" />
   <link rel="stylesheet" href="publics/css/Phim.css" />
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="publics/css/styles.css" />
   <link rel="stylesheet" href="publics/css/trang_chu1.css" />

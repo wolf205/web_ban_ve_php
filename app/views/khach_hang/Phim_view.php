@@ -1,8 +1,4 @@
 <?php
-// Giả định Controller đã cung cấp các biến:
-// $phimDangChieu = [ [...], [...], ... ];
-// $phimSapChieu = [ [...], [...], ... ];
-// $suatChieuDacBiet = [ [...], [...], ... ]; (Giả định là phim hot)
 require_once __DIR__ . '/../chung/header.php';
 ?>
 

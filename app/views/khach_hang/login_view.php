@@ -65,9 +65,7 @@ require_once __DIR__ . '/../chung/header.php';
                     </div>
                 </div>
 
-                <div class="form-options">
-                    <a href="#" class="forgot-password">Quên mật khẩu?</a>
-                </div>
+                
 
                 <button type="submit" class="btn btn-primary btn-login">
                     Đăng nhập tài khoản

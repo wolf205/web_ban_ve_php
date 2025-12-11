@@ -1,0 +1,52 @@
+/* publics/css/admin-ghe.css */
+
+/* THÔNG TIN PHÒNG */
+.info-section {
+  background: #f0c419;
+  color: black;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+/* NÚT QUAY LẠI */
+.back-btn {
+  margin-left: 10px;
+}
+
+/* BẢNG DỮ LIỆU GHẾ */
+.no-data {
+  text-align: center;
+  padding: 30px;
+}
+
+.add-link {
+  color: #4a90e2;
+  text-decoration: underline;
+}
+
+/* SỐ LƯỢNG KẾT QUẢ */
+.result-count {
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #666;
+}
+
+/* PHÂN TRANG */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #666;
+}

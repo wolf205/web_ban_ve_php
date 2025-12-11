@@ -149,7 +149,146 @@ class KhachHangModel {
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+// ==============================
+    // HÀM MỚI CHO QUẢN LÝ KHÁCH HÀNG
+    // ==============================
 
+    /**
+     * Lấy tất cả khách hàng
+     */
+    public function getAllKhachHang() {
+        $sql = "SELECT ma_kh, ho_ten, email, SDT, tai_khoan, vai_tro, avatar 
+                FROM khach_hang 
+                ORDER BY ma_kh DESC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Lọc khách hàng
+     */
+    public function filterKhachHang($vai_tro = null, $search = null) {
+        $sql = "SELECT ma_kh, ho_ten, email, SDT, tai_khoan, vai_tro, avatar 
+                FROM khach_hang 
+                WHERE 1=1";
+        
+        $params = [];
+        
+        if ($vai_tro && $vai_tro != 'all') {
+            $sql .= " AND vai_tro = :vai_tro";
+            $params[':vai_tro'] = $vai_tro;
+        }
+        
+        if ($search) {
+            $sql .= " AND (ho_ten LIKE :search OR email LIKE :search OR tai_khoan LIKE :search OR SDT LIKE :search)";
+            $params[':search'] = "%$search%";
+        }
+        
+        $sql .= " ORDER BY ma_kh DESC";
+        
+        $stmt = $this->conn->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Lấy danh sách vai trò duy nhất
+     */
+    public function getDistinctRoles() {
+        $sql = "SELECT DISTINCT vai_tro FROM khach_hang WHERE vai_tro IS NOT NULL ORDER BY vai_tro";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    }
+
+    public function addQuanLy($ho_ten, $email, $SDT, $tai_khoan, $mat_khau, $avatar = null) {
+        // Kiểm tra trùng email hoặc tài khoản trước khi thêm
+        if ($this->checkEmailExists($email) || $this->checkTaiKhoanExists($tai_khoan)) {
+            return false; // Không thêm nếu trùng
+        }
+        
+        $sql = "INSERT INTO khach_hang (ho_ten, email, SDT, tai_khoan, mat_khau, vai_tro, avatar)
+                VALUES (:ho_ten, :email, :SDT, :tai_khoan, :mat_khau, :vai_tro, :avatar)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':ho_ten', $ho_ten);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':SDT', $SDT);
+        $stmt->bindParam(':tai_khoan', $tai_khoan);
+        $stmt->bindParam(':mat_khau', $mat_khau);
+        $stmt->bindValue(':vai_tro', 'quản lý'); // Vai trò mặc định
+        $stmt->bindParam(':avatar', $avatar);
+        
+        return $stmt->execute();
+    }
+
+    /**
+     * Cập nhật khách hàng (dành cho admin)
+     */
+    public function updateKhachHangAdmin($ma_kh, $ho_ten, $email, $SDT, $tai_khoan, $mat_khau = null, $vai_tro = null) {
+        // Kiểm tra email trùng (ngoại trừ chính khách hàng này)
+        $checkEmail = $this->conn->prepare("SELECT ma_kh FROM khach_hang WHERE email = :email AND ma_kh != :ma_kh");
+        $checkEmail->execute([':email' => $email, ':ma_kh' => $ma_kh]);
+        if ($checkEmail->fetch()) {
+            return false; // Email đã tồn tại
+        }
+        
+        // Kiểm tra tài khoản trùng
+        $checkTaiKhoan = $this->conn->prepare("SELECT ma_kh FROM khach_hang WHERE tai_khoan = :tai_khoan AND ma_kh != :ma_kh");
+        $checkTaiKhoan->execute([':tai_khoan' => $tai_khoan, ':ma_kh' => $ma_kh]);
+        if ($checkTaiKhoan->fetch()) {
+            return false; // Tài khoản đã tồn tại
+        }
+        
+        // Cập nhật thông tin
+        if ($mat_khau) {
+            $sql = "UPDATE khach_hang 
+                    SET ho_ten = :ho_ten, email = :email, SDT = :SDT, 
+                        tai_khoan = :tai_khoan, mat_khau = :mat_khau, vai_tro = :vai_tro
+                    WHERE ma_kh = :ma_kh";
+        } else {
+            $sql = "UPDATE khach_hang 
+                    SET ho_ten = :ho_ten, email = :email, SDT = :SDT, 
+                        tai_khoan = :tai_khoan, vai_tro = :vai_tro
+                    WHERE ma_kh = :ma_kh";
+        }
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':ho_ten', $ho_ten);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':SDT', $SDT);
+        $stmt->bindParam(':tai_khoan', $tai_khoan);
+        $stmt->bindParam(':vai_tro', $vai_tro);
+        $stmt->bindParam(':ma_kh', $ma_kh);
+        
+        if ($mat_khau) {
+            $stmt->bindParam(':mat_khau', $mat_khau);
+        }
+        
+        return $stmt->execute();
+    }
+
+    /**
+     * Xóa khách hàng
+     */
+    public function deleteKhachHang($ma_kh) {
+        // Kiểm tra xem khách hàng có hóa đơn không
+        $check = $this->conn->prepare("SELECT COUNT(*) as count FROM hoa_don WHERE ma_kh = :ma_kh");
+        $check->execute([':ma_kh' => $ma_kh]);
+        $result = $check->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result['count'] > 0) {
+            return false; // Không thể xóa vì có hóa đơn liên quan
+        }
+        
+        $sql = "DELETE FROM khach_hang WHERE ma_kh = :ma_kh";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':ma_kh', $ma_kh);
+        return $stmt->execute();
+    }
 }
 
 ?>

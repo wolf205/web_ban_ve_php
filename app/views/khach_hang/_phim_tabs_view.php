@@ -1,9 +1,3 @@
-<?php
-// File này giả định Controller đã cung cấp 3 biến:
-// $phimDangChieu = [ [...], [...], ... ];
-// $phimSapChieu = [ [...], [...], ... ];
-// $suatChieuDacBiet = [ [...], [...], ... ]; (Giả định là phim hot)
-?>
 <section class="section container">
     <nav class="movie-tabs">
       <a href="#dang-chieu" class="active" data-tab="dang-chieu">Phim Đang Chiếu</a>
