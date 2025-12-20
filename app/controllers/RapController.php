@@ -25,8 +25,7 @@ class RapController {
         $ma_rap = $_GET['ma_rap'] ?? $_POST['ma_rap'] ?? '1';
         $selected_rap_id = $ma_rap;
 
-        // KIỂM TRA ĐĂNG NHẬP - SỬA Ở ĐÂY
-        // Bạn đang lưu thông tin trong $_SESSION['khach_hang'], không phải $_SESSION['ma_kh']
+        
         $isLoggedIn = isset($_SESSION['khach_hang']) && isset($_SESSION['khach_hang']['ma_kh']);
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['noi_dung'])) {

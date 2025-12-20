@@ -97,9 +97,6 @@ class RapModel {
     // 5. (MỚI) XÓA RẠP
     // ==============================
     public function deleteRap($ma_rap) {
-        // Lưu ý: Cần xử lý ràng buộc khóa ngoại
-        // (ví dụ: không thể xóa rạp nếu vẫn còn phòng/suất chiếu liên quan)
-        // Tạm thời, giả sử CSDL cho phép xóa (hoặc đã xử lý ON DELETE CASCADE)
         try {
             $sql = "DELETE FROM rap WHERE ma_rap = :ma_rap";
             $stmt = $this->conn->prepare($sql);

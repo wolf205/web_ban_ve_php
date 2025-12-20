@@ -44,7 +44,8 @@ class KhachHangController {
                     'email' => $khach_hang['email'],
                     'SDT' => $khach_hang['SDT'],
                     'tai_khoan' => $khach_hang['tai_khoan'],
-                    'vai_tro' => $khach_hang['vai_tro']
+                    'vai_tro' => $khach_hang['vai_tro'],
+                    'avatar' => $khach_hang['avatar'] ?? null
                 ];
 
                 // Chuyển hướng theo vai trò sau khi đăng nhập thành công

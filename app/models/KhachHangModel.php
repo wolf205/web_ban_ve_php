@@ -52,7 +52,7 @@ class KhachHangModel {
     // 4. HÀM LOGIN
     // ==============================
     public function login($tai_khoan, $mat_khau) {
-        $sql = "SELECT ma_kh, ho_ten, email, SDT, vai_tro, tai_khoan 
+        $sql = "SELECT ma_kh, ho_ten, email, SDT, vai_tro, tai_khoan, avatar 
                 FROM khach_hang 
                 WHERE tai_khoan = :tai_khoan AND mat_khau = :mat_khau";
         $stmt = $this->conn->prepare($sql);
@@ -228,7 +228,7 @@ class KhachHangModel {
     /**
      * Cập nhật khách hàng (dành cho admin)
      */
-    public function updateKhachHangAdmin($ma_kh, $ho_ten, $email, $SDT, $tai_khoan, $mat_khau = null, $vai_tro = null) {
+    public function updateKhachHangAdmin($ma_kh, $ho_ten, $email, $SDT, $tai_khoan, $mat_khau = null, $vai_tro = null, $avatar = null) {
         // Kiểm tra email trùng (ngoại trừ chính khách hàng này)
         $checkEmail = $this->conn->prepare("SELECT ma_kh FROM khach_hang WHERE email = :email AND ma_kh != :ma_kh");
         $checkEmail->execute([':email' => $email, ':ma_kh' => $ma_kh]);
@@ -243,18 +243,25 @@ class KhachHangModel {
             return false; // Tài khoản đã tồn tại
         }
         
-        // Cập nhật thông tin
+        // Xây dựng câu lệnh SQL động
+        $sql = "UPDATE khach_hang SET 
+                ho_ten = :ho_ten, 
+                email = :email, 
+                SDT = :SDT, 
+                tai_khoan = :tai_khoan, 
+                vai_tro = :vai_tro";
+        
+        // Thêm mật khẩu nếu có
         if ($mat_khau) {
-            $sql = "UPDATE khach_hang 
-                    SET ho_ten = :ho_ten, email = :email, SDT = :SDT, 
-                        tai_khoan = :tai_khoan, mat_khau = :mat_khau, vai_tro = :vai_tro
-                    WHERE ma_kh = :ma_kh";
-        } else {
-            $sql = "UPDATE khach_hang 
-                    SET ho_ten = :ho_ten, email = :email, SDT = :SDT, 
-                        tai_khoan = :tai_khoan, vai_tro = :vai_tro
-                    WHERE ma_kh = :ma_kh";
+            $sql .= ", mat_khau = :mat_khau";
         }
+        
+        // Thêm avatar nếu có
+        if ($avatar) {
+            $sql .= ", avatar = :avatar";
+        }
+        
+        $sql .= " WHERE ma_kh = :ma_kh";
         
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':ho_ten', $ho_ten);
@@ -266,6 +273,10 @@ class KhachHangModel {
         
         if ($mat_khau) {
             $stmt->bindParam(':mat_khau', $mat_khau);
+        }
+        
+        if ($avatar) {
+            $stmt->bindParam(':avatar', $avatar);
         }
         
         return $stmt->execute();

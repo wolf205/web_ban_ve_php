@@ -164,6 +164,8 @@ class AdminKhachHangController {
                 if (!$ma_kh) throw new Exception("Thiếu ID khách hàng.");
 
                 $mat_khau = !empty($_POST['mat_khau']) ? $_POST['mat_khau'] : null;
+
+                $avatar_path = $this->handleFileUpload('avatar');
                 
                 $result = $this->khachHangModel->updateKhachHangAdmin(
                     $ma_kh,
@@ -172,7 +174,9 @@ class AdminKhachHangController {
                     $_POST['SDT'],
                     $_POST['tai_khoan'],
                     $mat_khau,
-                    $_POST['vai_tro']
+                    $_POST['vai_tro'],
+                    $avatar_path
+                    
                 );
                 
                 if ($result) {

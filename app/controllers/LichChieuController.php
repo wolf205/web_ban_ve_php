@@ -55,12 +55,17 @@ class LichChieuController {
         }
 
         $fixedDateList = [];
-        foreach ($dateListRaw as $date_item) {
-            $date_item['link'] = 'index.php?controller=lichchieu&action=index'
-                               . '&ngay=' . $date_item['sql']
-                               . '&ma_rap=' . urlencode($selected_rap_id);
-            $fixedDateList[] = $date_item;
-        }
+            foreach ($dateListRaw as $date_item) {
+                $date_item['link'] = 'index.php?controller=lichchieu&action=index'
+                         . '&ngay=' . $date_item['sql']
+                         . '&ma_rap=' . urlencode($selected_rap_id);
+
+                $date_item['active'] = ($date_item['sql'] == $selected_date);
+                $date_item['text']   = $date_item['display'] . " - " . $date_item['weekday'];
+
+                $fixedDateList[] = $date_item;
+            }
+
 
         // Lấy lịch chiếu cho ngày được chọn
         $allShowtimes = $this->lichChieuModel->getLichChieu($selected_date, $selected_rap_id);

@@ -1,6 +1,3 @@
-<?php
-// app/views/admin/khachhang_view.php
-?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -9,37 +6,12 @@
     <title>Quản lý Người Dùng</title>
     <link rel="stylesheet" href="publics/css/admin-layout1.css" />
     <link rel="stylesheet" href="publics/css/admin-rap1.css" />
-    <style>
-        /* Thêm một số style riêng cho trang khách hàng */
-        .avatar-small {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .no-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 12px;
-        }
-        .action-disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-            text-decoration: line-through;
-        }
-    </style>
+    <link rel="stylesheet" href="publics/css/admin-khachhang.css" />
 </head>
 <body>
     <?php include __DIR__ . '/../chung/header_sidebar.php'; ?>
 
-    <div class="container">
+        <!-- Main Content -->
         <main class="main-content">
             <!-- PAGE HEADER -->
             <div class="page-header">
@@ -102,9 +74,7 @@
                         }
                         echo implode(', ', $filters);
                         ?>
-                        <a href="index.php?controller=adminKhachHang&action=index" style="margin-left: 10px; color: #e74c3c;">
-                            [Xóa tất cả]
-                        </a>
+                        <a href="index.php?controller=adminKhachHang&action=index">[Xóa tất cả]</a>
                     </small>
                 </div>
             <?php endif; ?>
@@ -146,6 +116,7 @@
                     <div class="form-group">
                         <label>Avatar</label>
                         <input type="file" name="avatar" accept="image/*">
+                        <small class="file-help">Hỗ trợ: JPG, PNG, GIF. Tối đa 2MB</small>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-save">Lưu</button>
@@ -159,7 +130,7 @@
             <?php if (isset($edit_id) && isset($khachhang_to_edit)): ?>
             <div class="form-container">
                 <h4>CHỈNH SỬA TÀI KHOẢN <?php echo $khachhang_to_edit['vai_tro'] == 'quản lý' ? 'QUẢN LÝ' : htmlspecialchars(strtoupper($khachhang_to_edit['vai_tro'])); ?></h4>
-                <form action="index.php?controller=adminKhachHang&action=update" method="POST" class="form-grid">
+                <form action="index.php?controller=adminKhachHang&action=update" method="POST" enctype="multipart/form-data" class="form-grid">
                     <input type="hidden" name="ma_kh" value="<?php echo $khachhang_to_edit['ma_kh']; ?>">
                     <div class="form-group">
                         <label>Họ tên *</label>
@@ -195,6 +166,11 @@
                             <small class="file-help">Chỉ có thể sửa thông tin tài khoản "Quản lý"</small>
                         <?php endif; ?>
                     </div>
+                    <div class="form-group">
+                        <label>Avatar mới</label>
+                        <input type="file" name="avatar" accept="image/*">
+                        <small class="file-help">Để trống nếu không muốn thay đổi avatar</small>
+                    </div>
                     <?php if (!empty($khachhang_to_edit['avatar'])): ?>
                         <div class="form-group">
                             <label>Avatar hiện tại</label>
@@ -207,7 +183,7 @@
                         <?php if ($khachhang_to_edit['vai_tro'] == 'quản lý'): ?>
                             <button type="submit" class="btn-save">Lưu</button>
                         <?php else: ?>
-                            <button type="button" class="btn-save" disabled>Chỉ sửa tài khoản "Quản lý"</button>
+                            <button type="button" class="btn-save" disabled style="background-color: #666; cursor: not-allowed;">Chỉ sửa tài khoản "Quản lý"</button>
                         <?php endif; ?>
                         <a href="index.php?controller=adminKhachHang&action=index" class="btn-cancel">Hủy</a>
                     </div>
@@ -225,6 +201,7 @@
             <!-- BẢNG DỮ LIỆU -->
             <section class="data-section">
                 <div class="table-container">
+                    <h3>DANH SÁCH NGƯỜI DÙNG</h3>
                     <table>
                         <thead>
                             <tr>
@@ -241,15 +218,15 @@
                         <tbody>
                             <?php if (empty($danhSachKhachHang)): ?>
                                 <tr>
-                                    <td colspan="8" style="text-align: center; padding: 30px;">
+                                    <td colspan="8" style="text-align: center; padding: 30px; color: #aaa;">
                                         <?php if (!empty($filter_params['vai_tro']) || !empty($filter_params['search'])): ?>
-                                            Không tìm thấy người dùng nào phù hợp với bộ lọc.
+                                            <div class="no-image">Không tìm thấy người dùng nào phù hợp với bộ lọc.</div>
                                             <br>
-                                            <a href="index.php?controller=adminKhachHang&action=index" style="color: #4a90e2; text-decoration: underline;">
-                                                Xem tất cả người dùng
+                                            <a href="index.php?controller=adminKhachHang&action=index" style="color: #f0c419; text-decoration: none;">
+                                                ← Xem tất cả người dùng
                                             </a>
                                         <?php else: ?>
-                                            Chưa có người dùng nào.
+                                            <div class="no-image">Chưa có người dùng nào.</div>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -269,7 +246,17 @@
                                         <td><?php echo htmlspecialchars($kh['SDT']); ?></td>
                                         <td><?php echo htmlspecialchars($kh['tai_khoan']); ?></td>
                                         <td>
-                                            <span class="badge <?php echo $kh['vai_tro'] == 'admin' ? 'badge-danger' : ($kh['vai_tro'] == 'quản lý' ? 'badge-warning' : 'badge-info'); ?>">
+                                            <?php
+                                            $badge_class = 'badge-info';
+                                            if ($kh['vai_tro'] == 'admin') {
+                                                $badge_class = 'badge-danger';
+                                            } elseif ($kh['vai_tro'] == 'quản lý') {
+                                                $badge_class = 'badge-warning';
+                                            } elseif ($kh['vai_tro'] == 'nhân viên') {
+                                                $badge_class = 'badge-success';
+                                            }
+                                            ?>
+                                            <span class="badge <?php echo $badge_class; ?>">
                                                 <?php echo htmlspecialchars($kh['vai_tro']); ?>
                                             </span>
                                         </td>
@@ -311,35 +298,35 @@
                 
                 switch(status) {
                     case 'add_success':
-                        message = 'Thêm tài khoản quản lý thành công!';
+                        message = '✅ Thêm tài khoản quản lý thành công!';
                         type = 'success';
                         break;
                     case 'add_error':
-                        message = 'Có lỗi xảy ra khi thêm tài khoản! Email hoặc tài khoản đã tồn tại.';
+                        message = '❌ Có lỗi xảy ra khi thêm tài khoản! Email hoặc tài khoản đã tồn tại.';
                         type = 'error';
                         break;
                     case 'update_success':
-                        message = 'Cập nhật tài khoản thành công!';
+                        message = '✅ Cập nhật tài khoản thành công!';
                         type = 'success';
                         break;
                     case 'update_error':
-                        message = 'Có lỗi xảy ra khi cập nhật tài khoản! Email hoặc tài khoản đã tồn tại.';
+                        message = '❌ Có lỗi xảy ra khi cập nhật tài khoản! Email hoặc tài khoản đã tồn tại.';
                         type = 'error';
                         break;
                     case 'delete_success':
-                        message = 'Xóa tài khoản quản lý thành công!';
+                        message = '✅ Xóa tài khoản quản lý thành công!';
                         type = 'success';
                         break;
                     case 'delete_error_fk':
-                        message = 'Không thể xóa tài khoản vì có hóa đơn liên quan!';
+                        message = '❌ Không thể xóa tài khoản vì có hóa đơn liên quan!';
                         type = 'error';
                         break;
                     case 'delete_not_allowed':
-                        message = 'Chỉ có thể xóa tài khoản có vai trò "Quản lý"!';
+                        message = '❌ Chỉ có thể xóa tài khoản có vai trò "Quản lý"!';
                         type = 'error';
                         break;
                     case 'not_found':
-                        message = 'Không tìm thấy tài khoản!';
+                        message = '❌ Không tìm thấy tài khoản!';
                         type = 'error';
                         break;
                 }
