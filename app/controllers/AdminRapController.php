@@ -55,35 +55,45 @@ class AdminRapController {
  * Hiển thị danh sách rạp với bộ lọc
  */
 public function index() {
-    // Nhận tham số lọc từ URL hoặc POST
-    $thanh_pho = $_GET['thanh_pho'] ?? $_POST['thanh_pho'] ?? null;
-    $search = $_GET['search'] ?? $_POST['search'] ?? null;
-    
-    // Lấy danh sách rạp đã lọc
-    if ($thanh_pho || $search) {
-        $danhSachRap = $this->rapModel->filterRap($thanh_pho, $search);
-    } else {
-        $danhSachRap = $this->rapModel->getAllRap();
+        // Nhận tham số lọc từ URL hoặc POST
+        $thanh_pho = $_GET['thanh_pho'] ?? $_POST['thanh_pho'] ?? null;
+        $search = $_GET['search'] ?? $_POST['search'] ?? null;
+        
+        // Tham số phân trang
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 2; // Số rạp mỗi trang
+        $offset = ($page - 1) * $limit;
+        
+        // Lấy danh sách rạp đã lọc và phân trang
+        if ($thanh_pho || $search) {
+            // Sửa theo thứ tự tham số mới: limit, offset, thanh_pho, search
+            $danhSachRap = $this->rapModel->filterRapPhanTrang($limit, $offset, $thanh_pho, $search);
+            $totalRecords = $this->rapModel->countFilterRap($thanh_pho, $search);
+        } else {
+            $danhSachRap = $this->rapModel->getAllRapPhanTrang($limit, $offset);
+            $totalRecords = $this->rapModel->countAllRap();
+        }
+        
+        // Tính toán thông tin phân trang
+        $totalPages = ceil($totalRecords / $limit);
+        
+        // Lấy danh sách thành phố để hiển thị trong dropdown
+        $cities = $this->rapModel->getDistinctCities();
+        
+        // Lấy số lượng phòng cho mỗi rạp
+        foreach ($danhSachRap as $key => $rap) {
+            $danhSachRap[$key]['so_phong'] = $this->phongModel->countPhongByRapId($rap['ma_rap']);
+        }
+        
+        // Lưu các tham số lọc để hiển thị lại trong form
+        $filter_params = [
+            'thanh_pho' => $thanh_pho,
+            'search' => $search
+        ];
+        
+        // Tải view và truyền biến phân trang
+        require_once __DIR__ . '/../views/admin/rap_view.php';
     }
-    
-    // Lấy danh sách thành phố để hiển thị trong dropdown
-    $cities = $this->rapModel->getDistinctCities();
-    
-    // Lấy số lượng phòng cho mỗi rạp
-    foreach ($danhSachRap as $key => $rap) {
-        $danhSachRap[$key]['so_phong'] = $this->phongModel->countPhongByRapId($rap['ma_rap']);
-    }
-    
-    // Lưu các tham số lọc để hiển thị lại trong form
-    $filter_params = [
-        'thanh_pho' => $thanh_pho,
-        'search' => $search
-    ];
-    
-    // Tải view
-    require_once __DIR__ . '/../views/admin/rap_view.php';
-}
-
     /**
      * Hiển thị form THÊM MỚI (inline)
      */

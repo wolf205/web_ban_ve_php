@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quản lý Phòng chiếu</title>
     <link rel="stylesheet" href="publics/css/admin-layout1.css" />
-    <link rel="stylesheet" href="publics/css/admin-room.css" />
+    <link rel="stylesheet" href="publics/css/admin-room1.css" />
 </head>
 <body>
     <?php include __DIR__ . '/../chung/header_sidebar.php'; ?>
@@ -17,7 +17,7 @@
             <!-- PAGE HEADER -->
             <div class="page-header">
                 <h3>DANH SÁCH PHÒNG CHIẾU</h3>
-                <a href="index.php?controller=adminPhong&action=create" class="add-btn">+ Thêm Phòng</a>
+                <a href="index.php?controller=adminPhong&action=create&page=<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>" class="add-btn">+ Thêm Phòng</a>
             </div>
 
             <!-- BỘ LỌC & TÌM KIẾM -->
@@ -111,6 +111,7 @@
                 <form action="" method="POST" class="form-grid">
                     <input type="hidden" name="controller" value="adminPhong">
                     <input type="hidden" name="action" value="store">
+                    <input type="hidden" name="page" value="<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>">
 
                     <div class="form-group">
                         <label>Tên Phòng *</label>
@@ -135,7 +136,7 @@
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-save">Lưu</button>
-                        <a href="index.php?controller=adminPhong&action=index" class="btn-cancel">Hủy</a>
+                        <a href="index.php?controller=adminPhong&action=index&page=<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>" class="btn-cancel">Hủy</a>
                     </div>
                 </form>
             </div>
@@ -147,6 +148,7 @@
                 <h4>CHỈNH SỬA PHÒNG</h4>
                 <form action="index.php?controller=adminPhong&action=update" method="POST" class="form-grid">
                     <input type="hidden" name="ma_phong" value="<?php echo $phong_to_edit['ma_phong']; ?>">
+                    <input type="hidden" name="page" value="<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>">
                     <div class="form-group">
                         <label>Tên Phòng *</label>
                         <input type="text" name="ten_phong" value="<?php echo htmlspecialchars($phong_to_edit['ten_phong']); ?>" required>
@@ -171,7 +173,7 @@
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-save">Lưu</button>
-                        <a href="index.php?controller=adminPhong&action=index" class="btn-cancel">Hủy</a>
+                        <a href="index.php?controller=adminPhong&action=index&page=<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>" class="btn-cancel">Hủy</a>
                     </div>
                 </form>
             </div>
@@ -223,8 +225,8 @@
                                         <td><?php echo $phong['loai_man_hinh']; ?></td>
                                         <td>
                                             <a href="index.php?controller=adminPhong&action=manageSeats&ma_phong=<?php echo $phong['ma_phong']; ?>" class="action-btn edit-btn">Xem ghế</a>
-                                            <a href="index.php?controller=adminPhong&action=edit&id=<?php echo $phong['ma_phong']; ?>" class="action-btn edit-btn">Sửa</a>
-                                            <a href="index.php?controller=adminPhong&action=destroy&id=<?php echo $phong['ma_phong']; ?>" class="action-btn delete-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này?');">Xóa</a>
+                                            <a href="index.php?controller=adminPhong&action=edit&id=<?php echo $phong['ma_phong']; ?>&page=<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>" class="action-btn edit-btn">Sửa</a>
+                                            <a href="index.php?controller=adminPhong&action=destroy&id=<?php echo $phong['ma_phong']; ?>&page=<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>" class="action-btn delete-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa phòng này?');">Xóa</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -232,16 +234,27 @@
                         </tbody>
                     </table>
                 </div>
-            </section>
 
-            <!-- PHÂN TRANG (CÓ THỂ THÊM SAU NẾU CẦN) -->
-            <?php if (count($danhSachPhong) > 0 && !isset($action)): ?>
-                <div class="pagination">
-                    <div class="pagination-info">
-                        Hiển thị tất cả <?php echo count($danhSachPhong); ?> phòng
-                    </div>
-                </div>
+            <!-- PHÂN TRANG -->
+            <?php if (isset($totalPages) && $totalPages > 1 && !isset($action)): ?>
+            <div class="simple-pagination">
+                <?php 
+                $queryParams = $_GET;
+                unset($queryParams['page']);
+                $baseUrl = 'index.php?' . http_build_query($queryParams);
+                ?>
+                
+                <?php for($i = 1; $i <= $totalPages; $i++): ?>
+                    <?php if($i == $page): ?>
+                        <strong><?php echo $i; ?></strong>
+                    <?php else: ?>
+                        <a href="<?php echo $baseUrl . '&page=' . $i; ?>"><?php echo $i; ?></a>
+                    <?php endif; ?>
+                <?php endfor; ?>
+            </div>
             <?php endif; ?>
+                
+            </section>
         </main>
     </div>
 

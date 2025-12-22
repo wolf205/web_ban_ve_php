@@ -154,5 +154,93 @@ public function getDistinctCities() {
     $cities = $stmt->fetchAll(PDO::FETCH_COLUMN);
     return $cities ?: [];
 }
+
+// ==============================
+    // 10. LỌC VÀ TÌM KIẾM RẠP VỚI PHÂN TRANG
+    // ==============================
+    public function filterRapPhanTrang($limit, $offset, $thanh_pho = null, $search = null) {
+        $sql = "SELECT ma_rap, ten_rap, dia_chi, thanh_pho, SDT, anh_rap, mo_ta_rap FROM rap WHERE 1=1";
+        $params = [];
+        
+        if (!empty($thanh_pho) && $thanh_pho != 'all') {
+            $sql .= " AND thanh_pho = :thanh_pho";
+            $params[':thanh_pho'] = $thanh_pho;
+        }
+        
+        if (!empty($search)) {
+            $sql .= " AND (ten_rap LIKE :search OR dia_chi LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+        
+        $sql .= " ORDER BY ma_rap ASC LIMIT :limit OFFSET :offset";
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ==============================
+    // 11. ĐẾM SỐ LƯỢNG RẠP KHI LỌC
+    // ==============================
+    public function countFilterRap($thanh_pho = null, $search = null) {
+        $sql = "SELECT COUNT(*) FROM rap WHERE 1=1";
+        $params = [];
+        
+        if (!empty($thanh_pho) && $thanh_pho != 'all') {
+            $sql .= " AND thanh_pho = :thanh_pho";
+            $params[':thanh_pho'] = $thanh_pho;
+        }
+        
+        if (!empty($search)) {
+            $sql .= " AND (ten_rap LIKE :search OR dia_chi LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+
+    // ==============================
+    // 8. LẤY TẤT CẢ CÁC RẠP VỚI PHÂN TRANG
+    // ==============================
+    public function getAllRapPhanTrang($limit, $offset) {
+        $sql = "SELECT ma_rap, ten_rap, dia_chi, thanh_pho, SDT, anh_rap, mo_ta_rap 
+                FROM rap 
+                ORDER BY ma_rap ASC 
+                LIMIT :limit OFFSET :offset";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ==============================
+    // 9. ĐẾM TẤT CẢ CÁC RẠP
+    // ==============================
+    public function countAllRap() {
+        $sql = "SELECT COUNT(*) FROM rap";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
 }
 ?>

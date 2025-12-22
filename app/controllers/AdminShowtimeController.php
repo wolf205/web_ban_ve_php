@@ -31,11 +31,14 @@ class AdminShowtimeController {
 /**
  * Hiển thị danh sách suất chiếu
  */
-public function index() {
-    $filters = [];
-    
-    // Xử lý bộ lọc nếu có
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+ public function index() {
+        // 1. Cấu hình phân trang
+        $limit = 3; // Số bản ghi mỗi trang
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        // 2. Lấy filters từ GET
+        $filters = [];
         if (!empty($_GET['ngay_chieu'])) {
             $filters['ngay_chieu'] = $_GET['ngay_chieu'];
         }
@@ -45,36 +48,59 @@ public function index() {
         if (!empty($_GET['ten_phim'])) {
             $filters['ten_phim'] = $_GET['ten_phim'];
         }
-    }
 
-    // Lấy danh sách suất chiếu với bộ lọc
-    if (!empty($filters)) {
-        $danhSachSuatChieu = $this->suatChieuModel->getSuatChieuWithFilter($filters);
-    } else {
-        $danhSachSuatChieu = $this->suatChieuModel->getAllSuatChieu();
-    }
-    
-    // Lấy số ghế trống và tổng số ghế cho mỗi suất chiếu
-    foreach ($danhSachSuatChieu as $key => $suatChieu) {
-        $soGheTrong = $this->gheSuatChieuModel->countGheTrong($suatChieu['ma_suat_chieu']);
-        $tongSoGhe = $this->gheModel->countGheByPhong($suatChieu['ma_phong']);
+        // 3. Lấy dữ liệu VỚI PHÂN TRANG
+        $totalRows = $this->suatChieuModel->countSuatChieu($filters);
+        $totalPages = ceil($totalRows / $limit);
         
-        $danhSachSuatChieu[$key]['so_ghe_trong'] = $soGheTrong;
-        $danhSachSuatChieu[$key]['tong_so_ghe'] = $tongSoGhe;
+        // Lấy danh sách suất chiếu CÓ PHÂN TRANG
+        $danhSachSuatChieu = $this->suatChieuModel->getSuatChieuPhanTrang($filters, $limit, $offset);
+
+        // 4. Lấy số ghế trống và tổng số ghế cho mỗi suất chiếu
+        foreach ($danhSachSuatChieu as $key => $suatChieu) {
+            $soGheTrong = $this->gheSuatChieuModel->countGheTrong($suatChieu['ma_suat_chieu']);
+            $tongSoGhe = $this->gheModel->countGheByPhong($suatChieu['ma_phong']);
+            
+            $danhSachSuatChieu[$key]['so_ghe_trong'] = $soGheTrong;
+            $danhSachSuatChieu[$key]['tong_so_ghe'] = $tongSoGhe;
+        }
+
+        // 5. Lấy dữ liệu cho dropdowns
+        $danhSachPhim = $this->suatChieuModel->getAllPhim();
+        $danhSachPhong = $this->suatChieuModel->getAllPhong();
+        $danhSachRap = $this->suatChieuModel->getAllRap();
+
+        // 6. Truyền biến phân trang sang view
+        require_once __DIR__ . '/../views/admin/showtime_view.php';
     }
-
-    $danhSachPhim = $this->suatChieuModel->getAllPhim();
-    $danhSachPhong = $this->suatChieuModel->getAllPhong();
-    $danhSachRap = $this->suatChieuModel->getAllRap();
-
-    require_once __DIR__ . '/../views/admin/showtime_view.php';
-}
 
     /**
      * Hiển thị form thêm mới
      */
     public function create() {
-        $danhSachSuatChieu = $this->suatChieuModel->getAllSuatChieu();
+        // 1. Cấu hình phân trang
+        $limit = 3; // Số bản ghi mỗi trang
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        // 2. Lấy filters từ GET
+        $filters = [];
+        if (!empty($_GET['ngay_chieu'])) {
+            $filters['ngay_chieu'] = $_GET['ngay_chieu'];
+        }
+        if (!empty($_GET['ten_rap'])) {
+            $filters['ten_rap'] = $_GET['ten_rap'];
+        }
+        if (!empty($_GET['ten_phim'])) {
+            $filters['ten_phim'] = $_GET['ten_phim'];
+        }
+
+        // 3. Lấy dữ liệu VỚI PHÂN TRANG
+        $totalRows = $this->suatChieuModel->countSuatChieu($filters);
+        $totalPages = ceil($totalRows / $limit);
+        
+        // Lấy danh sách suất chiếu CÓ PHÂN TRANG
+        $danhSachSuatChieu = $this->suatChieuModel->getSuatChieuPhanTrang($filters, $limit, $offset);
         $danhSachPhim = $this->suatChieuModel->getAllPhim();
         $danhSachPhong = $this->suatChieuModel->getAllPhong();
 
@@ -134,7 +160,29 @@ public function index() {
             exit;
         }
 
-        $danhSachSuatChieu = $this->suatChieuModel->getAllSuatChieu();
+        // 1. Cấu hình phân trang
+        $limit = 3; // Số bản ghi mỗi trang
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        // 2. Lấy filters từ GET
+        $filters = [];
+        if (!empty($_GET['ngay_chieu'])) {
+            $filters['ngay_chieu'] = $_GET['ngay_chieu'];
+        }
+        if (!empty($_GET['ten_rap'])) {
+            $filters['ten_rap'] = $_GET['ten_rap'];
+        }
+        if (!empty($_GET['ten_phim'])) {
+            $filters['ten_phim'] = $_GET['ten_phim'];
+        }
+
+        // 3. Lấy dữ liệu VỚI PHÂN TRANG
+        $totalRows = $this->suatChieuModel->countSuatChieu($filters);
+        $totalPages = ceil($totalRows / $limit);
+        
+        // Lấy danh sách suất chiếu CÓ PHÂN TRANG
+        $danhSachSuatChieu = $this->suatChieuModel->getSuatChieuPhanTrang($filters, $limit, $offset);
         $danhSachPhim = $this->suatChieuModel->getAllPhim();
         $danhSachPhong = $this->suatChieuModel->getAllPhong();
 

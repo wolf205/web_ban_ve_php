@@ -8,8 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quản lý Ghế - <?php echo htmlspecialchars($selected_phong_info['ten_phong']); ?></title>
     <link rel="stylesheet" href="publics/css/admin-layout1.css" />
-    <link rel="stylesheet" href="publics/css/admin-room.css" />
-    <link rel="stylesheet" href="publics/css/admin-ghe.css" />
+    <link rel="stylesheet" href="publics/css/admin-room1.css" />
+    <link rel="stylesheet" href="publics/css/admin-ghe1.css" />
 </head>
 <body>
     <?php include __DIR__ . '/../chung/header_sidebar.php'; ?>
@@ -19,7 +19,7 @@
             <div class="page-header">
                 <h3>QUẢN LÝ GHẾ - <?php echo htmlspecialchars($selected_phong_info['ten_phong']); ?> (<?php echo htmlspecialchars($selected_phong_info['ten_rap']); ?>)</h3>
                 <div>
-                    <a href="index.php?controller=adminPhong&action=createGhe&ma_phong=<?php echo $selected_phong_info['ma_phong']; ?>" class="add-btn">+ Thêm Ghế</a>
+                    <a href="index.php?controller=adminPhong&action=createGhe&ma_phong=<?php echo $selected_phong_info['ma_phong']; ?>&page=<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>" class="add-btn">+ Thêm Ghế</a>
                     <a href="index.php?controller=adminPhong&action=index" class="btn-cancel back-btn">← Quay lại danh sách phòng</a>
                 </div>
             </div>
@@ -48,6 +48,7 @@
                 <h4>THÊM GHẾ MỚI</h4>
                 <form action="index.php?controller=adminPhong&action=storeGhe" method="POST" class="form-grid">
                     <input type="hidden" name="ma_phong" value="<?php echo $selected_phong_info['ma_phong']; ?>">
+                    <input type="hidden" name="page" value="<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>">
                     <div class="form-group">
                         <label>Vị trí *</label>
                         <input type="text" name="vi_tri" placeholder="Ví dụ: A1, B2, C3..." required>
@@ -71,7 +72,7 @@
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-save">Lưu</button>
-                        <a href="index.php?controller=adminPhong&action=manageSeats&ma_phong=<?php echo $selected_phong_info['ma_phong']; ?>" class="btn-cancel">Hủy</a>
+                        <a href="index.php?controller=adminPhong&action=manageSeats&ma_phong=<?php echo $selected_phong_info['ma_phong']; ?>&page=<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>" class="btn-cancel">Hủy</a>
                     </div>
                 </form>
             </div>
@@ -84,6 +85,7 @@
                 <form action="index.php?controller=adminPhong&action=updateGhe" method="POST" class="form-grid">
                     <input type="hidden" name="ma_ghe" value="<?php echo $ghe_to_edit['ma_ghe']; ?>">
                     <input type="hidden" name="ma_phong" value="<?php echo $selected_phong_info['ma_phong']; ?>">
+                    <input type="hidden" name="page" value="<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>">
                     <div class="form-group">
                         <label>Vị trí *</label>
                         <input type="text" name="vi_tri" value="<?php echo htmlspecialchars($ghe_to_edit['vi_tri']); ?>" required>
@@ -106,7 +108,7 @@
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn-save">Lưu</button>
-                        <a href="index.php?controller=adminPhong&action=manageSeats&ma_phong=<?php echo $selected_phong_info['ma_phong']; ?>" class="btn-cancel">Hủy</a>
+                        <a href="index.php?controller=adminPhong&action=manageSeats&ma_phong=<?php echo $selected_phong_info['ma_phong']; ?>&page=<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>" class="btn-cancel">Hủy</a>
                     </div>
                 </form>
             </div>
@@ -159,8 +161,8 @@
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <a href="index.php?controller=adminPhong&action=editGhe&ma_ghe=<?php echo $ghe['ma_ghe']; ?>&ma_phong=<?php echo $selected_phong_info['ma_phong']; ?>" class="action-btn edit-btn">Sửa</a>
-                                            <a href="index.php?controller=adminPhong&action=destroyGhe&ma_ghe=<?php echo $ghe['ma_ghe']; ?>&ma_phong=<?php echo $selected_phong_info['ma_phong']; ?>" class="action-btn delete-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa ghế này?');">Xóa</a>
+                                            <a href="index.php?controller=adminPhong&action=editGhe&ma_ghe=<?php echo $ghe['ma_ghe']; ?>&ma_phong=<?php echo $selected_phong_info['ma_phong']; ?>&page=<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>" class="action-btn edit-btn">Sửa</a>
+                                            <a href="index.php?controller=adminPhong&action=destroyGhe&ma_ghe=<?php echo $ghe['ma_ghe']; ?>&ma_phong=<?php echo $selected_phong_info['ma_phong']; ?>&page=<?php echo isset($_GET['page']) ? (int)$_GET['page'] : 1; ?>" class="action-btn delete-btn" onclick="return confirm('Bạn có chắc chắn muốn xóa ghế này?');">Xóa</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -168,16 +170,27 @@
                         </tbody>
                     </table>
                 </div>
-            </section>
 
-            <!-- PHÂN TRANG -->
-            <?php if (count($danhSachGhe) > 0 && !isset($action)): ?>
-                <div class="pagination">
-                    <div class="pagination-info">
-                        Hiển thị tất cả <?php echo count($danhSachGhe); ?> ghế
-                    </div>
-                </div>
+
+                <!-- PHÂN TRANG -->
+            <?php if (isset($totalPages) && $totalPages > 1 && !isset($action)): ?>
+            <div class="simple-pagination">
+                <?php 
+                $queryParams = $_GET;
+                unset($queryParams['page']);
+                $baseUrl = 'index.php?' . http_build_query($queryParams);
+                ?>
+                
+                <?php for($i = 1; $i <= $totalPages; $i++): ?>
+                    <?php if($i == $page): ?>
+                        <strong><?php echo $i; ?></strong>
+                    <?php else: ?>
+                        <a href="<?php echo $baseUrl . '&page=' . $i; ?>"><?php echo $i; ?></a>
+                    <?php endif; ?>
+                <?php endfor; ?>
+            </div>
             <?php endif; ?>
+            </section>
         </main>
     </div>
 

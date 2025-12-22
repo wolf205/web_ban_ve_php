@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quản lý Rạp</title>
     <link rel="stylesheet" href="publics/css/admin-layout1.css" />
-    <link rel="stylesheet" href="publics/css/admin-rap1.css" />
+    <link rel="stylesheet" href="publics/css/admin-rap.css" />
 </head>
 <body>
     <?php include __DIR__ . '/../chung/header_sidebar.php'; ?>
@@ -167,11 +167,11 @@
             <?php endif; ?>
 
             <!-- SỐ LƯỢNG KẾT QUẢ -->
-            <?php if (!isset($action) || $action !== 'create'): ?>
-                <div class="result-count">
-                    <span>Hiển thị <?php echo count($danhSachRap); ?> rạp</span>
-                </div>
-            <?php endif; ?>
+<?php if (!isset($action) || $action !== 'create'): ?>
+    <div class="result-count">
+        <span>Hiển thị <?php echo count($danhSachRap); ?> rạp</span>
+    </div>
+<?php endif; ?>
 
             <!-- BẢNG DỮ LIỆU -->
             <section class="data-section">
@@ -230,16 +230,27 @@
                         </tbody>
                     </table>
                 </div>
-            </section>
 
-            <!-- PHÂN TRANG (CÓ THỂ THÊM SAU NẾU CẦN) -->
-            <?php if (count($danhSachRap) > 0 && !isset($action)): ?>
-                <div class="pagination">
-                    <div class="pagination-info">
-                        Hiển thị tất cả <?php echo count($danhSachRap); ?> rạp
-                    </div>
-                </div>
+            <!-- PHÂN TRANG -->
+            <?php if (isset($totalPages) && $totalPages > 1 && !isset($action)): ?>
+            <div class="simple-pagination">
+                <?php 
+                $queryParams = $_GET;
+                unset($queryParams['page']);
+                $baseUrl = 'index.php?' . http_build_query($queryParams);
+                ?>
+                
+                <?php for($i = 1; $i <= $totalPages; $i++): ?>
+                    <?php if($i == $page): ?>
+                        <strong><?php echo $i; ?></strong>
+                    <?php else: ?>
+                        <a href="<?php echo $baseUrl . '&page=' . $i; ?>"><?php echo $i; ?></a>
+                    <?php endif; ?>
+                <?php endfor; ?>
+            </div>
             <?php endif; ?>
+
+            </section>
         </main>
     </div>
 

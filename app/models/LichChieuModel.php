@@ -182,66 +182,158 @@ class LichChieuModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Thêm vào LichChieuModel.php sau hàm getAllSuatChieu()
+    /**
+     * Lấy suất chiếu với bộ lọc
+     */
+    public function getSuatChieuWithFilter($filters = []) {
+        $sql = "SELECT 
+                    sc.ma_suat_chieu,
+                    sc.ma_phong,
+                    p.ten_phim,
+                    r.ten_rap,
+                    ph.ten_phong,
+                    sc.ngay_chieu,
+                    sc.gio_bat_dau,
+                    sc.gio_ket_thuc,
+                    sc.gia_ve_co_ban as gia_ve
+                FROM suat_chieu sc
+                JOIN phim p ON sc.ma_phim = p.ma_phim
+                JOIN phong ph ON sc.ma_phong = ph.ma_phong
+                JOIN rap r ON ph.ma_rap = r.ma_rap
+                WHERE 1=1";
 
-/**
- * Lấy suất chiếu với bộ lọc
- */
-public function getSuatChieuWithFilter($filters = []) {
-    $sql = "SELECT 
-                sc.ma_suat_chieu,
-                sc.ma_phong,
-                p.ten_phim,
-                r.ten_rap,
-                ph.ten_phong,
-                sc.ngay_chieu,
-                sc.gio_bat_dau,
-                sc.gio_ket_thuc,
-                sc.gia_ve_co_ban as gia_ve
-            FROM suat_chieu sc
-            JOIN phim p ON sc.ma_phim = p.ma_phim
-            JOIN phong ph ON sc.ma_phong = ph.ma_phong
-            JOIN rap r ON ph.ma_rap = r.ma_rap
-            WHERE 1=1";
+        $params = [];
 
-    $params = [];
+        if (!empty($filters['ngay_chieu'])) {
+            $sql .= " AND sc.ngay_chieu = :ngay_chieu";
+            $params[':ngay_chieu'] = $filters['ngay_chieu'];
+        }
 
-    if (!empty($filters['ngay_chieu'])) {
-        $sql .= " AND sc.ngay_chieu = :ngay_chieu";
-        $params[':ngay_chieu'] = $filters['ngay_chieu'];
+        if (!empty($filters['ten_rap'])) {
+            $sql .= " AND r.ten_rap LIKE :ten_rap";
+            $params[':ten_rap'] = '%' . $filters['ten_rap'] . '%';
+        }
+
+        if (!empty($filters['ten_phim'])) {
+            $sql .= " AND p.ten_phim LIKE :ten_phim";
+            $params[':ten_phim'] = '%' . $filters['ten_phim'] . '%';
+        }
+
+        $sql .= " ORDER BY sc.ngay_chieu DESC, sc.gio_bat_dau ASC";
+
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    if (!empty($filters['ten_rap'])) {
-        $sql .= " AND r.ten_rap LIKE :ten_rap";
-        $params[':ten_rap'] = '%' . $filters['ten_rap'] . '%';
+    /**
+     * Lấy danh sách rạp duy nhất để hiển thị trong bộ lọc
+     */
+    public function getAllRap() {
+        $sql = "SELECT DISTINCT ten_rap FROM rap ORDER BY ten_rap ASC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    if (!empty($filters['ten_phim'])) {
-        $sql .= " AND p.ten_phim LIKE :ten_phim";
-        $params[':ten_phim'] = '%' . $filters['ten_phim'] . '%';
+    // =================================================================
+    // 3. HÀM PHÂN TRANG (THÊM LẠI)
+    // =================================================================
+
+    /**
+     * Lấy suất chiếu với phân trang
+     */
+    public function getSuatChieuPhanTrang($filters = [], $limit = 3, $offset = 0) {
+        $sql = "SELECT 
+                    sc.ma_suat_chieu,
+                    sc.ma_phong,
+                    p.ten_phim,
+                    r.ten_rap,
+                    ph.ten_phong,
+                    sc.ngay_chieu,
+                    sc.gio_bat_dau,
+                    sc.gio_ket_thuc,
+                    sc.gia_ve_co_ban as gia_ve
+                FROM suat_chieu sc
+                JOIN phim p ON sc.ma_phim = p.ma_phim
+                JOIN phong ph ON sc.ma_phong = ph.ma_phong
+                JOIN rap r ON ph.ma_rap = r.ma_rap
+                WHERE 1=1";
+
+        $params = [];
+
+        if (!empty($filters['ngay_chieu'])) {
+            $sql .= " AND sc.ngay_chieu = :ngay_chieu";
+            $params[':ngay_chieu'] = $filters['ngay_chieu'];
+        }
+
+        if (!empty($filters['ten_rap'])) {
+            $sql .= " AND r.ten_rap LIKE :ten_rap";
+            $params[':ten_rap'] = '%' . $filters['ten_rap'] . '%';
+        }
+
+        if (!empty($filters['ten_phim'])) {
+            $sql .= " AND p.ten_phim LIKE :ten_phim";
+            $params[':ten_phim'] = '%' . $filters['ten_phim'] . '%';
+        }
+
+        $sql .= " ORDER BY sc.ngay_chieu DESC, sc.gio_bat_dau ASC";
+        $sql .= " LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    $sql .= " ORDER BY sc.ngay_chieu DESC, sc.gio_bat_dau ASC";
+    /**
+     * Đếm tổng số suất chiếu
+     */
+    public function countSuatChieu($filters = []) {
+        $sql = "SELECT COUNT(*) 
+                FROM suat_chieu sc
+                JOIN phim p ON sc.ma_phim = p.ma_phim
+                JOIN phong ph ON sc.ma_phong = ph.ma_phong
+                JOIN rap r ON ph.ma_rap = r.ma_rap
+                WHERE 1=1";
 
-    $stmt = $this->conn->prepare($sql);
-    
-    foreach ($params as $key => $value) {
-        $stmt->bindValue($key, $value);
+        $params = [];
+
+        if (!empty($filters['ngay_chieu'])) {
+            $sql .= " AND sc.ngay_chieu = :ngay_chieu";
+            $params[':ngay_chieu'] = $filters['ngay_chieu'];
+        }
+
+        if (!empty($filters['ten_rap'])) {
+            $sql .= " AND r.ten_rap LIKE :ten_rap";
+            $params[':ten_rap'] = '%' . $filters['ten_rap'] . '%';
+        }
+
+        if (!empty($filters['ten_phim'])) {
+            $sql .= " AND p.ten_phim LIKE :ten_phim";
+            $params[':ten_phim'] = '%' . $filters['ten_phim'] . '%';
+        }
+
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchColumn();
     }
-
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-/**
- * Lấy danh sách rạp duy nhất để hiển thị trong bộ lọc
- */
-public function getAllRap() {
-    $sql = "SELECT DISTINCT ten_rap FROM rap ORDER BY ten_rap ASC";
-    $stmt = $this->conn->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
 }
 ?>

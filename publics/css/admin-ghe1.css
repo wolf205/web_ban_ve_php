@@ -50,3 +50,35 @@
   font-size: 14px;
   color: #666;
 }
+
+/* PHÂN TRANG */
+.simple-pagination {
+  margin: 20px 0;
+  text-align: center;
+  padding: 20px 0;
+}
+
+.simple-pagination a,
+.simple-pagination strong {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 0 5px;
+  text-decoration: none;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 14px;
+  min-width: 36px;
+  text-align: center;
+}
+
+.simple-pagination a:hover {
+  background: #f5f5f5;
+}
+
+.simple-pagination strong {
+  background: #f0c419;
+  color: white;
+  border-color: #f0c419;
+  font-weight: bold;
+}

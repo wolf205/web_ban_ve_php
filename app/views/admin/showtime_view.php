@@ -19,6 +19,76 @@
                 <a href="index.php?controller=adminShowtime&action=create" class="add-btn">+ Thêm Suất Chiếu</a>
             </div>
 
+            <!-- Bộ lọc sử dụng class CSS chuẩn từ admin-layout1.css -->
+                <div class="filter-section">
+                    <h4>Bộ lọc suất chiếu</h4>
+                    <form class="filter-form" method="GET" action="index.php">
+                        <input type="hidden" name="controller" value="adminShowtime">
+                        <input type="hidden" name="action" value="index">
+                        
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label for="ngay_chieu">Ngày chiếu</label>
+                                <input type="date" id="ngay_chieu" name="ngay_chieu" value="<?php echo $_GET['ngay_chieu'] ?? ''; ?>">
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="ten_rap">Rạp</label>
+                                <select id="ten_rap" name="ten_rap">
+                                    <option value="">Tất cả rạp</option>
+                                    <?php foreach ($danhSachRap as $rap): ?>
+                                        <option value="<?php echo htmlspecialchars($rap['ten_rap']); ?>" 
+                                            <?php echo (isset($_GET['ten_rap']) && $_GET['ten_rap'] == $rap['ten_rap']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($rap['ten_rap']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="ten_phim">Phim</label>
+                                <select id="ten_phim" name="ten_phim">
+                                    <option value="">Tất cả phim</option>
+                                    <?php foreach ($danhSachPhim as $phim): ?>
+                                        <option value="<?php echo htmlspecialchars($phim['ten_phim']); ?>" 
+                                            <?php echo (isset($_GET['ten_phim']) && $_GET['ten_phim'] == $phim['ten_phim']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($phim['ten_phim']); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <div class="filter-actions">
+                                <button type="submit" class="btn-filter">Lọc</button>
+                                <a href="index.php?controller=adminShowtime&action=index" class="btn-reset">Đặt lại</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Thông tin bộ lọc đang áp dụng -->
+                <?php if (!empty($_GET['ngay_chieu']) || !empty($_GET['ten_rap']) || !empty($_GET['ten_phim'])): ?>
+                    <div class="active-filters">
+                        <small>
+                            Đang lọc theo: 
+                            <?php 
+                            $filters = [];
+                            if (!empty($_GET['ngay_chieu'])) {
+                                $filters[] = "<strong>Ngày chiếu</strong>: " . htmlspecialchars($_GET['ngay_chieu']);
+                            }
+                            if (!empty($_GET['ten_rap'])) {
+                                $filters[] = "<strong>Rạp</strong>: " . htmlspecialchars($_GET['ten_rap']);
+                            }
+                            if (!empty($_GET['ten_phim'])) {
+                                $filters[] = "<strong>Phim</strong>: " . htmlspecialchars($_GET['ten_phim']);
+                            }
+                            echo implode(', ', $filters);
+                            ?>
+                            <a href="index.php?controller=adminShowtime&action=index">[Xóa tất cả]</a>
+                        </small>
+                    </div>
+                <?php endif; ?>
+
             <?php if (isset($action) && $action === 'create'): ?>
             <!-- FORM THÊM MỚI -->
             <div class="form-container">
@@ -125,75 +195,7 @@
             <?php endif; ?>
 
             <section class="data-section">
-                <!-- Bộ lọc sử dụng class CSS chuẩn từ admin-layout1.css -->
-                <div class="filter-section">
-                    <h4>Bộ lọc suất chiếu</h4>
-                    <form class="filter-form" method="GET" action="index.php">
-                        <input type="hidden" name="controller" value="adminShowtime">
-                        <input type="hidden" name="action" value="index">
-                        
-                        <div class="filter-row">
-                            <div class="filter-group">
-                                <label for="ngay_chieu">Ngày chiếu</label>
-                                <input type="date" id="ngay_chieu" name="ngay_chieu" value="<?php echo $_GET['ngay_chieu'] ?? ''; ?>">
-                            </div>
-
-                            <div class="filter-group">
-                                <label for="ten_rap">Rạp</label>
-                                <select id="ten_rap" name="ten_rap">
-                                    <option value="">Tất cả rạp</option>
-                                    <?php foreach ($danhSachRap as $rap): ?>
-                                        <option value="<?php echo htmlspecialchars($rap['ten_rap']); ?>" 
-                                            <?php echo (isset($_GET['ten_rap']) && $_GET['ten_rap'] == $rap['ten_rap']) ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($rap['ten_rap']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-
-                            <div class="filter-group">
-                                <label for="ten_phim">Phim</label>
-                                <select id="ten_phim" name="ten_phim">
-                                    <option value="">Tất cả phim</option>
-                                    <?php foreach ($danhSachPhim as $phim): ?>
-                                        <option value="<?php echo htmlspecialchars($phim['ten_phim']); ?>" 
-                                            <?php echo (isset($_GET['ten_phim']) && $_GET['ten_phim'] == $phim['ten_phim']) ? 'selected' : ''; ?>>
-                                            <?php echo htmlspecialchars($phim['ten_phim']); ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-
-                            <div class="filter-actions">
-                                <button type="submit" class="btn-filter">Lọc</button>
-                                <a href="index.php?controller=adminShowtime&action=index" class="btn-reset">Đặt lại</a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Thông tin bộ lọc đang áp dụng -->
-                <?php if (!empty($_GET['ngay_chieu']) || !empty($_GET['ten_rap']) || !empty($_GET['ten_phim'])): ?>
-                    <div class="active-filters">
-                        <small>
-                            Đang lọc theo: 
-                            <?php 
-                            $filters = [];
-                            if (!empty($_GET['ngay_chieu'])) {
-                                $filters[] = "<strong>Ngày chiếu</strong>: " . htmlspecialchars($_GET['ngay_chieu']);
-                            }
-                            if (!empty($_GET['ten_rap'])) {
-                                $filters[] = "<strong>Rạp</strong>: " . htmlspecialchars($_GET['ten_rap']);
-                            }
-                            if (!empty($_GET['ten_phim'])) {
-                                $filters[] = "<strong>Phim</strong>: " . htmlspecialchars($_GET['ten_phim']);
-                            }
-                            echo implode(', ', $filters);
-                            ?>
-                            <a href="index.php?controller=adminShowtime&action=index">[Xóa tất cả]</a>
-                        </small>
-                    </div>
-                <?php endif; ?>
+                
 
                 <!-- Số lượng kết quả -->
                 <?php if (!empty($danhSachSuatChieu)): ?>
@@ -252,6 +254,24 @@
                         </tbody>
                     </table>
                 </div>
+<!-- Phân trang (THÊM VÀO CUỐI BẢNG) -->
+<?php if ($totalPages > 1): ?>
+<div class="simple-pagination">
+    <?php 
+    $queryParams = $_GET;
+    unset($queryParams['page']);
+    $baseUrl = 'index.php?' . http_build_query($queryParams);
+    ?>
+    
+    <?php for($i = 1; $i <= $totalPages; $i++): ?>
+        <?php if($i == $page): ?>
+            <strong><?php echo $i; ?></strong>
+        <?php else: ?>
+            <a href="<?php echo $baseUrl . '&page=' . $i; ?>"><?php echo $i; ?></a>
+        <?php endif; ?>
+    <?php endfor; ?>
+</div>
+<?php endif; ?>
             </section>
         </main>
     </div>

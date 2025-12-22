@@ -130,5 +130,37 @@ class GheModel {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // ==============================
+    // 7. LẤY GHẾ THEO PHÒNG VỚI PHÂN TRANG
+    // ==============================
+    public function getAllGheByPhongPhanTrang($ma_phong, $limit, $offset) {
+        $sql = "SELECT ma_ghe, ma_phong, loai_ghe, tinh_trang, vi_tri 
+                FROM ghe
+                WHERE ma_phong = :ma_phong
+                ORDER BY ma_ghe ASC
+                LIMIT :limit OFFSET :offset";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':ma_phong', $ma_phong);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ==============================
+    // 8. ĐẾM GHẾ THEO PHÒNG
+    // ==============================
+    public function countGheByPhongTotal($ma_phong) {
+        $sql = "SELECT COUNT(*) as so_luong 
+                FROM ghe 
+                WHERE ma_phong = :ma_phong";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindParam(':ma_phong', $ma_phong);
+        $stmt->execute();
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['so_luong'];
+    }
+
 }
 ?>

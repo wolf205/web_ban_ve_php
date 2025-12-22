@@ -179,5 +179,108 @@ public function getDistinctScreenTypes() {
     $types = $stmt->fetchAll(PDO::FETCH_COLUMN);
     return $types ?: [];
 }
+
+    // ==============================
+    // HÀM: LẤY TẤT CẢ PHÒNG VỚI THÔNG TIN RẠP (CÓ PHÂN TRANG)
+    // ==============================
+    public function getAllPhongWithRapPhanTrang($limit, $offset) {
+        $sql = "SELECT p.*, r.ten_rap 
+                FROM phong p
+                LEFT JOIN rap r ON p.ma_rap = r.ma_rap
+                ORDER BY p.ma_phong ASC
+                LIMIT :limit OFFSET :offset";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ==============================
+    // HÀM: ĐẾM TẤT CẢ PHÒNG
+    // ==============================
+    public function countAllPhong() {
+        $sql = "SELECT COUNT(*) FROM phong";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+    // ==============================
+    // HÀM: LỌC PHÒNG VỚI PHÂN TRANG
+    // ==============================
+    public function filterPhongPhanTrang($limit, $offset, $ma_rap = null, $search = null, $loai_man_hinh = null) {
+        $sql = "SELECT p.*, r.ten_rap 
+                FROM phong p
+                LEFT JOIN rap r ON p.ma_rap = r.ma_rap
+                WHERE 1=1";
+        $params = [];
+        
+        if (!empty($ma_rap) && $ma_rap != 'all') {
+            $sql .= " AND p.ma_rap = :ma_rap";
+            $params[':ma_rap'] = $ma_rap;
+        }
+        
+        if (!empty($loai_man_hinh) && $loai_man_hinh != 'all') {
+            $sql .= " AND p.loai_man_hinh = :loai_man_hinh";
+            $params[':loai_man_hinh'] = $loai_man_hinh;
+        }
+        
+        if (!empty($search)) {
+            $sql .= " AND (p.ten_phong LIKE :search OR r.ten_rap LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+        
+        $sql .= " ORDER BY p.ma_phong ASC LIMIT :limit OFFSET :offset";
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // ==============================
+    // HÀM: ĐẾM SỐ LƯỢNG PHÒNG KHI LỌC
+    // ==============================
+    public function countFilterPhong($ma_rap = null, $search = null, $loai_man_hinh = null) {
+        $sql = "SELECT COUNT(*) 
+                FROM phong p
+                LEFT JOIN rap r ON p.ma_rap = r.ma_rap
+                WHERE 1=1";
+        $params = [];
+        
+        if (!empty($ma_rap) && $ma_rap != 'all') {
+            $sql .= " AND p.ma_rap = :ma_rap";
+            $params[':ma_rap'] = $ma_rap;
+        }
+        
+        if (!empty($loai_man_hinh) && $loai_man_hinh != 'all') {
+            $sql .= " AND p.loai_man_hinh = :loai_man_hinh";
+            $params[':loai_man_hinh'] = $loai_man_hinh;
+        }
+        
+        if (!empty($search)) {
+            $sql .= " AND (p.ten_phong LIKE :search OR r.ten_rap LIKE :search)";
+            $params[':search'] = '%' . $search . '%';
+        }
+        
+        $stmt = $this->conn->prepare($sql);
+        
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
 }
 ?>

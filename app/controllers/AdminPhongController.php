@@ -25,40 +25,48 @@ class AdminPhongController {
     }
 
     /**
-     * Hiển thị danh sách phòng với bộ lọc
+     * Hiển thị danh sách phòng với bộ lọc và phân trang
      */
     public function index() {
-        // Nhận tham số lọc từ URL
+        // 1. Nhận tham số lọc
         $ma_rap = $_GET['ma_rap'] ?? null;
         $search = $_GET['search'] ?? null;
         $loai_man_hinh = $_GET['loai_man_hinh'] ?? null;
         
-        // Lấy danh sách phòng đã lọc
+        // 2. Cấu hình phân trang
+        $limit = 3; // Số phòng mỗi trang
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+        
+        // 3. Lấy dữ liệu với phân trang
         if ($ma_rap || $search || $loai_man_hinh) {
-            $danhSachPhong = $this->phongModel->filterPhong($ma_rap, $search, $loai_man_hinh);
+            $danhSachPhong = $this->phongModel->filterPhongPhanTrang($limit, $offset, $ma_rap, $search, $loai_man_hinh);
+            $totalRecords = $this->phongModel->countFilterPhong($ma_rap, $search, $loai_man_hinh);
         } else {
-            $danhSachPhong = $this->phongModel->getAllPhongWithRap();
+            $danhSachPhong = $this->phongModel->getAllPhongWithRapPhanTrang($limit, $offset);
+            $totalRecords = $this->phongModel->countAllPhong();
         }
         
-        // Tính số lượng ghế cho từng phòng
+        // 4. Tính toán phân trang
+        $totalPages = ceil($totalRecords / $limit);
+        
+        // 5. Tính số lượng ghế cho từng phòng
         foreach ($danhSachPhong as $key => $phong) {
             $danhSachPhong[$key]['so_luong_ghe'] = $this->gheModel->countGheByPhong($phong['ma_phong']);
         }
         
-        // Lấy danh sách rạp cho dropdown
+        // 6. Lấy danh sách rạp và loại màn hình
         $danhSachRap = $this->rapModel->getAllRap();
-        
-        // Lấy danh sách loại màn hình unique
         $loai_man_hinh_list = $this->phongModel->getDistinctScreenTypes();
         
-        // Lưu các tham số lọc
+        // 7. Lưu tham số lọc
         $filter_params = [
             'ma_rap' => $ma_rap,
             'search' => $search,
             'loai_man_hinh' => $loai_man_hinh
         ];
 
-        // Tải view
+        // 8. Tải view
         require_once __DIR__ . '/../views/admin/phong_view.php';
     }
 
@@ -66,26 +74,38 @@ class AdminPhongController {
      * Hiển thị form THÊM MỚI phòng (inline)
      */
     public function create() {
-        // Lấy danh sách phòng để hiển thị bên dưới form
-        $danhSachPhong = $this->phongModel->getAllPhongWithRap();
+        // 1. Lấy tham số phân trang
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 3;
+        $offset = ($page - 1) * $limit;
+        
+        // 2. Lấy dữ liệu với phân trang
+        $danhSachPhong = $this->phongModel->getAllPhongWithRapPhanTrang($limit, $offset);
+        
+        // 3. Tính toán phân trang
+        $totalRecords = $this->phongModel->countAllPhong();
+        $totalPages = ceil($totalRecords / $limit);
+        
+        // Tính số lượng ghế
         foreach ($danhSachPhong as $key => $phong) {
             $danhSachPhong[$key]['so_luong_ghe'] = $this->gheModel->countGheByPhong($phong['ma_phong']);
         }
 
-        // Lấy danh sách rạp cho dropdown
+        // 4. Lấy danh sách rạp
         $danhSachRap = $this->rapModel->getAllRap();
 
-        // Đặt cờ để view biết phải hiển thị form 'create'
-        $action = 'create';
+        // 5. Lấy danh sách loại màn hình
+        $loai_man_hinh_list = $this->phongModel->getDistinctScreenTypes();
         
-        // Khởi tạo filter_params rỗng
+        // 6. Đặt cờ và tham số
+        $action = 'create';
         $filter_params = [
             'ma_rap' => null,
             'search' => null,
             'loai_man_hinh' => null
         ];
 
-        // Tải view
+        // 7. Tải view
         require_once __DIR__ . '/../views/admin/phong_view.php';
     }
 
@@ -100,12 +120,17 @@ class AdminPhongController {
                     $_POST['ma_rap'],
                     $_POST['loai_man_hinh']
                 );
-                header("Location: index.php?controller=adminPhong&action=index&status=add_success");
+                
+                // Quay lại trang hiện tại
+                $page = $_POST['page'] ?? 1;
+                header("Location: index.php?controller=adminPhong&action=index&page=" . $page . "&status=add_success");
             } catch (Exception $e) {
-                header("Location: index.php?controller=adminPhong&action=index&status=add_error");
+                $page = $_POST['page'] ?? 1;
+                header("Location: index.php?controller=adminPhong&action=index&page=" . $page . "&status=add_error");
             }
         } else {
-            header('Location: index.php?controller=adminPhong&action=create');
+            $page = $_GET['page'] ?? 1;
+            header('Location: index.php?controller=adminPhong&action=create&page=' . $page);
         }
     }
 
@@ -118,34 +143,36 @@ class AdminPhongController {
             header('Location: index.php?controller=adminPhong&action=index');
             exit;
         }
-
-        // Lấy danh sách phòng để hiển thị
-        $danhSachPhong = $this->phongModel->getAllPhongWithRap();
+        
+        // 1. Lấy tham số phân trang
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 3;
+        $offset = ($page - 1) * $limit;
+        
+        // 2. Lấy dữ liệu với phân trang
+        $danhSachPhong = $this->phongModel->getAllPhongWithRapPhanTrang($limit, $offset);
+        
+        // 3. Tính toán phân trang
+        $totalRecords = $this->phongModel->countAllPhong();
+        $totalPages = ceil($totalRecords / $limit);
+        
+        // Tính số lượng ghế
         foreach ($danhSachPhong as $key => $phong) {
             $danhSachPhong[$key]['so_luong_ghe'] = $this->gheModel->countGheByPhong($phong['ma_phong']);
         }
         
-        // Lấy thông tin chi tiết của phòng cần sửa
+        // 4. Lấy thông tin phòng cần sửa
         $phong_to_edit = $this->phongModel->getPhongByMa($edit_id);
         if (!$phong_to_edit) {
             header('Location: index.php?controller=adminPhong&action=index&status=not_found');
             exit;
         }
 
-        // Lấy danh sách rạp cho dropdown
+        // 5. Lấy danh sách rạp và loại màn hình
         $danhSachRap = $this->rapModel->getAllRap();
-        
-        // Lấy danh sách loại màn hình
         $loai_man_hinh_list = $this->phongModel->getDistinctScreenTypes();
         
-        // Khởi tạo filter_params rỗng
-        $filter_params = [
-            'ma_rap' => null,
-            'search' => null,
-            'loai_man_hinh' => null
-        ];
-
-        // Tải view
+        // 6. Tải view
         require_once __DIR__ . '/../views/admin/phong_view.php';
     }
 
@@ -164,9 +191,13 @@ class AdminPhongController {
                     $_POST['ma_rap'],
                     $_POST['loai_man_hinh']
                 );
-                header("Location: index.php?controller=adminPhong&action=index&status=update_success");
+                
+                // Quay lại trang hiện tại
+                $page = $_POST['page'] ?? 1;
+                header("Location: index.php?controller=adminPhong&action=index&page=" . $page . "&status=update_success");
             } catch (Exception $e) {
-                header("Location: index.php?controller=adminPhong&action=index&status=update_error");
+                $page = $_POST['page'] ?? 1;
+                header("Location: index.php?controller=adminPhong&action=index&page=" . $page . "&status=update_error");
             }
         }
     }
@@ -177,18 +208,22 @@ class AdminPhongController {
     public function destroy() {
         $id = $_GET['id'] ?? null;
         if ($id) {
+            // Lấy trang hiện tại
+            $page = $_GET['page'] ?? 1;
+            
             if ($this->phongModel->deletePhong($id)) {
-                header("Location: index.php?controller=adminPhong&action=index&status=delete_success");
+                header("Location: index.php?controller=adminPhong&action=index&page=" . $page . "&status=delete_success");
             } else {
-                header("Location: index.php?controller=adminPhong&action=index&status=delete_error_fk");
+                header("Location: index.php?controller=adminPhong&action=index&page=" . $page . "&status=delete_error_fk");
             }
         } else {
-            header('Location: index.php?controller=adminPhong&action=index');
+            $page = $_GET['page'] ?? 1;
+            header('Location: index.php?controller=adminPhong&action=index&page=' . $page);
         }
     }
 
     /**
-     * Hiển thị quản lý ghế của một phòng
+     * Hiển thị quản lý ghế của một phòng với phân trang
      */
     public function manageSeats() {
         $ma_phong = $_GET['ma_phong'] ?? null;
@@ -197,17 +232,24 @@ class AdminPhongController {
             exit;
         }
 
-        // Lấy thông tin phòng
+        // 1. Cấu hình phân trang
+        $limit = 5; // Số ghế mỗi trang
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        // 2. Lấy thông tin phòng
         $selected_phong_info = $this->phongModel->getPhongByMa($ma_phong);
         if (!$selected_phong_info) {
             header('Location: index.php?controller=adminPhong&action=index&status=not_found');
             exit;
         }
 
-        // Lấy danh sách ghế
-        $danhSachGhe = $this->gheModel->getAllGheByPhong($ma_phong);
+        // 3. Lấy danh sách ghế với phân trang
+        $danhSachGhe = $this->gheModel->getAllGheByPhongPhanTrang($ma_phong, $limit, $offset);
+        $totalRecords = $this->gheModel->countGheByPhongTotal($ma_phong);
+        $totalPages = ceil($totalRecords / $limit);
 
-        // Tải view quản lý ghế
+        // 4. Tải view
         require_once __DIR__ . '/../views/admin/ghe_view.php';
     }
 
@@ -216,21 +258,29 @@ class AdminPhongController {
      */
     public function createGhe() {
         $ma_phong = $_GET['ma_phong'] ?? null;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        
         if (!$ma_phong) {
             header('Location: index.php?controller=adminPhong&action=index');
             exit;
         }
 
-        // Lấy thông tin phòng
+        // 1. Cấu hình phân trang
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+
+        // 2. Lấy thông tin phòng
         $selected_phong_info = $this->phongModel->getPhongByMa($ma_phong);
         
-        // Lấy danh sách ghế
-        $danhSachGhe = $this->gheModel->getAllGheByPhong($ma_phong);
+        // 3. Lấy danh sách ghế với phân trang
+        $danhSachGhe = $this->gheModel->getAllGheByPhongPhanTrang($ma_phong, $limit, $offset);
+        $totalRecords = $this->gheModel->countGheByPhongTotal($ma_phong);
+        $totalPages = ceil($totalRecords / $limit);
 
-        // Đặt cờ để hiển thị form thêm ghế
+        // 4. Đặt cờ để hiển thị form thêm ghế
         $action = 'create_ghe';
 
-        // Tải view
+        // 5. Tải view
         require_once __DIR__ . '/../views/admin/ghe_view.php';
     }
 
@@ -241,6 +291,8 @@ class AdminPhongController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
                 $ma_phong = $_POST['ma_phong'] ?? null;
+                $page = $_POST['page'] ?? 1;
+                
                 if (!$ma_phong) throw new Exception("Thiếu ID phòng.");
 
                 $this->gheModel->addGhe(
@@ -249,9 +301,11 @@ class AdminPhongController {
                     $_POST['loai_ghe'],
                     $_POST['trang_thai']
                 );
-                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $ma_phong . "&status=add_ghe_success");
+                
+                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $ma_phong . "&page=" . $page . "&status=add_ghe_success");
             } catch (Exception $e) {
-                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $_POST['ma_phong'] . "&status=add_ghe_error");
+                $page = $_POST['page'] ?? 1;
+                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $_POST['ma_phong'] . "&page=" . $page . "&status=add_ghe_error");
             }
         }
     }
@@ -262,19 +316,26 @@ class AdminPhongController {
     public function editGhe() {
         $ma_ghe = $_GET['ma_ghe'] ?? null;
         $ma_phong = $_GET['ma_phong'] ?? null;
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         
         if (!$ma_ghe || !$ma_phong) {
             header('Location: index.php?controller=adminPhong&action=index');
             exit;
         }
 
-        // Lấy thông tin phòng
+        // 1. Cấu hình phân trang
+        $limit = 5;
+        $offset = ($page - 1) * $limit;
+
+        // 2. Lấy thông tin phòng
         $selected_phong_info = $this->phongModel->getPhongByMa($ma_phong);
         
-        // Lấy danh sách ghế
-        $danhSachGhe = $this->gheModel->getAllGheByPhong($ma_phong);
+        // 3. Lấy danh sách ghế với phân trang
+        $danhSachGhe = $this->gheModel->getAllGheByPhongPhanTrang($ma_phong, $limit, $offset);
+        $totalRecords = $this->gheModel->countGheByPhongTotal($ma_phong);
+        $totalPages = ceil($totalRecords / $limit);
         
-        // Lấy thông tin ghế cần sửa
+        // 4. Lấy thông tin ghế cần sửa
         $ghe_to_edit = null;
         foreach ($danhSachGhe as $ghe) {
             if ($ghe['ma_ghe'] == $ma_ghe) {
@@ -284,11 +345,16 @@ class AdminPhongController {
         }
         
         if (!$ghe_to_edit) {
-            header('Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=' . $ma_phong . '&status=not_found');
-            exit;
+            // Nếu không tìm thấy trong trang hiện tại, lấy thông tin trực tiếp
+            $ghe_to_edit = $this->gheModel->getGheById($ma_ghe);
+            
+            if (!$ghe_to_edit) {
+                header('Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=' . $ma_phong . '&page=' . $page . '&status=not_found');
+                exit;
+            }
         }
 
-        // Tải view
+        // 5. Tải view
         require_once __DIR__ . '/../views/admin/ghe_view.php';
     }
 
@@ -300,6 +366,8 @@ class AdminPhongController {
             try {
                 $ma_ghe = $_POST['ma_ghe'] ?? null;
                 $ma_phong = $_POST['ma_phong'] ?? null;
+                $page = $_POST['page'] ?? 1;
+                
                 if (!$ma_ghe || !$ma_phong) throw new Exception("Thiếu thông tin.");
 
                 $this->gheModel->updateGhe(
@@ -308,9 +376,11 @@ class AdminPhongController {
                     $_POST['loai_ghe'],
                     $_POST['trang_thai']
                 );
-                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $ma_phong . "&status=update_ghe_success");
+                
+                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $ma_phong . "&page=" . $page . "&status=update_ghe_success");
             } catch (Exception $e) {
-                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $_POST['ma_phong'] . "&status=update_ghe_error");
+                $page = $_POST['page'] ?? 1;
+                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $_POST['ma_phong'] . "&page=" . $page . "&status=update_ghe_error");
             }
         }
     }
@@ -321,12 +391,13 @@ class AdminPhongController {
     public function destroyGhe() {
         $ma_ghe = $_GET['ma_ghe'] ?? null;
         $ma_phong = $_GET['ma_phong'] ?? null;
+        $page = $_GET['page'] ?? 1;
         
         if ($ma_ghe && $ma_phong) {
             if ($this->gheModel->deleteGhe($ma_ghe)) {
-                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $ma_phong . "&status=delete_ghe_success");
+                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $ma_phong . "&page=" . $page . "&status=delete_ghe_success");
             } else {
-                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $ma_phong . "&status=delete_ghe_error");
+                header("Location: index.php?controller=adminPhong&action=manageSeats&ma_phong=" . $ma_phong . "&page=" . $page . "&status=delete_ghe_error");
             }
         } else {
             header('Location: index.php?controller=adminPhong&action=index');
