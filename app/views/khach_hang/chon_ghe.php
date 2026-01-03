@@ -22,6 +22,9 @@ require_once __DIR__ . '/../chung/header.php';
 
     <!-- CSS riêng cho chức năng đặt vé -->
     <link rel="stylesheet" href="publics/css/chon_ghe.css">
+</head>
+<body>
+
 <section class="booking container">
     <div class="booking__header card">
         <div class="booking__poster">
@@ -57,16 +60,20 @@ require_once __DIR__ . '/../chung/header.php';
 
             <div class="booking__legend">
                 <div class="booking__legend-item">
-                    <span class="booking__seat--sample booking__seat--regular"></span> Ghế thường
+                    <span class="booking__seat--sample booking__seat--regular"></span>
+                    <span>Ghế thường</span>
                 </div>
                 <div class="booking__legend-item">
-                    <span class="booking__seat--sample booking__seat--vip"></span> Ghế VIP
+                    <span class="booking__seat--sample booking__seat--vip"></span>
+                    <span>Ghế VIP</span>
                 </div>
                 <div class="booking__legend-item">
-                    <span class="booking__seat--sample booking__seat--couple"></span> Ghế đôi
+                    <span class="booking__seat--sample booking__seat--couple"></span>
+                    <span>Ghế đôi</span>
                 </div>
                 <div class="booking__legend-item">
-                    <span class="booking__seat--sample booking__seat--unavailable"></span> Đã chọn/đã bán
+                    <span class="booking__seat--sample booking__seat--unavailable"></span>
+                    <span>Đã chọn/đã bán</span>
                 </div>
             </div>
         </div>
@@ -78,19 +85,33 @@ require_once __DIR__ . '/../chung/header.php';
         <div class="booking__map" role="grid" aria-label="Sơ đồ ghế">
             <?php if (!empty($rows)) : ?>
                 <?php foreach ($rows as $rowLabel => $listSeats) : ?>
-                    <div class="booking__row" role="row" aria-label="Hàng <?= htmlspecialchars($rowLabel) ?>">
+                    <?php
+                    // Kiểm tra xem hàng này có ghế đôi không
+                    $hasCouple = false;
+                    foreach ($listSeats as $seat) {
+                        $loaiLower = mb_strtolower(trim($seat['loai_ghe'] ?? ''), 'UTF-8');
+                        if ($loaiLower === 'đôi' || $loaiLower === 'doi' || $loaiLower === 'couple') {
+                            $hasCouple = true;
+                            break;
+                        }
+                    }
+                    ?>
+                    <div class="booking__row<?= $hasCouple ? ' booking__row--couple' : '' ?>" role="row" aria-label="Hàng <?= htmlspecialchars($rowLabel) ?>">
                         <span class="booking__row-label"><?= htmlspecialchars($rowLabel) ?></span>
 
                         <?php foreach ($listSeats as $seat) : ?>
                             <?php
                             $seatName = $seat['seat_name'];
-                            $loai     = strtolower(trim($seat['loai_ghe'] ?? ''));
+                            $loai     = trim($seat['loai_ghe'] ?? ''); // Không lowercase để giữ nguyên "Đôi"
+                            $loaiLower = mb_strtolower($loai, 'UTF-8'); // Dùng mb_strtolower cho tiếng Việt
 
-                            $typeClass = 'booking__seat--regular';
-                            if ($loai === 'vip') {
+                            $typeClass = '';
+                            if ($loaiLower === 'vip') {
                                 $typeClass = 'booking__seat--vip';
-                            } elseif ($loai === 'đôi' || $loai === 'doi' || $loai === 'ghe doi') {
+                            } elseif ($loaiLower === 'đôi' || $loaiLower === 'doi' || $loaiLower === 'couple' || $loaiLower === 'ghe doi' || $loaiLower === 'ghế đôi') {
                                 $typeClass = 'booking__seat--couple';
+                            } else {
+                                $typeClass = 'booking__seat--regular';
                             }
 
                             $isUnavailable = isset($seat['trang_thai']) && (int)$seat['trang_thai'] === 1;
@@ -99,6 +120,7 @@ require_once __DIR__ . '/../chung/header.php';
                                 class="booking__seat <?= $typeClass ?><?= $isUnavailable ? ' booking__seat--unavailable' : '' ?>"
                                 data-seat="<?= htmlspecialchars($seatName) ?>"
                                 data-id="<?= (int)$seat['ma_ghe'] ?>"
+                                data-type="<?= htmlspecialchars($loai) ?>"
                                 <?php if ($isUnavailable) : ?>disabled<?php endif; ?>
                             >
                                 <span class="booking__seat-label"><?= htmlspecialchars($seatName) ?></span>
@@ -122,11 +144,11 @@ require_once __DIR__ . '/../chung/header.php';
             </div>
 
             <div class="booking__actions">
-                <a href="javascript:history.back()" class="btn" type="button">QUAY LẠI</a>
-
+                <a href="javascript:history.back()" class="btn">QUAY LẠI</a>
                 <form id="goComboForm"
                     method="POST"
-                    action="index.php?controller=chonghe&ma_suat_chieu=<?= (int)$thongTinSuat['ma_suat_chieu'] ?>">
+                    action="index.php?controller=chonghe&ma_suat_chieu=<?= (int)$thongTinSuat['ma_suat_chieu'] ?>"
+                    style="margin: 0;">
                     <input type="hidden" name="seat_ids"   id="seatIdsInput">
                     <input type="hidden" name="seat_names" id="seatNamesInput">
                     <button type="submit" class="btn btn--primary">TIẾP TỤC</button>
@@ -137,7 +159,6 @@ require_once __DIR__ . '/../chung/header.php';
 </section>
 
 <script>
-
     // Giá vé cơ bản từ DB
     const basePrice = <?= (int)$giaVeCoBan ?>;
 
@@ -156,24 +177,16 @@ require_once __DIR__ . '/../chung/header.php';
         if (el.classList.contains('booking__seat--vip')) return 'vip';
         return 'regular';
     }
-    const goComboForm   = document.getElementById('goComboForm');
-    const seatIdsInput  = document.getElementById('seatIdsInput');
-    const seatNamesInput= document.getElementById('seatNamesInput');
 
-    if (goComboForm) {
-        goComboForm.addEventListener('submit', function () {
-            const selected = [...document.querySelectorAll('.booking__seat--selected')];
-            const ids   = selected.map(s => s.dataset.id);
-            const names = selected.map(s => s.dataset.seat);
+    const goComboForm    = document.getElementById('goComboForm');
+    const seatIdsInput   = document.getElementById('seatIdsInput');
+    const seatNamesInput = document.getElementById('seatNamesInput');
 
-            seatIdsInput.value   = JSON.stringify(ids);      // mảng ID ghế
-            seatNamesInput.value = names.join(', ');         // chuỗi tên ghế để hiển thị
-        });
-    }
     function updateBill() {
         const selected = [...document.querySelectorAll('.booking__seat--selected')];
         const names = selected.map(s => s.dataset.seat).join(', ') || '—';
         const total = selected.reduce((sum, s) => sum + price[seatType(s)], 0);
+
         selectedSeatsEl.textContent = names;
         totalPriceEl.textContent = total.toLocaleString('vi-VN') + ' đ';
     }
@@ -184,6 +197,26 @@ require_once __DIR__ . '/../chung/header.php';
             updateBill();
         });
     });
+
+    if (goComboForm) {
+        goComboForm.addEventListener('submit', function (e) {
+            const selected = [...document.querySelectorAll('.booking__seat--selected')];
+
+            // ❌ Chưa chọn ghế
+            if (selected.length === 0) {
+                e.preventDefault(); // chặn submit
+                alert('⚠️ Vui lòng chọn ít nhất 1 ghế trước khi tiếp tục!');
+                return;
+            }
+
+            // ✅ Có ghế → cho submit
+            const ids   = selected.map(s => s.dataset.id);
+            const names = selected.map(s => s.dataset.seat);
+
+            seatIdsInput.value   = JSON.stringify(ids);
+            seatNamesInput.value = names.join(', ');
+        });
+    }
 
     updateBill();
 </script>

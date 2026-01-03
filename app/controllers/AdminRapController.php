@@ -11,14 +11,19 @@ class AdminRapController {
     private $db;
     private $rapModel;
     private $phongModel;
+    private $limit = 2; // Số rạp mỗi trang
 
+    // =================================================================
+    // 1. HÀM KHỞI TẠO VÀ CẤU HÌNH CƠ BẢN
+    // =================================================================
+
+    /**
+     * KHỞI TẠO CONTROLLER
+     * - Thiết lập kết nối database
+     * - Khởi tạo các model cần thiết cho quản lý rạp
+     * - Kiểm tra kết nối database thành công
+     */
     public function __construct() {
-        // (Bảo mật: Kiểm tra admin session nếu cần)
-        // if (!isset($_SESSION['admin_user'])) {
-        //     header('Location: login.php');
-        //     exit;
-        // }
-
         $database = new Database();
         $this->db = $database->getConnection();
         if ($this->db === null) throw new \Exception("Không thể kết nối đến CSDL.");
@@ -27,144 +32,232 @@ class AdminRapController {
         $this->phongModel = new PhongModel($this->db);
     }
 
+    // =================================================================
+    // 2. CÁC PHƯƠNG THỨC TIỆN ÍCH VÀ XỬ LÝ DỮ LIỆU
+    // =================================================================
+
     /**
-     * Hàm tiện ích xử lý upload file
+     * HÀM TIỆN ÍCH XỬ LÝ UPLOAD FILE ẢNH
+     * - Xử lý upload ảnh rạp từ form
+     * - Tạo thư mục nếu chưa tồn tại
+     * - Đặt tên file an toàn (thêm timestamp và prefix)
+     * - Trả về đường dẫn file hoặc null nếu không có upload
      */
     private function handleFileUpload($fileInputName, $ma_rap_prefix = '') {
+        // KIỂM TRA CÓ FILE UPLOAD VÀ KHÔNG CÓ LỖI
         if (isset($_FILES[$fileInputName]) && $_FILES[$fileInputName]['error'] == 0) {
-            // Đảm bảo đường dẫn này đúng từ file index.php gốc
-            $uploadDir = 'publics/img/rap/'; 
+            $uploadDir = 'publics/img/rap/'; // ĐƯỜNG DẪN LƯU ẢNH
             
+            // TẠO THƯ MỤC NẾU CHƯA TỒN TẠI
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
 
+            // LẤY TÊN FILE VÀ TẠO TÊN AN TOÀN
             $fileName = basename($_FILES[$fileInputName]['name']);
-            // Thêm prefix để tránh trùng tên file
-            $safeFileName = $ma_rap_prefix . time() . '_' . $fileName;
+            $safeFileName = $ma_rap_prefix . time() . '_' . $fileName; // THÊM TIMESTAMP ĐỂ TRÁNH TRÙNG
             $targetFilePath = $uploadDir . $safeFileName;
             
+            // DI CHUYỂN FILE TỪ TEMP ĐẾN THƯ MỤC ĐÍCH
             if (move_uploaded_file($_FILES[$fileInputName]['tmp_name'], $targetFilePath)) {
-                return $targetFilePath; // Trả về đường dẫn file đã lưu
+                return $targetFilePath; // TRẢ VỀ ĐƯỜNG DẪN FILE ĐÃ LƯU
             }
         }
-        return null; // Trả về null nếu không upload
+        return null; // KHÔNG CÓ FILE UPLOAD
     }
 
     /**
- * Hiển thị danh sách rạp với bộ lọc
- */
-public function index() {
-        // Nhận tham số lọc từ URL hoặc POST
-        $thanh_pho = $_GET['thanh_pho'] ?? $_POST['thanh_pho'] ?? null;
-        $search = $_GET['search'] ?? $_POST['search'] ?? null;
+     * LẤY BỘ LỌC TỪ REQUEST
+     * - Xử lý các tham số GET từ form filter
+     * - Loại bỏ giá trị 'all' (tất cả)
+     * - Trả về mảng filters để sử dụng trong query
+     */
+    private function getFilters() {
+        $filters = [];
         
-        // Tham số phân trang
+        // LỌC THEO THÀNH PHỐ (KHÁC RỖNG VÀ KHÁC 'all')
+        if (isset($_GET['thanh_pho']) && $_GET['thanh_pho'] != '' && $_GET['thanh_pho'] != 'all') {
+            $filters['thanh_pho'] = $_GET['thanh_pho'];
+        }
+        
+        // LỌC THEO TỪ KHÓA TÌM KIẾM
+        if (!empty($_GET['search'])) {
+            $filters['search'] = $_GET['search'];
+        }
+        
+        return $filters;
+    }
+
+    /**
+     * LẤY DỮ LIỆU CƠ BẢN CHO TẤT CẢ CÁC ACTION
+     * - Xử lý phân trang (page, limit, offset)
+     * - Áp dụng bộ lọc nếu có
+     * - Tính toán số trang tổng
+     * - Lấy danh sách rạp và thông tin liên quan
+     * - Tính số phòng cho mỗi rạp
+     */
+    private function getBaseData($filters = [], $action = null, $edit_id = null, $rap_to_edit = null) {
+        // XỬ LÝ PHÂN TRANG
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $limit = 2; // Số rạp mỗi trang
-        $offset = ($page - 1) * $limit;
+        $page = max(1, $page); // ĐẢM BẢO PAGE ÍT NHẤT LÀ 1
+        $offset = ($page - 1) * $this->limit;
         
-        // Lấy danh sách rạp đã lọc và phân trang
-        if ($thanh_pho || $search) {
-            // Sửa theo thứ tự tham số mới: limit, offset, thanh_pho, search
-            $danhSachRap = $this->rapModel->filterRapPhanTrang($limit, $offset, $thanh_pho, $search);
-            $totalRecords = $this->rapModel->countFilterRap($thanh_pho, $search);
+        // LẤY DỮ LIỆU RẠP (CÓ HOẶC KHÔNG CÓ BỘ LỌC)
+        if (!empty($filters)) {
+            $danhSachRap = $this->rapModel->filterRapPhanTrang(
+                $this->limit, 
+                $offset, 
+                $filters['thanh_pho'] ?? null, 
+                $filters['search'] ?? null
+            );
+            $totalRecords = $this->rapModel->countFilterRap(
+                $filters['thanh_pho'] ?? null, 
+                $filters['search'] ?? null
+            );
         } else {
-            $danhSachRap = $this->rapModel->getAllRapPhanTrang($limit, $offset);
+            $danhSachRap = $this->rapModel->getAllRapPhanTrang($this->limit, $offset);
             $totalRecords = $this->rapModel->countAllRap();
         }
         
-        // Tính toán thông tin phân trang
-        $totalPages = ceil($totalRecords / $limit);
+        // TÍNH TOÁN PHÂN TRANG
+        $totalPages = ceil($totalRecords / $this->limit);
         
-        // Lấy danh sách thành phố để hiển thị trong dropdown
+        // LẤY DANH SÁCH THÀNH PHỐ DUY NHẤT CHO DROPDOWN FILTER
         $cities = $this->rapModel->getDistinctCities();
         
-        // Lấy số lượng phòng cho mỗi rạp
+        // TÍNH SỐ PHÒNG CHO TỪNG RẠP
         foreach ($danhSachRap as $key => $rap) {
             $danhSachRap[$key]['so_phong'] = $this->phongModel->countPhongByRapId($rap['ma_rap']);
         }
         
-        // Lưu các tham số lọc để hiển thị lại trong form
-        $filter_params = [
-            'thanh_pho' => $thanh_pho,
-            'search' => $search
+        // TRẢ VỀ MẢNG DỮ LIỆU ĐẦY ĐỦ CHO VIEW
+        return [
+            'danhSachRap' => $danhSachRap,
+            'cities' => $cities,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'filter_params' => $filters,
+            'action' => $action,
+            'edit_id' => $edit_id,
+            'rap_to_edit' => $rap_to_edit
         ];
+    }
+
+    /**
+     * CHUYỂN HƯỚNG VỚI TRẠNG THÁI (DÙNG SESSION)
+     * - Lưu trạng thái thành công/lỗi vào session
+     * - Xây dựng URL với các tham số
+     * - Chuyển hướng và thoát chương trình
+     */
+    private function redirectWithStatus($success, $actionType) {
+        // TẠO MÃ TRẠNG THÁI (success/error)
+        $status = $success ? $actionType . '_success' : $actionType . '_error';
         
-        // Tải view và truyền biến phân trang
+        // LƯU VÀO SESSION (FLASH MESSAGE)
+        $_SESSION['flash_status'] = $status;
+        
+        // CHUYỂN HƯỚNG VỀ TRANG DANH SÁCH RẠP
+        header("Location: index.php?controller=adminRap&action=index");
+        exit;
+    }
+
+    // =================================================================
+    // 3. CÁC ACTION CHÍNH CHO QUẢN LÝ RẠP (CRUD)
+    // =================================================================
+
+    /**
+     * HIỂN THỊ DANH SÁCH RẠP VỚI BỘ LỌC
+     * - Action mặc định (index)
+     * - Lấy dữ liệu và hiển thị view
+     * - Áp dụng bộ lọc nếu có
+     */
+    public function index() {
+        $filters = $this->getFilters();
+        $data = $this->getBaseData($filters);
+        
+        // CHUYỂN MẢNG THÀNH BIẾN ĐỂ VIEW SỬ DỤNG
+        extract($data);
         require_once __DIR__ . '/../views/admin/rap_view.php';
     }
+
     /**
-     * Hiển thị form THÊM MỚI (inline)
+     * HIỂN THỊ FORM THÊM MỚI RẠP (INLINE)
+     * - Đặt action = 'create' để view biết hiển thị form
+     * - Vẫn giữ lại các bộ lọc hiện tại
+     * - Hiển thị form ngay trên trang danh sách
      */
     public function create() {
-        // Lấy danh sách rạp để hiển thị bên dưới form
-        $danhSachRap = $this->rapModel->getAllRap();
-        foreach ($danhSachRap as $key => $rap) {
-            $danhSachRap[$key]['so_phong'] = $this->phongModel->countPhongByRapId($rap['ma_rap']);
-        }
-
-        // Đặt cờ (flag) để view biết phải hiển thị form 'create'
-        $action = 'create';
-
-        // Tải view
+        $filters = $this->getFilters();
+        $data = $this->getBaseData($filters, 'create');
+        
+        extract($data);
         require_once __DIR__ . '/../views/admin/rap_view.php';
     }
 
     /**
-     * Xử lý lưu trữ rạp MỚI
+     * XỬ LÝ LƯU TRỮ RẠP MỚI
+     * - Kiểm tra phương thức POST
+     * - Xử lý upload ảnh rạp (nếu có)
+     * - Gọi model để thêm rạp
+     * - Chuyển hướng với trạng thái
      */
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             try {
+                // XỬ LÝ UPLOAD ẢNH RẠP
                 $anh_rap_path = $this->handleFileUpload('anh_rap');
                 
-                $this->rapModel->addRap(
+                // GỌI MODEL ĐỂ THÊM RẠP
+                $success = $this->rapModel->addRap(
                     $_POST['ten_rap'],
                     $_POST['dia_chi'],
                     $_POST['thanh_pho'],
                     $_POST['SDT'],
-                    $anh_rap_path,
+                    $anh_rap_path, // CÓ THỂ LÀ NULL NẾU KHÔNG CÓ ẢNH
                     $_POST['mo_ta_rap']
                 );
-                header("Location: index.php?controller=adminRap&action=index&status=add_success");
+                
+                $this->redirectWithStatus($success, 'add');
             } catch (Exception $e) {
-                header("Location: index.php?controller=adminRap&action=index&status=add_error");
+                $this->redirectWithStatus(false, 'add');
             }
         } else {
+            // NẾU KHÔNG PHẢI POST, CHUYỂN VỀ TRANG THÊM MỚI
             header('Location: index.php?controller=adminRap&action=create');
+            exit;
         }
     }
 
     /**
-     * Hiển thị form SỬA (inline)
+     * HIỂN THỊ FORM SỬA RẠP (INLINE)
+     * - Kiểm tra ID rạp hợp lệ
+     * - Lấy thông tin rạp cần sửa
+     * - Hiển thị form với dữ liệu hiện tại
      */
     public function edit() {
         $edit_id = $_GET['id'] ?? null;
         if (!$edit_id) {
-            header('Location: index.php?controller=adminRap&action=index');
-            exit;
+            $this->redirectWithStatus(false, 'not_found');
         }
 
-        // Lấy danh sách rạp để hiển thị (bao gồm cả dòng đang sửa)
-        $danhSachRap = $this->rapModel->getAllRap();
-        foreach ($danhSachRap as $key => $rap) {
-            $danhSachRap[$key]['so_phong'] = $this->phongModel->countPhongByRapId($rap['ma_rap']);
-        }
-        
-        // Lấy thông tin chi tiết của rạp cần sửa để fill vào form
         $rap_to_edit = $this->rapModel->getRapById($edit_id);
         if (!$rap_to_edit) {
-             header('Location: index.php?controller=adminRap&action=index&status=not_found');
-             exit;
+            $this->redirectWithStatus(false, 'not_found');
         }
 
-        // Tải view
+        $filters = $this->getFilters();
+        $data = $this->getBaseData($filters, null, $edit_id, $rap_to_edit);
+        
+        extract($data);
         require_once __DIR__ . '/../views/admin/rap_view.php';
     }
 
     /**
-     * Xử lý CẬP NHẬT rạp
+     * XỬ LÝ CẬP NHẬT RẠP
+     * - Kiểm tra phương thức POST
+     * - Validate dữ liệu (thiếu ID)
+     * - Xử lý upload ảnh mới (nếu có)
+     * - Gọi model để cập nhật
      */
     public function update() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -172,39 +265,51 @@ public function index() {
                 $ma_rap = $_POST['ma_rap'] ?? null;
                 if (!$ma_rap) throw new Exception("Thiếu ID rạp.");
 
-                // Xử lý upload ảnh mới (nếu có)
+                // XỬ LÝ UPLOAD ẢNH MỚI (THÊM PREFIX ĐỂ TRÁNH TRÙNG)
                 $anh_rap_path = $this->handleFileUpload('anh_rap', $ma_rap . '_');
                 
-                $this->rapModel->updateRap(
+                $success = $this->rapModel->updateRap(
                     $ma_rap,
                     $_POST['ten_rap'],
                     $_POST['dia_chi'],
                     $_POST['thanh_pho'],
                     $_POST['SDT'],
-                    $anh_rap_path, // Sẽ là null nếu không có file mới
+                    $anh_rap_path, // NULL NẾU KHÔNG ĐỔI ẢNH
                     $_POST['mo_ta_rap']
                 );
-                header("Location: index.php?controller=adminRap&action=index&status=update_success");
+                
+                $this->redirectWithStatus($success, 'update');
             } catch (Exception $e) {
-                header("Location: index.php?controller=adminRap&action=index&status=update_error");
+                $this->redirectWithStatus(false, 'update');
             }
         }
     }
 
     /**
-     * Xử lý XÓA một rạp
+     * XỬ LÝ XÓA MỘT RẠP
+     * - Kiểm tra ID hợp lệ
+     * - Xử lý ràng buộc khóa ngoại (phòng, suất chiếu)
+     * - Chuyển hướng với trạng thái phù hợp
      */
     public function destroy() {
         $id = $_GET['id'] ?? null;
         if ($id) {
-            if ($this->rapModel->deleteRap($id)) {
-                header("Location: index.php?controller=adminRap&action=index&status=delete_success");
-            } else {
-                // Lỗi do ràng buộc khóa ngoại
-                header("Location: index.php?controller=adminRap&action=index&status=delete_error_fk");
+            try {
+                $success = $this->rapModel->deleteRap($id);
+                if ($success) {
+                    $this->redirectWithStatus(true, 'delete');
+                } else {
+                    // LỖI DO RÀNG BUỘC KHÓA NGOẠI (CÓ PHÒNG HOẶC SUẤT CHIẾU LIÊN QUAN)
+                    $_SESSION['flash_status'] = 'delete_error_fk';
+                    header("Location: index.php?controller=adminRap&action=index");
+                    exit;
+                }
+            } catch (Exception $e) {
+                $this->redirectWithStatus(false, 'delete');
             }
         } else {
             header('Location: index.php?controller=adminRap&action=index');
+            exit;
         }
     }
 }

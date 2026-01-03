@@ -1,31 +1,16 @@
 <?php
-$selected_theater_name = 'Chọn rạp';
-$selected_theater_id = null;
+// Sử dụng HeaderHandler để xử lý logic
+require_once __DIR__ . '/../../services/HeaderHandler.php';
 
-if (isset($rap) && is_array($rap) && isset($rap['ma_rap'])) {
-    $selected_theater_name = $rap['ten_rap'];
-    $selected_theater_id = $rap['ma_rap'];
-} 
-else if (isset($all_raps) && is_array($all_raps)) {
-    foreach ($all_raps as $r) {
-        if ($r['ma_rap'] == '1') { 
-            $selected_theater_name = $r['ten_rap'];
-            $selected_theater_id = $r['ma_rap'];
-            break;
-        }
-    }
-    if ($selected_theater_id === null && !empty($all_raps)) {
-        $selected_theater_name = $all_raps[0]['ten_rap'];
-        $selected_theater_id = $all_raps[0]['ma_rap'];
-    }
-}
+$headerHandler = new HeaderHandler();
+$headerData = $headerHandler->getHeaderData();
 
-if (!isset($header_rap_link_template)) {
-    $header_rap_link_template = 'index.php?controller=rap&action=showDetails&ma_rap=__MA_RAP__';
-}
-
-$current_controller = $_GET['controller'] ?? 'phim';
-
+// Trích xuất biến từ headerData
+$all_raps = $headerData['all_raps'];
+$selected_theater_id = $headerData['selected_theater_id'];
+$selected_theater_name = $headerData['selected_theater_name'];
+$header_rap_link_template = $headerData['header_rap_link_template'];
+$current_controller = $headerData['current_controller'];
 ?>
 <header id="page-header">
   <div class="top-bar">

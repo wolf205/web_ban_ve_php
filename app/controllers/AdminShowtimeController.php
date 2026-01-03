@@ -5,14 +5,25 @@ session_start();
 require_once __DIR__ . '/../config/Database.php';
 require_once __DIR__ . '/../models/LichChieuModel.php';
 require_once __DIR__ . '/../models/GheSuatChieuModel.php';
-require_once __DIR__ . '/../models/GheModel.php'; // Thêm import GheModel
+require_once __DIR__ . '/../models/GheModel.php';
 
 class AdminShowtimeController {
     private $db;
     private $suatChieuModel;
     private $gheSuatChieuModel;
-    private $gheModel; // Thêm property cho GheModel
+    private $gheModel;
+    private $limit = 3; // Số suất chiếu mỗi trang
 
+    // =================================================================
+    // 1. HÀM KHỞI TẠO VÀ CẤU HÌNH CƠ BẢN
+    // =================================================================
+
+    /**
+     * KHỞI TẠO CONTROLLER
+     * - Thiết lập kết nối database
+     * - Khởi tạo các model cần thiết cho quản lý suất chiếu
+     * - Kiểm tra kết nối database thành công
+     */
     public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
@@ -20,106 +31,144 @@ class AdminShowtimeController {
 
         $this->suatChieuModel = new LichChieuModel($this->db);
         $this->gheSuatChieuModel = new GheSuatChieuModel($this->db);
-        $this->gheModel = new GheModel($this->db); // Khởi tạo GheModel
+        $this->gheModel = new GheModel($this->db);
     }
 
+    // =================================================================
+    // 2. CÁC PHƯƠNG THỨC TRÍCH XUẤT VÀ XỬ LÝ DỮ LIỆU
+    // =================================================================
+
     /**
-     * Hiển thị danh sách suất chiếu
+     * LẤY DỮ LIỆU CƠ BẢN CHO TẤT CẢ CÁC ACTION
+     * - Xử lý phân trang (page, limit, offset)
+     * - Áp dụng bộ lọc nếu có
+     * - Tính toán số trang tổng
+     * - Lấy danh sách suất chiếu và thông tin liên quan
+     * - Tính thông tin ghế (trống/tổng) cho mỗi suất chiếu
      */
-    // Cập nhật hàm index() trong AdminShowtimeController.php
-
-/**
- * Hiển thị danh sách suất chiếu
- */
- public function index() {
-        // 1. Cấu hình phân trang
-        $limit = 3; // Số bản ghi mỗi trang
+    private function getBaseData($filters = []) {
+        // XỬ LÝ PHÂN TRANG
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $offset = ($page - 1) * $limit;
+        $page = max(1, $page); // ĐẢM BẢO PAGE ÍT NHẤT LÀ 1
+        $offset = ($page - 1) * $this->limit;
 
-        // 2. Lấy filters từ GET
-        $filters = [];
-        if (!empty($_GET['ngay_chieu'])) {
-            $filters['ngay_chieu'] = $_GET['ngay_chieu'];
-        }
-        if (!empty($_GET['ten_rap'])) {
-            $filters['ten_rap'] = $_GET['ten_rap'];
-        }
-        if (!empty($_GET['ten_phim'])) {
-            $filters['ten_phim'] = $_GET['ten_phim'];
-        }
-
-        // 3. Lấy dữ liệu VỚI PHÂN TRANG
+        // LẤY DỮ LIỆU SUẤT CHIẾU VỚI PHÂN TRANG VÀ BỘ LỌC
         $totalRows = $this->suatChieuModel->countSuatChieu($filters);
-        $totalPages = ceil($totalRows / $limit);
-        
-        // Lấy danh sách suất chiếu CÓ PHÂN TRANG
-        $danhSachSuatChieu = $this->suatChieuModel->getSuatChieuPhanTrang($filters, $limit, $offset);
+        $totalPages = ceil($totalRows / $this->limit);
+        $danhSachSuatChieu = $this->suatChieuModel->getSuatChieuPhanTrang($filters, $this->limit, $offset);
 
-        // 4. Lấy số ghế trống và tổng số ghế cho mỗi suất chiếu
+        // THÊM THÔNG TIN GHẾ CHO TỪNG SUẤT CHIẾU
         foreach ($danhSachSuatChieu as $key => $suatChieu) {
+            // ĐẾM SỐ GHẾ TRỐNG CHO SUẤT CHIẾU NÀY
             $soGheTrong = $this->gheSuatChieuModel->countGheTrong($suatChieu['ma_suat_chieu']);
+            // ĐẾM TỔNG SỐ GHẾ TRONG PHÒNG
             $tongSoGhe = $this->gheModel->countGheByPhong($suatChieu['ma_phong']);
             
+            // THÊM THÔNG TIN VÀO MẢNG SUẤT CHIẾU
             $danhSachSuatChieu[$key]['so_ghe_trong'] = $soGheTrong;
             $danhSachSuatChieu[$key]['tong_so_ghe'] = $tongSoGhe;
         }
 
-        // 5. Lấy dữ liệu cho dropdowns
-        $danhSachPhim = $this->suatChieuModel->getAllPhim();
-        $danhSachPhong = $this->suatChieuModel->getAllPhong();
-        $danhSachRap = $this->suatChieuModel->getAllRap();
-
-        // 6. Truyền biến phân trang sang view
-        require_once __DIR__ . '/../views/admin/showtime_view.php';
+        // TRẢ VỀ MẢNG DỮ LIỆU ĐẦY ĐỦ CHO VIEW
+        return [
+            'danhSachSuatChieu' => $danhSachSuatChieu,
+            'danhSachPhim' => $this->suatChieuModel->getAllPhim(),      // CHO DROPDOWN PHIM
+            'danhSachPhong' => $this->suatChieuModel->getAllPhong(),    // CHO DROPDOWN PHÒNG
+            'danhSachRap' => $this->suatChieuModel->getAllRap(),       // CHO DROPDOWN RẠP (FILTER)
+            'page' => $page,
+            'totalPages' => $totalPages
+        ];
     }
 
     /**
-     * Hiển thị form thêm mới
+     * LẤY BỘ LỌC TỪ REQUEST
+     * - Xử lý các tham số GET từ form filter
+     * - Chỉ thêm vào mảng nếu giá trị không rỗng
+     * - Trả về mảng filters để sử dụng trong query
      */
-    public function create() {
-        // 1. Cấu hình phân trang
-        $limit = 3; // Số bản ghi mỗi trang
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $offset = ($page - 1) * $limit;
-
-        // 2. Lấy filters từ GET
+    private function getFilters() {
         $filters = [];
+        
+        // LỌC THEO NGÀY CHIẾU
         if (!empty($_GET['ngay_chieu'])) {
             $filters['ngay_chieu'] = $_GET['ngay_chieu'];
         }
+        
+        // LỌC THEO TÊN RẠP
         if (!empty($_GET['ten_rap'])) {
             $filters['ten_rap'] = $_GET['ten_rap'];
         }
+        
+        // LỌC THEO TÊN PHIM
         if (!empty($_GET['ten_phim'])) {
             $filters['ten_phim'] = $_GET['ten_phim'];
         }
-
-        // 3. Lấy dữ liệu VỚI PHÂN TRANG
-        $totalRows = $this->suatChieuModel->countSuatChieu($filters);
-        $totalPages = ceil($totalRows / $limit);
         
-        // Lấy danh sách suất chiếu CÓ PHÂN TRANG
-        $danhSachSuatChieu = $this->suatChieuModel->getSuatChieuPhanTrang($filters, $limit, $offset);
-        $danhSachPhim = $this->suatChieuModel->getAllPhim();
-        $danhSachPhong = $this->suatChieuModel->getAllPhong();
+        return $filters;
+    }
 
-        // Lấy số ghế trống và tổng số ghế cho mỗi suất chiếu
-        foreach ($danhSachSuatChieu as $key => $suatChieu) {
-            $soGheTrong = $this->gheSuatChieuModel->countGheTrong($suatChieu['ma_suat_chieu']);
-            $tongSoGhe = $this->gheModel->countGheByPhong($suatChieu['ma_phong']); // Lấy tổng số ghế từ phòng
-            
-            $danhSachSuatChieu[$key]['so_ghe_trong'] = $soGheTrong;
-            $danhSachSuatChieu[$key]['tong_so_ghe'] = $tongSoGhe; // Sử dụng giá trị thực tế
-        }
+    /**
+     * CHUYỂN HƯỚNG VỚI TRẠNG THÁI (DÙNG SESSION)
+     * - Lưu trạng thái thành công/lỗi vào session
+     * - Xây dựng URL với các tham số
+     * - Chuyển hướng và thoát chương trình
+     */
+    private function redirectWithStatus($success, $actionType) {
+        // TẠO MÃ TRẠNG THÁI (success/error)
+        $status = $success ? $actionType . '_success' : $actionType . '_error';
         
-        $action = 'create';
+        // LƯU VÀO SESSION (FLASH MESSAGE)
+        $_SESSION['flash_status'] = $status;
+        
+        // CHUYỂN HƯỚNG VỀ TRANG DANH SÁCH SUẤT CHIẾU
+        header("Location: index.php?controller=adminShowtime&action=index");
+        exit;
+    }
+
+    // =================================================================
+    // 3. CÁC ACTION CHÍNH CHO QUẢN LÝ SUẤT CHIẾU (CRUD)
+    // =================================================================
+
+    /**
+     * HIỂN THỊ DANH SÁCH SUẤT CHIẾU VỚI BỘ LỌC
+     * - Action mặc định (index)
+     * - Lấy dữ liệu và hiển thị view
+     * - Áp dụng bộ lọc nếu có
+     */
+    public function index() {
+        $filters = $this->getFilters();
+        $data = $this->getBaseData($filters);
+        
+        // CHUYỂN MẢNG THÀNH BIẾN ĐỂ VIEW SỬ DỤNG
+        extract($data);
         
         require_once __DIR__ . '/../views/admin/showtime_view.php';
     }
 
     /**
-     * Xử lý thêm suất chiếu mới
+     * HIỂN THỊ FORM THÊM MỚI SUẤT CHIẾU
+     * - Lấy dữ liệu cơ bản và thêm action = 'create'
+     * - Hiển thị form thêm suất chiếu mới
+     * - Giữ lại các bộ lọc hiện tại
+     */
+    public function create() {
+        $filters = $this->getFilters();
+        $data = $this->getBaseData($filters);
+        
+        // THÊM BIẾN ACTION ĐỂ VIEW BIẾT HIỂN THỊ FORM THÊM MỚI
+        $data['action'] = 'create';
+        
+        // CHUYỂN MẢNG THÀNH BIẾN ĐỂ VIEW SỬ DỤNG
+        extract($data);
+        
+        require_once __DIR__ . '/../views/admin/showtime_view.php';
+    }
+
+    /**
+     * XỬ LÝ THÊM SUẤT CHIẾU MỚI
+     * - Kiểm tra phương thức POST
+     * - Gọi model để thêm suất chiếu
+     * - Chuyển hướng với trạng thái thành công/lỗi
      */
     public function store() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -133,19 +182,20 @@ class AdminShowtimeController {
                     $_POST['gia_ve_co_ban']
                 );
 
-                if ($success) {
-                    header("Location: index.php?controller=adminShowtime&action=index&status=add_success");
-                } else {
-                    throw new Exception("Lỗi khi thêm suất chiếu");
-                }
+                $this->redirectWithStatus($success, 'add');
             } catch (Exception $e) {
+                // TRƯỜNG HỢP CŨ (CÓ THỂ XÓA SAU KHI TEST)
                 header("Location: index.php?controller=adminShowtime&action=index&status=add_error");
+                exit;
             }
         }
     }
 
     /**
-     * Hiển thị form chỉnh sửa
+     * HIỂN THỊ FORM CHỈNH SỬA SUẤT CHIẾU
+     * - Kiểm tra ID suất chiếu hợp lệ
+     * - Lấy thông tin suất chiếu cần sửa
+     * - Hiển thị form với dữ liệu hiện tại
      */
     public function edit() {
         $edit_id = $_GET['id'] ?? null;
@@ -160,48 +210,24 @@ class AdminShowtimeController {
             exit;
         }
 
-        // 1. Cấu hình phân trang
-        $limit = 3; // Số bản ghi mỗi trang
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $offset = ($page - 1) * $limit;
-
-        // 2. Lấy filters từ GET
-        $filters = [];
-        if (!empty($_GET['ngay_chieu'])) {
-            $filters['ngay_chieu'] = $_GET['ngay_chieu'];
-        }
-        if (!empty($_GET['ten_rap'])) {
-            $filters['ten_rap'] = $_GET['ten_rap'];
-        }
-        if (!empty($_GET['ten_phim'])) {
-            $filters['ten_phim'] = $_GET['ten_phim'];
-        }
-
-        // 3. Lấy dữ liệu VỚI PHÂN TRANG
-        $totalRows = $this->suatChieuModel->countSuatChieu($filters);
-        $totalPages = ceil($totalRows / $limit);
+        $filters = $this->getFilters();
+        $data = $this->getBaseData($filters);
         
-        // Lấy danh sách suất chiếu CÓ PHÂN TRANG
-        $danhSachSuatChieu = $this->suatChieuModel->getSuatChieuPhanTrang($filters, $limit, $offset);
-        $danhSachPhim = $this->suatChieuModel->getAllPhim();
-        $danhSachPhong = $this->suatChieuModel->getAllPhong();
-
-        // Lấy số ghế trống và tổng số ghế cho mỗi suất chiếu
-        foreach ($danhSachSuatChieu as $key => $suatChieu) {
-            $soGheTrong = $this->gheSuatChieuModel->countGheTrong($suatChieu['ma_suat_chieu']);
-            $tongSoGhe = $this->gheModel->countGheByPhong($suatChieu['ma_phong']); // Lấy tổng số ghế từ phòng
-            
-            $danhSachSuatChieu[$key]['so_ghe_trong'] = $soGheTrong;
-            $danhSachSuatChieu[$key]['tong_so_ghe'] = $tongSoGhe; // Sử dụng giá trị thực tế
-        }
+        // THÊM CÁC BIẾN CHO FORM EDIT
+        $data['edit_id'] = $edit_id;
+        $data['suatChieuToEdit'] = $suatChieuToEdit;
         
-        $edit_id = $edit_id;
+        // CHUYỂN MẢNG THÀNH BIẾN ĐỂ VIEW SỬ DỤNG
+        extract($data);
         
         require_once __DIR__ . '/../views/admin/showtime_view.php';
     }
 
     /**
-     * Xử lý cập nhật suất chiếu
+     * XỬ LÝ CẬP NHẬT SUẤT CHIẾU
+     * - Kiểm tra phương thức POST
+     * - Gọi model để cập nhật suất chiếu
+     * - Chuyển hướng với trạng thái thành công/lỗi
      */
     public function update() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -216,34 +242,35 @@ class AdminShowtimeController {
                     $_POST['gia_ve_co_ban']
                 );
 
-                if ($success) {
-                    header("Location: index.php?controller=adminShowtime&action=index&status=update_success");
-                } else {
-                    throw new Exception("Lỗi khi cập nhật suất chiếu");
-                }
+                $this->redirectWithStatus($success, 'update');
             } catch (Exception $e) {
+                // TRƯỜNG HỢP CŨ (CÓ THỂ XÓA SAU KHI TEST)
                 header("Location: index.php?controller=adminShowtime&action=index&status=update_error");
+                exit;
             }
         }
     }
 
     /**
-     * Xử lý xóa suất chiếu
+     * XỬ LÝ XÓA SUẤT CHIẾU
+     * - Kiểm tra ID hợp lệ
+     * - Gọi model để xóa suất chiếu
+     * - Chuyển hướng với trạng thái thành công/lỗi
      */
     public function destroy() {
         $id = $_GET['id'] ?? null;
         if ($id) {
             try {
-                if ($this->suatChieuModel->deleteSuatChieu($id)) {
-                    header("Location: index.php?controller=adminShowtime&action=index&status=delete_success");
-                } else {
-                    header("Location: index.php?controller=adminShowtime&action=index&status=delete_error");
-                }
+                $success = $this->suatChieuModel->deleteSuatChieu($id);
+                $this->redirectWithStatus($success, 'delete');
             } catch (Exception $e) {
+                // TRƯỜNG HỢP CŨ (CÓ THỂ XÓA SAU KHI TEST)
                 header("Location: index.php?controller=adminShowtime&action=index&status=delete_error");
+                exit;
             }
         } else {
             header('Location: index.php?controller=adminShowtime&action=index');
+            exit;
         }
     }
 }

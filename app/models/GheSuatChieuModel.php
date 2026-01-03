@@ -89,39 +89,39 @@ class GheSuatChieuModel {
         return $stmt->execute();
     }
 
-    /**
-     * Cập nhật trạng thái nhiều ghế trong 1 suất chiếu (transaction)
-     *  - Dùng khi user bấm TIẾP TỤC / THANH TOÁN
-     */
-    public function updateTrangThaiNhieuGhe($ma_suat_chieu, array $dsMaGhe, $trang_thai)
-    {
-        if (empty($dsMaGhe)) {
-            return false;
-        }
-
-        $sql = "UPDATE {$this->table}
-                SET trang_thai = :trang_thai
-                WHERE ma_suat_chieu = :ma_suat_chieu
-                  AND ma_ghe = :ma_ghe";
-
-        try {
-            $this->conn->beginTransaction();
-            $stmt = $this->conn->prepare($sql);
-
-            foreach ($dsMaGhe as $ma_ghe) {
-                $stmt->bindParam(':trang_thai', $trang_thai, PDO::PARAM_INT);
-                $stmt->bindParam(':ma_suat_chieu', $ma_suat_chieu, PDO::PARAM_INT);
-                $stmt->bindParam(':ma_ghe', $ma_ghe, PDO::PARAM_INT);
-                $stmt->execute();
-            }
-
-            $this->conn->commit();
-            return true;
-        } catch (\Exception $e) {
-            $this->conn->rollBack();
-            return false;
-        }
+/**
+ * Cập nhật trạng thái nhiều ghế trong 1 suất chiếu (transaction)
+ * Đã sửa: Sử dụng bindValue để đảm bảo đúng kiểu dữ liệu INT
+ */
+public function updateTrangThaiNhieuGhe($ma_suat_chieu, array $dsMaGhe, $trang_thai)
+{
+    if (empty($dsMaGhe)) {
+        return false;
     }
+
+    $sql = "UPDATE {$this->table}
+            SET trang_thai = :trang_thai
+            WHERE ma_suat_chieu = :ma_suat_chieu
+              AND ma_ghe = :ma_ghe";
+
+    try {
+        $stmt = $this->conn->prepare($sql);
+
+        foreach ($dsMaGhe as $ma_ghe) {
+            // SỬA: Dùng bindValue để ép kiểu INT rõ ràng
+            $stmt->bindValue(':trang_thai', (int)$trang_thai, PDO::PARAM_INT);
+            $stmt->bindValue(':ma_suat_chieu', (int)$ma_suat_chieu, PDO::PARAM_INT);
+            $stmt->bindValue(':ma_ghe', (int)$ma_ghe, PDO::PARAM_INT);
+            
+            $stmt->execute();
+        }
+
+        return true;
+    } catch (\Exception $e) {
+        error_log("Lỗi updateTrangThaiNhieuGhe: " . $e->getMessage());
+        return false;
+    }
+}
 
     /**
      * Kiểm tra xem danh sách ghế có còn trống không cho 1 suất chiếu

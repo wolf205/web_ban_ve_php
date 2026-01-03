@@ -13,7 +13,10 @@ class LichChieuModel {
     // =================================================================
 
     /**
-     * Lấy danh sách suất chiếu để hiển thị trang bán vé (Giữ nguyên)
+     * LẤY DANH SÁCH SUẤT CHIẾU ĐỂ HIỂN THỊ TRANG BÁN VÉ
+     * - Dùng cho trang khách hàng chọn suất chiếu
+     * - Có thể lọc theo ngày chiếu và rạp
+     * - Trả về thông tin cơ bản: mã suất chiếu, thông tin phim, phòng, thời gian
      */
     public function getLichChieu($ngay_chieu = null, $ma_rap = null) {
         $sql = "SELECT sc.ma_suat_chieu, sc.ma_phim, p.ten_phim, sc.ma_phong, 
@@ -22,20 +25,24 @@ class LichChieuModel {
                 FROM suat_chieu sc
                 JOIN phim p ON sc.ma_phim = p.ma_phim
                 JOIN phong ph ON sc.ma_phong = ph.ma_phong
-                WHERE 1=1";
+                WHERE 1=1"; // Mệnh đề WHERE 1=1 để dễ dàng thêm điều kiện
 
+        // THÊM ĐIỀU KIỆN LỌC THEO NGÀY CHIẾU (NẾU CÓ)
         if (!empty($ngay_chieu)) {
             $sql .= " AND sc.ngay_chieu = :ngay_chieu";
         }
         
+        // THÊM ĐIỀU KIỆN LỌC THEO RẠP (NẾU CÓ)
         if (!empty($ma_rap)) {
             $sql .= " AND ph.ma_rap = :ma_rap";
         }
 
+        // SẮP XẾP THEO NGÀY VÀ GIỜ CHIẾU
         $sql .= " ORDER BY sc.ngay_chieu ASC, sc.gio_bat_dau ASC";
 
         $stmt = $this->conn->prepare($sql);
 
+        // BIND PARAM CHO CÁC ĐIỀU KIỆN LỌC
         if (!empty($ngay_chieu)) {
             $stmt->bindParam(':ngay_chieu', $ngay_chieu);
         }
@@ -50,7 +57,9 @@ class LichChieuModel {
 
 
     /**
-     * HÀM ĐÃ SỬA: LẤY SUẤT CHIẾU THEO MÃ PHIM VÀ MÃ RẠP
+     * LẤY SUẤT CHIẾU THEO MÃ PHIM VÀ MÃ RẠP
+     * - Dùng cho trang chi tiết phim, hiển thị lịch chiếu của phim tại một rạp cụ thể
+     * - Kết hợp cả 2 điều kiện: phim và rạp
      */
     public function getLichChieuByPhimId($ma_phim, $ma_rap) {
         
@@ -61,13 +70,13 @@ class LichChieuModel {
                 JOIN phim p ON sc.ma_phim = p.ma_phim
                 JOIN phong ph ON sc.ma_phong = ph.ma_phong
                 WHERE sc.ma_phim = :ma_phim
-                  AND ph.ma_rap = :ma_rap"; // <-- THÊM LỌC RẠP
+                  AND ph.ma_rap = :ma_rap"; // LỌC THEO CẢ PHIM VÀ RẠP
 
         $sql .= " ORDER BY sc.ngay_chieu ASC, sc.gio_bat_dau ASC";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':ma_phim', $ma_phim);
-        $stmt->bindParam(':ma_rap', $ma_rap); // <-- THÊM BIND PARAM
+        $stmt->bindParam(':ma_rap', $ma_rap); // BIND PARAM CHO MÃ RẠP
         $stmt->execute();
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -78,7 +87,10 @@ class LichChieuModel {
     // =================================================================
 
     /**
-     * Lấy tất cả suất chiếu với thông tin đầy đủ
+     * LẤY TẤT CẢ SUẤT CHIẾU VỚI THÔNG TIN ĐẦY ĐỦ
+     * - Dùng cho admin xem toàn bộ suất chiếu
+     * - JOIN nhiều bảng để lấy thông tin đầy đủ: phim, phòng, rạp
+     * - Sắp xếp theo ngày mới nhất và giờ sớm nhất
      */
     public function getAllSuatChieu() {
         $sql = "SELECT 
@@ -103,7 +115,9 @@ class LichChieuModel {
     }
 
     /**
-     * Lấy thông tin suất chiếu theo ID
+     * LẤY THÔNG TIN SUẤT CHIẾU THEO ID
+     * - Dùng cho admin chỉnh sửa suất chiếu
+     * - Chỉ lấy thông tin từ bảng suat_chieu
      */
     public function getSuatChieuById($ma_suat_chieu) {
         $sql = "SELECT * FROM suat_chieu WHERE ma_suat_chieu = :ma_suat_chieu";
@@ -114,7 +128,10 @@ class LichChieuModel {
     }
 
     /**
-     * Thêm suất chiếu mới
+     * THÊM SUẤT CHIẾU MỚI
+     * - Dùng cho admin tạo suất chiếu mới
+     * - Validate dữ liệu đầu vào
+     * - Trả về boolean để controller biết thành công/thất bại
      */
     public function addSuatChieu($ma_phim, $ma_phong, $ngay_chieu, $gio_bat_dau, $gio_ket_thuc, $gia_ve_co_ban) {
         $sql = "INSERT INTO suat_chieu (ma_phim, ma_phong, ngay_chieu, gio_bat_dau, gio_ket_thuc, gia_ve_co_ban) 
@@ -128,11 +145,13 @@ class LichChieuModel {
         $stmt->bindParam(':gio_ket_thuc', $gio_ket_thuc);
         $stmt->bindParam(':gia_ve_co_ban', $gia_ve_co_ban);
 
-        return $stmt->execute();
+        return $stmt->execute(); // TRẢ VỀ TRUE/FALSE
     }
 
     /**
-     * Cập nhật suất chiếu
+     * CẬP NHẬT SUẤT CHIẾU
+     * - Dùng cho admin chỉnh sửa suất chiếu
+     * - Cập nhật tất cả các trường
      */
     public function updateSuatChieu($ma_suat_chieu, $ma_phim, $ma_phong, $ngay_chieu, $gio_bat_dau, $gio_ket_thuc, $gia_ve_co_ban) {
         $sql = "UPDATE suat_chieu 
@@ -153,27 +172,38 @@ class LichChieuModel {
         $stmt->bindParam(':gio_ket_thuc', $gio_ket_thuc);
         $stmt->bindParam(':gia_ve_co_ban', $gia_ve_co_ban);
 
-        return $stmt->execute();
+        return $stmt->execute(); // TRẢ VỀ TRUE/FALSE
     }
 
     /**
-     * Xóa suất chiếu
+     * XÓA SUẤT CHIẾU
+     * - Dùng cho admin xóa suất chiếu
+     * - Kiểm tra ràng buộc khóa ngoại trước khi xóa (nếu cần)
      */
     public function deleteSuatChieu($ma_suat_chieu) {
         $sql = "DELETE FROM suat_chieu WHERE ma_suat_chieu = :ma_suat_chieu";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':ma_suat_chieu', $ma_suat_chieu);
-        return $stmt->execute();
+        return $stmt->execute(); // TRẢ VỀ TRUE/FALSE
     }
 
+    /**
+     * LẤY TẤT CẢ PHÒNG
+     * - Dùng để populate dropdown chọn phòng trong form
+     * - Sắp xếp theo mã phòng
+     */
     public function getAllPhong() {
         $sql = "SELECT * FROM phong ORDER BY ma_phong ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
-
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    /**
+     * LẤY TẤT CẢ PHIM
+     * - Dùng để populate dropdown chọn phim trong form
+     * - Chỉ lấy các trường cần thiết
+     */
     public function getAllPhim() {
         $sql = "SELECT ma_phim, ten_phim, the_loai, thoi_luong, dao_dien, dien_vien, mo_ta, ngay_khoi_chieu, anh_trailer, hot, gioi_han_do_tuoi 
                 FROM phim";
@@ -183,7 +213,10 @@ class LichChieuModel {
     }
 
     /**
-     * Lấy suất chiếu với bộ lọc
+     * LẤY SUẤT CHIẾU VỚI BỘ LỌC (KHÔNG PHÂN TRANG)
+     * - Dùng cho admin xem suất chiếu với bộ lọc
+     * - Hỗ trợ lọc theo ngày, rạp, phim
+     * - Sử dụng LIKE cho tìm kiếm text
      */
     public function getSuatChieuWithFilter($filters = []) {
         $sql = "SELECT 
@@ -204,6 +237,7 @@ class LichChieuModel {
 
         $params = [];
 
+        // XỬ LÝ CÁC ĐIỀU KIỆN LỌC
         if (!empty($filters['ngay_chieu'])) {
             $sql .= " AND sc.ngay_chieu = :ngay_chieu";
             $params[':ngay_chieu'] = $filters['ngay_chieu'];
@@ -211,18 +245,19 @@ class LichChieuModel {
 
         if (!empty($filters['ten_rap'])) {
             $sql .= " AND r.ten_rap LIKE :ten_rap";
-            $params[':ten_rap'] = '%' . $filters['ten_rap'] . '%';
+            $params[':ten_rap'] = '%' . $filters['ten_rap'] . '%'; // TÌM KIẾM GẦN ĐÚNG
         }
 
         if (!empty($filters['ten_phim'])) {
             $sql .= " AND p.ten_phim LIKE :ten_phim";
-            $params[':ten_phim'] = '%' . $filters['ten_phim'] . '%';
+            $params[':ten_phim'] = '%' . $filters['ten_phim'] . '%'; // TÌM KIẾM GẦN ĐÚNG
         }
 
         $sql .= " ORDER BY sc.ngay_chieu DESC, sc.gio_bat_dau ASC";
 
         $stmt = $this->conn->prepare($sql);
         
+        // BIND CÁC THAM SỐ
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
@@ -232,7 +267,9 @@ class LichChieuModel {
     }
 
     /**
-     * Lấy danh sách rạp duy nhất để hiển thị trong bộ lọc
+     * LẤY DANH SÁCH RẠP DUY NHẤT
+     * - Dùng để populate dropdown lọc rạp
+     * - DISTINCT để chỉ lấy tên rạp không trùng
      */
     public function getAllRap() {
         $sql = "SELECT DISTINCT ten_rap FROM rap ORDER BY ten_rap ASC";
@@ -242,11 +279,14 @@ class LichChieuModel {
     }
 
     // =================================================================
-    // 3. HÀM PHÂN TRANG (THÊM LẠI)
+    // 3. HÀM PHÂN TRANG (CHO ADMIN)
     // =================================================================
 
     /**
-     * Lấy suất chiếu với phân trang
+     * LẤY SUẤT CHIẾU VỚI PHÂN TRANG VÀ BỘ LỌC
+     * - Dùng cho admin với phân trang
+     * - Giới hạn số lượng kết quả trả về (LIMIT)
+     * - Bỏ qua một số kết quả (OFFSET)
      */
     public function getSuatChieuPhanTrang($filters = [], $limit = 3, $offset = 0) {
         $sql = "SELECT 
@@ -267,6 +307,7 @@ class LichChieuModel {
 
         $params = [];
 
+        // XỬ LÝ CÁC ĐIỀU KIỆN LỌC
         if (!empty($filters['ngay_chieu'])) {
             $sql .= " AND sc.ngay_chieu = :ngay_chieu";
             $params[':ngay_chieu'] = $filters['ngay_chieu'];
@@ -283,14 +324,16 @@ class LichChieuModel {
         }
 
         $sql .= " ORDER BY sc.ngay_chieu DESC, sc.gio_bat_dau ASC";
-        $sql .= " LIMIT :limit OFFSET :offset";
+        $sql .= " LIMIT :limit OFFSET :offset"; // THÊM PHÂN TRANG
 
         $stmt = $this->conn->prepare($sql);
         
+        // BIND CÁC THAM SỐ LỌC
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
         
+        // BIND THAM SỐ PHÂN TRANG (ÉP KIỂU INT)
         $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
 
@@ -299,7 +342,9 @@ class LichChieuModel {
     }
 
     /**
-     * Đếm tổng số suất chiếu
+     * ĐẾM TỔNG SỐ SUẤT CHIẾU (CHO PHÂN TRANG)
+     * - Đếm tổng số bản ghi phù hợp với bộ lọc
+     * - Dùng để tính toán số lượng trang
      */
     public function countSuatChieu($filters = []) {
         $sql = "SELECT COUNT(*) 
@@ -311,6 +356,7 @@ class LichChieuModel {
 
         $params = [];
 
+        // XỬ LÝ CÁC ĐIỀU KIỆN LỌC (GIỐNG NHƯ TRÊN)
         if (!empty($filters['ngay_chieu'])) {
             $sql .= " AND sc.ngay_chieu = :ngay_chieu";
             $params[':ngay_chieu'] = $filters['ngay_chieu'];
@@ -328,12 +374,13 @@ class LichChieuModel {
 
         $stmt = $this->conn->prepare($sql);
         
+        // BIND CÁC THAM SỐ
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
         
         $stmt->execute();
-        return $stmt->fetchColumn();
+        return $stmt->fetchColumn(); // LẤY GIÁ TRỊ ĐẾM ĐẦU TIÊN
     }
 }
 ?>

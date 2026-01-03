@@ -13,6 +13,12 @@ class LichChieuController {
     private $gheSuatChieuModel;
     private $rapModel;
 
+    /**
+     * KHỞI TẠO CONTROLLER
+     * - Thiết lập kết nối database
+     * - Khởi tạo các model cần thiết
+     * - Kiểm tra kết nối thành công
+     */
     public function __construct() {
         $database = new Database();
         $this->db = $database->getConnection();
@@ -24,74 +30,112 @@ class LichChieuController {
         $this->rapModel = new RapModel($this->db);
     }
 
+    /**
+     * ACTION INDEX - HIỂN THỊ TRANG LỊCH CHIẾU
+     * - Xử lý tham số ngày và rạp từ URL
+     * - Tạo danh sách ngày cho date selector
+     * - Lấy và tổ chức dữ liệu lịch chiếu
+     * - Truyền dữ liệu đến view
+     */
     public function index() {
-        // Lấy ngày được chọn từ GET, mặc định là ngày hôm nay
+        // =================================================================
+        // 1. XỬ LÝ THAM SỐ ĐẦU VÀO
+        // =================================================================
+        
+        // LẤY NGÀY ĐƯỢC CHỌN TỪ THAM SỐ GET, MẶC ĐỊNH LÀ NGÀY HÔM NAY
         $selected_date = $_GET['ngay'] ?? date('Y-m-d');
+        
+        // LẤY MÃ RẠP ĐƯỢC CHỌN, MẶC ĐỊNH LÀ '1'
         $selected_rap_id = $_GET['ma_rap'] ?? '1';
 
-        // Tạo danh sách 6 ngày kể từ hôm nay
+        // =================================================================
+        // 2. TẠO DANH SÁCH NGÀY CHO DATE SELECTOR
+        // =================================================================
+        
         $dateListRaw = [];
         
-        // Tên các thứ trong tiếng Việt
+        // TÊN CÁC THỨ TRONG TIẾNG VIỆT (0=CN, 1=T2, ..., 6=T7)
         $weekdays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
         
-        // Ngày hiện tại
+        // NGÀY HIỆN TẠI ĐỂ LÀM ĐIỂM BẮT ĐẦU
         $currentDate = new DateTime();
         
-        // Tạo 6 ngày kể từ hôm nay
+        // TẠO 6 NGÀY KỂ TỪ HÔM NAY (0 ĐẾN 5)
         for ($i = 0; $i < 6; $i++) {
-            $date = clone $currentDate;
-            $date->modify("+$i days");
+            $date = clone $currentDate; // CLONE ĐỂ KHÔNG ẢNH HƯỞNG ĐẾN $currentDate
+            $date->modify("+$i days"); // THÊM i NGÀY VÀO NGÀY HIỆN TẠI
             
-            $sqlDate = $date->format('Y-m-d');
-            $displayDate = $date->format('d/m');
+            // ĐỊNH DẠNG CHO CÁC MỤC ĐÍCH KHÁC NHAU
+            $sqlDate = $date->format('Y-m-d');     // CHO SQL QUERY (YYYY-MM-DD)
+            $displayDate = $date->format('d/m');   // CHO HIỂN THỊ (DD/MM)
             $weekdayIndex = (int)$date->format('w'); // 0=CN, 1=T2, ..., 6=T7
             
+            // THÊM VÀO MẢNG DANH SÁCH NGÀY
             $dateListRaw[] = [
-                'sql' => $sqlDate,
-                'display' => $displayDate,
-                'weekday' => $weekdays[$weekdayIndex]
+                'sql' => $sqlDate,          // CHO DATABASE
+                'display' => $displayDate,  // CHO HIỂN THỊ
+                'weekday' => $weekdays[$weekdayIndex] // TÊN THỨ
             ];
         }
 
+        // =================================================================
+        // 3. CHUẨN BỊ DỮ LIỆU CHO DATE SELECTOR VIEW
+        // =================================================================
+        
         $fixedDateList = [];
-            foreach ($dateListRaw as $date_item) {
-                $date_item['link'] = 'index.php?controller=lichchieu&action=index'
-                         . '&ngay=' . $date_item['sql']
-                         . '&ma_rap=' . urlencode($selected_rap_id);
+        foreach ($dateListRaw as $date_item) {
+            // TẠO LINK CHO MỖI NGÀY, GIỮ LẠI MÃ RẠP HIỆN TẠI
+            $date_item['link'] = 'index.php?controller=lichchieu&action=index'
+                     . '&ngay=' . $date_item['sql']           // NGÀY
+                     . '&ma_rap=' . urlencode($selected_rap_id); // RẠP
 
-                $date_item['active'] = ($date_item['sql'] == $selected_date);
-                $date_item['text']   = $date_item['display'] . " - " . $date_item['weekday'];
+            // KIỂM TRA NGÀY NÀY CÓ ĐANG ĐƯỢC CHỌN KHÔNG
+            $date_item['active'] = ($date_item['sql'] == $selected_date);
+            
+            // VĂN BẢN HIỂN THỊ: "DD/MM - TThứ"
+            $date_item['text'] = $date_item['display'] . " - " . $date_item['weekday'];
 
-                $fixedDateList[] = $date_item;
-            }
+            $fixedDateList[] = $date_item;
+        }
 
-
-        // Lấy lịch chiếu cho ngày được chọn
+        // =================================================================
+        // 4. LẤY VÀ XỬ LÝ DỮ LIỆU LỊCH CHIẾU
+        // =================================================================
+        
+        // LẤY TẤT CẢ SUẤT CHIẾU CHO NGÀY VÀ RẠP ĐƯỢC CHỌN
         $allShowtimes = $this->lichChieuModel->getLichChieu($selected_date, $selected_rap_id);
+        
+        // MẢNG ĐỂ NHÓM SUẤT CHIẾU THEO PHIM
         $moviesData = [];
 
         foreach ($allShowtimes as $showtime) {
             $ma_phim = $showtime['ma_phim'];
+            
+            // NẾU PHIM NÀY CHƯA CÓ TRONG MẢNG, THÊM THÔNG TIN PHIM
             if (!isset($moviesData[$ma_phim])) {
                 $phimInfo = $this->phimModel->getPhimById($ma_phim);
-                if (!$phimInfo) continue;
+                if (!$phimInfo) continue; // BỎ QUA NẾU KHÔNG TÌM THẤY PHIM
+                
                 $moviesData[$ma_phim] = $phimInfo;
-                $moviesData[$ma_phim]['showtimes'] = [];
+                $moviesData[$ma_phim]['showtimes'] = []; // KHỞI TẠO MẢNG SUẤT CHIẾU
             }
 
             $ma_suat_chieu = $showtime['ma_suat_chieu'];
+            
+            // ĐẾM SỐ GHẾ TRỐNG CHO SUẤT CHIẾU NÀY
             $so_ghe_trong = $this->gheSuatChieuModel->countGheTrong($ma_suat_chieu);
+            
+            // THÊM THÔNG TIN GHẾ TRỐNG VÀO SUẤT CHIẾU
             $showtime['so_ghe_trong'] = $so_ghe_trong;
+            
+            // THÊM SUẤT CHIẾU VÀO MẢNG SUẤT CHIẾU CỦA PHIM
             $moviesData[$ma_phim]['showtimes'][] = $showtime;
         }
 
-        $all_raps = $this->rapModel->getAllRap();
-        $rap = $this->rapModel->getRapById($selected_rap_id);
-        $header_rap_link_template = 'index.php?controller=lichchieu&action=index&ngay=' 
-                                  . urlencode($selected_date) 
-                                  . '&ma_rap=__MA_RAP__';
-
+        // =================================================================
+        // 5. TRUYỀN DỮ LIỆU ĐẾN VIEW
+        // =================================================================
+        
         require_once __DIR__ . '/../views/khach_hang/LichChieu_view.php';
     }
 }
